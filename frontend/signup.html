@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Sign Up</title>
+</head>
+<body>
+
+    <main>
+        <h1>MediStock</h1>
+        <h2>Sign Up</h2>
+
+        <form id="signupForm">
+            <div>
+                <label for="signupEmail">Email</label>
+                <input
+                    type="email"
+                    id="signupEmail"
+                    name="email"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="signupPassword">Password</label>
+                <input
+                    type="password"
+                    id="signupPassword"
+                    name="password"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    required
+                >
+            </div>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <button type="button" id="backToLogin">Back to Login</button>
+
+        <div id="message"></div>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/signup.js"></script>
+</body>
+</html>

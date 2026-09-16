@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.schemas.auth import LoginRequest, TokenResponse
-from app.services.auth import authenticate_user
+from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
+from app.services.auth import authenticate_user, register_user
 from app.core.database import db
 from app.core.security import (
     create_access_token,
@@ -24,9 +24,7 @@ router = APIRouter(
 bearer_scheme = HTTPBearer()
 
 
-# -------------------------
 # Login
-# -------------------------
 
 @router.post(
     "/login",
@@ -59,10 +57,28 @@ async def login(data: LoginRequest):
         token_type="bearer",
     )
 
+# sign up
 
-# -------------------------
+@router.post("/register")
+async def register(data: RegisterRequest):
+    user = await register_user(
+        data.email,
+        data.password,
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+
+    return {
+        "message": "User registered successfully",
+        "email": user["email"],
+    }
+
+
 # Protected user endpoint
-# -------------------------
 
 @router.get("/me")
 async def get_me(
@@ -74,9 +90,9 @@ async def get_me(
     }
 
 
-# -------------------------
+
 # RBAC permission test
-# -------------------------
+
 
 @router.get("/test-medicine-write")
 async def test_medicine_write(
@@ -91,9 +107,7 @@ async def test_medicine_write(
     }
 
 
-# -------------------------
 # Logout
-# -------------------------
 
 @router.post("/logout")
 async def logout(
