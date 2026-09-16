@@ -1,12 +1,18 @@
+import uuid
+
 from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from app.core.config import JWT_SECRET_KEY, JWT_ACCESS_EXPIRY_MIN
+from app.core.config import (
+    JWT_SECRET_KEY,
+    JWT_ACCESS_EXPIRY_MIN,
+)
 
 
 # Password hashing
+
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto",
@@ -22,6 +28,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 # JWT configuration
+
 SECRET_KEY = JWT_SECRET_KEY
 ALGORITHM = "HS256"
 
@@ -30,6 +37,7 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 
 # Create access token
+
 def create_access_token(subject: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
@@ -38,6 +46,7 @@ def create_access_token(subject: str) -> str:
     payload = {
         "sub": subject,
         "type": "access",
+        "jti": str(uuid.uuid4()),
         "exp": expire,
     }
 
@@ -49,6 +58,7 @@ def create_access_token(subject: str) -> str:
 
 
 # Create refresh token
+
 def create_refresh_token(subject: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(
         days=REFRESH_TOKEN_EXPIRE_DAYS
@@ -57,6 +67,7 @@ def create_refresh_token(subject: str) -> str:
     payload = {
         "sub": subject,
         "type": "refresh",
+        "jti": str(uuid.uuid4()),
         "exp": expire,
     }
 
@@ -68,6 +79,7 @@ def create_refresh_token(subject: str) -> str:
 
 
 # Decode and verify access token
+
 def decode_access_token(token: str):
     try:
         payload = jwt.decode(
@@ -76,8 +88,7 @@ def decode_access_token(token: str):
             algorithms=[ALGORITHM],
         )
 
-        # Make sure this is an access token,
-        # not a refresh token.
+        # Make sure this is an access token
         if payload.get("type") != "access":
             return None
 
