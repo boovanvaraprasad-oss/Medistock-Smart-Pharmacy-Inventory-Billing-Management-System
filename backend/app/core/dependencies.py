@@ -7,7 +7,6 @@ from app.core.database import db
 from app.core.permissions import ROLE_PERMISSIONS
 from app.core.security import decode_access_token
 
-
 security = HTTPBearer()
 
 
@@ -41,6 +40,39 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has been revoked",
+        )
+
+    # Get user ID from the token
+    user_id = payload.get("sub")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+
+    # Check whether the user still exists
+    try:
+        user = await db.users.find_one(
+            {"_id": ObjectId(user_id)}
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user ID",
+        )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
+
+    # Check whether the user is active
+    if not user.get("is_active", True):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User account is inactive",
         )
 
     return payload
