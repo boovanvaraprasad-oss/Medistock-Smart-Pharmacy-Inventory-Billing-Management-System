@@ -96,3 +96,22 @@ def decode_access_token(token: str):
 
     except JWTError:
         return None
+
+# Decode and verify refresh token
+
+def decode_refresh_token(token: str):
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
+
+        # Make sure this is a refresh token
+        if payload.get("type") != "refresh":
+            return None
+
+        return payload
+
+    except JWTError:
+        return None
