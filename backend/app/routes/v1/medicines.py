@@ -37,6 +37,7 @@ async def add_medicine(
         manufacturer_id=data.manufacturer_id,
         unit_id=data.unit_id,
         supplier_id=data.supplier_id,
+        stock=data.stock,
     )
 
 
@@ -70,5 +71,6 @@ async def edit_medicine(
         manufacturer_id=data.manufacturer_id,
         unit_id=data.unit_id,
         supplier_id=data.supplier_id,
+        stock=data.stock,
         is_active=data.is_active,
     )

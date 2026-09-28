@@ -11,6 +11,7 @@ async def create_medicine(
     manufacturer_id: str,
     unit_id: str,
     supplier_id: str,
+    stock: int = 0,
 ):
     # Check whether medicine already exists
     existing_medicine = await db.medicines.find_one(
@@ -63,6 +64,7 @@ async def create_medicine(
         "manufacturer_id": reference_ids["manufacturer_id"],
         "unit_id": reference_ids["unit_id"],
         "supplier_id": reference_ids["supplier_id"],
+        "stock": stock,
         "is_active": True,
     }
 
@@ -75,6 +77,7 @@ async def create_medicine(
         "manufacturer_id": manufacturer_id,
         "unit_id": unit_id,
         "supplier_id": supplier_id,
+        "stock": stock,
         "is_active": True,
     }
 
@@ -92,6 +95,7 @@ async def get_all_medicines():
             "manufacturer_id": str(medicine["manufacturer_id"]),
             "unit_id": str(medicine["unit_id"]),
             "supplier_id": str(medicine["supplier_id"]),
+            "stock": medicine.get("stock", 0),
             "is_active": medicine.get("is_active", True),
         })
 
@@ -105,6 +109,7 @@ async def update_medicine(
     manufacturer_id: str | None = None,
     unit_id: str | None = None,
     supplier_id: str | None = None,
+    stock: int | None = None,
     is_active: bool | None = None,
 ):
     try:
@@ -145,6 +150,10 @@ async def update_medicine(
     if name is not None:
         update_data["name"] = name
 
+    # Update stock
+    if stock is not None:
+        update_data["stock"] = stock
+
     # Validate and update referenced master data
     references = [
         ("category_id", "categories", category_id),
@@ -160,7 +169,10 @@ async def update_medicine(
             except Exception:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Invalid {field_name.replace('_id', '')} ID",
+                    detail=(
+                        f"Invalid "
+                        f"{field_name.replace('_id', '')} ID"
+                    ),
                 )
 
             document = await db[collection_name].find_one(
@@ -202,9 +214,21 @@ async def update_medicine(
     return {
         "id": str(updated_medicine["_id"]),
         "name": updated_medicine["name"],
-        "category_id": str(updated_medicine["category_id"]),
-        "manufacturer_id": str(updated_medicine["manufacturer_id"]),
-        "unit_id": str(updated_medicine["unit_id"]),
-        "supplier_id": str(updated_medicine["supplier_id"]),
-        "is_active": updated_medicine.get("is_active", True),
+        "category_id": str(
+            updated_medicine["category_id"]
+        ),
+        "manufacturer_id": str(
+            updated_medicine["manufacturer_id"]
+        ),
+        "unit_id": str(
+            updated_medicine["unit_id"]
+        ),
+        "supplier_id": str(
+            updated_medicine["supplier_id"]
+        ),
+        "stock": updated_medicine.get("stock", 0),
+        "is_active": updated_medicine.get(
+            "is_active",
+            True,
+        ),
     }

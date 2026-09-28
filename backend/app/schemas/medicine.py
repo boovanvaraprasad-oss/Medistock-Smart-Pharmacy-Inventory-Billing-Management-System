@@ -10,6 +10,10 @@ class CreateMedicineRequest(BaseModel):
     manufacturer_id: str
     unit_id: str
     supplier_id: str
+    stock: int = Field(
+        default=0,
+        ge=0,
+    )
 
 
 class MedicineResponse(BaseModel):
@@ -19,6 +23,7 @@ class MedicineResponse(BaseModel):
     manufacturer_id: str
     unit_id: str
     supplier_id: str
+    stock: int
     is_active: bool
 
 
@@ -32,4 +37,8 @@ class UpdateMedicineRequest(BaseModel):
     manufacturer_id: str | None = None
     unit_id: str | None = None
     supplier_id: str | None = None
+    stock: int | None = Field(
+        default=None,
+        ge=0,
+    )
     is_active: bool | None = None
