@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import STOCK_READ, STOCK_WRITE
+from app.core.permissions import PURCHASE_READ, PURCHASE_WRITE
 from app.schemas.purchase_order import (
     CreatePurchaseOrderRequest,
     PurchaseOrderResponse,
@@ -28,7 +28,7 @@ router = APIRouter(
 async def add_purchase_order(
     data: CreatePurchaseOrderRequest,
     current_user=Depends(
-        require_permission(STOCK_WRITE)
+        require_permission(PURCHASE_WRITE)
     ),
 ):
     return await create_purchase_order(
@@ -44,7 +44,7 @@ async def add_purchase_order(
 )
 async def get_purchase_orders(
     current_user=Depends(
-        require_permission(STOCK_READ)
+        require_permission(PURCHASE_READ)
     ),
 ):
     return await get_all_purchase_orders()
@@ -58,7 +58,7 @@ async def edit_purchase_order(
     purchase_order_id: str,
     data: UpdatePurchaseOrderRequest,
     current_user=Depends(
-        require_permission(STOCK_WRITE)
+        require_permission(PURCHASE_WRITE)
     ),
 ):
     return await update_purchase_order(
@@ -75,7 +75,7 @@ async def edit_purchase_order(
 async def receive_order(
     purchase_order_id: str,
     current_user=Depends(
-        require_permission(STOCK_WRITE)
+        require_permission(PURCHASE_WRITE)
     ),
 ):
     return await receive_purchase_order(

@@ -1,12 +1,17 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import MEDICINE_READ, MEDICINE_WRITE
+from app.core.permissions import (
+    MEDICINE_READ,
+    MEDICINE_WRITE,
+)
+
 from app.schemas.medicine import (
     CreateMedicineRequest,
     MedicineResponse,
     UpdateMedicineRequest,
 )
+
 from app.services.medicines import (
     create_medicine,
     get_all_medicines,
@@ -25,7 +30,7 @@ router = APIRouter(
     response_model=MedicineResponse,
     status_code=status.HTTP_201_CREATED,
 )
-async def add_medicine(
+async def create_new_medicine(
     data: CreateMedicineRequest,
     current_user=Depends(
         require_permission(MEDICINE_WRITE)
@@ -38,6 +43,7 @@ async def add_medicine(
         unit_id=data.unit_id,
         supplier_id=data.supplier_id,
         stock=data.stock,
+        price=data.price,
     )
 
 
@@ -57,7 +63,7 @@ async def get_medicines(
     "/{medicine_id}",
     response_model=MedicineResponse,
 )
-async def edit_medicine(
+async def update_existing_medicine(
     medicine_id: str,
     data: UpdateMedicineRequest,
     current_user=Depends(
@@ -72,5 +78,6 @@ async def edit_medicine(
         unit_id=data.unit_id,
         supplier_id=data.supplier_id,
         stock=data.stock,
+        price=data.price,
         is_active=data.is_active,
     )

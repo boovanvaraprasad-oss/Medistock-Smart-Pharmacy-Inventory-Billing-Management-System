@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
 from app.core.permissions import (
-    STOCK_READ,
-    STOCK_WRITE,
+    PURCHASE_READ,
+    PURCHASE_WRITE,
 )
 from app.schemas.purchase_items import (
     CreatePurchaseItemRequest,
@@ -30,7 +30,7 @@ router = APIRouter(
 async def add_purchase_item(
     data: CreatePurchaseItemRequest,
     current_user=Depends(
-        require_permission(STOCK_WRITE)
+        require_permission(PURCHASE_WRITE)
     ),
 ):
     return await create_purchase_item(
@@ -46,7 +46,7 @@ async def add_purchase_item(
 )
 async def get_purchase_items(
     current_user=Depends(
-        require_permission(STOCK_READ)
+        require_permission(PURCHASE_READ)
     ),
 ):
     return await get_all_purchase_items()
@@ -59,7 +59,7 @@ async def edit_purchase_item(
     purchase_item_id: str,
     data: UpdatePurchaseItemRequest,
     current_user=Depends(
-        require_permission(STOCK_WRITE)
+        require_permission(PURCHASE_WRITE)
     ),
 ):
     return await update_purchase_item(

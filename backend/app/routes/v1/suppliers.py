@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import MEDICINE_READ, MEDICINE_WRITE
+from app.core.permissions import SUPPLIER_READ, SUPPLIER_WRITE
 from app.schemas.supplier import (
     CreateSupplierRequest,
     SupplierResponse,
@@ -28,7 +28,7 @@ router = APIRouter(
 async def add_supplier(
     data: CreateSupplierRequest,
     current_user=Depends(
-        require_permission(MEDICINE_WRITE)
+        require_permission(SUPPLIER_WRITE)
     ),
 ):
     return await create_supplier(
@@ -45,7 +45,7 @@ async def add_supplier(
 )
 async def get_suppliers(
     current_user=Depends(
-        require_permission(MEDICINE_READ)
+        require_permission(SUPPLIER_READ)
     ),
 ):
     return await get_all_suppliers()
@@ -59,7 +59,7 @@ async def edit_supplier(
     supplier_id: str,
     data: UpdateSupplierRequest,
     current_user=Depends(
-        require_permission(MEDICINE_WRITE)
+        require_permission(SUPPLIER_WRITE)
     ),
 ):
     return await update_supplier(

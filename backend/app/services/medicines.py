@@ -12,6 +12,7 @@ async def create_medicine(
     unit_id: str,
     supplier_id: str,
     stock: int = 0,
+    price: float = 0,
 ):
     # Check whether medicine already exists
     existing_medicine = await db.medicines.find_one(
@@ -53,10 +54,15 @@ async def create_medicine(
         if not document:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"{field_name.capitalize()} not found or inactive",
+                detail=(
+                    f"{field_name.capitalize()} "
+                    "not found or inactive"
+                ),
             )
 
-        reference_ids[f"{field_name}_id"] = object_id
+        reference_ids[
+            f"{field_name}_id"
+        ] = object_id
 
     medicine = {
         "name": name,
@@ -65,10 +71,13 @@ async def create_medicine(
         "unit_id": reference_ids["unit_id"],
         "supplier_id": reference_ids["supplier_id"],
         "stock": stock,
+        "price": price,
         "is_active": True,
     }
 
-    result = await db.medicines.insert_one(medicine)
+    result = await db.medicines.insert_one(
+        medicine
+    )
 
     return {
         "id": str(result.inserted_id),
@@ -78,6 +87,7 @@ async def create_medicine(
         "unit_id": unit_id,
         "supplier_id": supplier_id,
         "stock": stock,
+        "price": price,
         "is_active": True,
     }
 
@@ -88,16 +98,36 @@ async def get_all_medicines():
     cursor = db.medicines.find({})
 
     async for medicine in cursor:
-        medicines.append({
-            "id": str(medicine["_id"]),
-            "name": medicine["name"],
-            "category_id": str(medicine["category_id"]),
-            "manufacturer_id": str(medicine["manufacturer_id"]),
-            "unit_id": str(medicine["unit_id"]),
-            "supplier_id": str(medicine["supplier_id"]),
-            "stock": medicine.get("stock", 0),
-            "is_active": medicine.get("is_active", True),
-        })
+        medicines.append(
+            {
+                "id": str(medicine["_id"]),
+                "name": medicine["name"],
+                "category_id": str(
+                    medicine["category_id"]
+                ),
+                "manufacturer_id": str(
+                    medicine["manufacturer_id"]
+                ),
+                "unit_id": str(
+                    medicine["unit_id"]
+                ),
+                "supplier_id": str(
+                    medicine["supplier_id"]
+                ),
+                "stock": medicine.get(
+                    "stock",
+                    0,
+                ),
+                "price": medicine.get(
+                    "price",
+                    0,
+                ),
+                "is_active": medicine.get(
+                    "is_active",
+                    True,
+                ),
+            }
+        )
 
     return medicines
 
@@ -110,10 +140,12 @@ async def update_medicine(
     unit_id: str | None = None,
     supplier_id: str | None = None,
     stock: int | None = None,
+    price: float | None = None,
     is_active: bool | None = None,
 ):
     try:
         object_id = ObjectId(medicine_id)
+
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -142,7 +174,10 @@ async def update_medicine(
         if existing_medicine:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="A medicine with this name already exists",
+                detail=(
+                    "A medicine with this name "
+                    "already exists"
+                ),
             )
 
     update_data = {}
@@ -154,18 +189,41 @@ async def update_medicine(
     if stock is not None:
         update_data["stock"] = stock
 
+    # Update price
+    if price is not None:
+        update_data["price"] = price
+
     # Validate and update referenced master data
     references = [
-        ("category_id", "categories", category_id),
-        ("manufacturer_id", "manufacturers", manufacturer_id),
-        ("unit_id", "units", unit_id),
-        ("supplier_id", "suppliers", supplier_id),
+        (
+            "category_id",
+            "categories",
+            category_id,
+        ),
+        (
+            "manufacturer_id",
+            "manufacturers",
+            manufacturer_id,
+        ),
+        (
+            "unit_id",
+            "units",
+            unit_id,
+        ),
+        (
+            "supplier_id",
+            "suppliers",
+            supplier_id,
+        ),
     ]
 
     for field_name, collection_name, reference_id in references:
         if reference_id is not None:
             try:
-                reference_object_id = ObjectId(reference_id)
+                reference_object_id = ObjectId(
+                    reference_id
+                )
+
             except Exception:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -191,7 +249,9 @@ async def update_medicine(
                     ),
                 )
 
-            update_data[field_name] = reference_object_id
+            update_data[
+                field_name
+            ] = reference_object_id
 
     if is_active is not None:
         update_data["is_active"] = is_active
@@ -212,13 +272,17 @@ async def update_medicine(
     )
 
     return {
-        "id": str(updated_medicine["_id"]),
+        "id": str(
+            updated_medicine["_id"]
+        ),
         "name": updated_medicine["name"],
         "category_id": str(
             updated_medicine["category_id"]
         ),
         "manufacturer_id": str(
-            updated_medicine["manufacturer_id"]
+            updated_medicine[
+                "manufacturer_id"
+            ]
         ),
         "unit_id": str(
             updated_medicine["unit_id"]
@@ -226,7 +290,14 @@ async def update_medicine(
         "supplier_id": str(
             updated_medicine["supplier_id"]
         ),
-        "stock": updated_medicine.get("stock", 0),
+        "stock": updated_medicine.get(
+            "stock",
+            0,
+        ),
+        "price": updated_medicine.get(
+            "price",
+            0,
+        ),
         "is_active": updated_medicine.get(
             "is_active",
             True,

@@ -6,13 +6,19 @@ class CreateMedicineRequest(BaseModel):
         min_length=2,
         max_length=150,
     )
+
     category_id: str
     manufacturer_id: str
     unit_id: str
     supplier_id: str
+
     stock: int = Field(
         default=0,
         ge=0,
+    )
+
+    price: float = Field(
+        gt=0,
     )
 
 
@@ -24,6 +30,7 @@ class MedicineResponse(BaseModel):
     unit_id: str
     supplier_id: str
     stock: int
+    price: float
     is_active: bool
 
 
@@ -33,12 +40,20 @@ class UpdateMedicineRequest(BaseModel):
         min_length=2,
         max_length=150,
     )
+
     category_id: str | None = None
     manufacturer_id: str | None = None
     unit_id: str | None = None
     supplier_id: str | None = None
+
     stock: int | None = Field(
         default=None,
         ge=0,
     )
+
+    price: float | None = Field(
+        default=None,
+        gt=0,
+    )
+
     is_active: bool | None = None

@@ -11,7 +11,9 @@ from app.core.config import (
 )
 
 
-# Password hashing
+# ---------------------------------------------------------
+# Password Hashing
+# ---------------------------------------------------------
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -23,23 +25,35 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(password: str, password_hash: str) -> bool:
-    return pwd_context.verify(password, password_hash)
+def verify_password(
+    password: str,
+    password_hash: str,
+) -> bool:
+    return pwd_context.verify(
+        password,
+        password_hash,
+    )
 
 
-# JWT configuration
+# ---------------------------------------------------------
+# JWT Configuration
+# ---------------------------------------------------------
 
 SECRET_KEY = JWT_SECRET_KEY
 ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = JWT_ACCESS_EXPIRY_MIN
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+REFRESH_TOKEN_EXPIRE_DAYS = 3
 
 
-# Create access token
+# ---------------------------------------------------------
+# Create Access Token
+# ---------------------------------------------------------
 
 def create_access_token(subject: str) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(
+    expire = datetime.now(
+        timezone.utc
+    ) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
@@ -57,10 +71,14 @@ def create_access_token(subject: str) -> str:
     )
 
 
-# Create refresh token
+# ---------------------------------------------------------
+# Create Refresh Token
+# ---------------------------------------------------------
 
 def create_refresh_token(subject: str) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(
+    expire = datetime.now(
+        timezone.utc
+    ) + timedelta(
         days=REFRESH_TOKEN_EXPIRE_DAYS
     )
 
@@ -78,7 +96,9 @@ def create_refresh_token(subject: str) -> str:
     )
 
 
-# Decode and verify access token
+# ---------------------------------------------------------
+# Decode and Verify Access Token
+# ---------------------------------------------------------
 
 def decode_access_token(token: str):
     try:
@@ -89,6 +109,7 @@ def decode_access_token(token: str):
         )
 
         # Make sure this is an access token
+
         if payload.get("type") != "access":
             return None
 
@@ -97,7 +118,10 @@ def decode_access_token(token: str):
     except JWTError:
         return None
 
-# Decode and verify refresh token
+
+# ---------------------------------------------------------
+# Decode and Verify Refresh Token
+# ---------------------------------------------------------
 
 def decode_refresh_token(token: str):
     try:
@@ -108,6 +132,7 @@ def decode_refresh_token(token: str):
         )
 
         # Make sure this is a refresh token
+
         if payload.get("type") != "refresh":
             return None
 

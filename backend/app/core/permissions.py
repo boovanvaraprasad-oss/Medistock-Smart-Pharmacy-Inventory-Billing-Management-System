@@ -1,19 +1,20 @@
 OWNER = "owner"
 PHARMACIST = "pharmacist"
-INVENTORY = "inventory"
-PROCUREMENT = "procurement"
-MANAGER = "manager"
-AUDITOR = "auditor"
+INVENTORY_EXECUTIVE = "inventory_executive"
+PURCHASE_EXECUTIVE = "purchase_executive"
+STORE_MANAGER = "store_manager"
+COMPLIANCE_OFFICER = "compliance_officer"
 
 
 ROLES = [
     OWNER,
     PHARMACIST,
-    INVENTORY,
-    PROCUREMENT,
-    MANAGER,
-    AUDITOR,
+    INVENTORY_EXECUTIVE,
+    PURCHASE_EXECUTIVE,
+    STORE_MANAGER,
+    COMPLIANCE_OFFICER,
 ]
+
 
 USER_READ = "user:read"
 USER_WRITE = "user:write"
@@ -23,6 +24,12 @@ MEDICINE_WRITE = "medicine:write"
 
 STOCK_READ = "stock:read"
 STOCK_WRITE = "stock:write"
+
+SUPPLIER_READ = "supplier:read"
+SUPPLIER_WRITE = "supplier:write"
+
+PURCHASE_READ = "purchase:read"
+PURCHASE_WRITE = "purchase:write"
 
 BILL_CREATE = "bill:create"
 BILL_READ = "bill:read"
@@ -37,6 +44,10 @@ PERMISSIONS = [
     MEDICINE_WRITE,
     STOCK_READ,
     STOCK_WRITE,
+    SUPPLIER_READ,
+    SUPPLIER_WRITE,
+    PURCHASE_READ,
+    PURCHASE_WRITE,
     BILL_CREATE,
     BILL_READ,
     REPORT_VIEW,
@@ -53,27 +64,33 @@ ROLE_PERMISSIONS = {
         BILL_READ,
     ],
 
-    INVENTORY: [
+    INVENTORY_EXECUTIVE: [
         MEDICINE_READ,
         MEDICINE_WRITE,
         STOCK_READ,
         STOCK_WRITE,
+        SUPPLIER_READ,
     ],
 
-    PROCUREMENT: [
+    PURCHASE_EXECUTIVE: [
         MEDICINE_READ,
-        MEDICINE_WRITE,
         STOCK_READ,
+        SUPPLIER_READ,
+        SUPPLIER_WRITE,
+        PURCHASE_READ,
+        PURCHASE_WRITE,
     ],
 
-    MANAGER: [
+    STORE_MANAGER: [
         MEDICINE_READ,
         STOCK_READ,
+        SUPPLIER_READ,
+        PURCHASE_READ,
         BILL_READ,
         REPORT_VIEW,
     ],
 
-    AUDITOR: [
+    COMPLIANCE_OFFICER: [
         USER_READ,
         MEDICINE_READ,
         STOCK_READ,

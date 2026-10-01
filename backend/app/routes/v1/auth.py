@@ -1,28 +1,39 @@
 from bson import ObjectId
 
 from fastapi import APIRouter, HTTPException, status, Depends
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth import (
-    LoginRequest,
     RegisterRequest,
     TokenResponse,
     RefreshTokenRequest,
     LogoutRequest,
+    MeResponse,
+    ChangePasswordRequest,
 )
-from app.services.auth import authenticate_user, register_user
+
+from app.services.auth import (
+    authenticate_user,
+    register_user,
+    revoke_token,
+    change_user_password,
+)
+
 from app.core.database import db
+
 from app.core.security import (
     create_access_token,
     create_refresh_token,
     decode_access_token,
     decode_refresh_token,
 )
+
 from app.core.dependencies import (
     get_current_user,
-    require_permission,
+    oauth2_scheme,
 )
-from app.core.permissions import MEDICINE_WRITE
+
+from app.core.permissions import ROLE_PERMISSIONS
 
 
 router = APIRouter(
@@ -30,19 +41,21 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
-bearer_scheme = HTTPBearer()
 
-
-# Login
+# ---------------------------------------------------------
+# OAuth2 Login
+# ---------------------------------------------------------
 
 @router.post(
-    "/login",
+    "/token",
     response_model=TokenResponse,
 )
-async def login(data: LoginRequest):
+async def oauth2_login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+):
     user = await authenticate_user(
-        data.email,
-        data.password,
+        form_data.username,
+        form_data.password,
     )
 
     if not user:
@@ -66,7 +79,9 @@ async def login(data: LoginRequest):
     )
 
 
-# Refresh access token
+# ---------------------------------------------------------
+# Refresh Access Token
+# ---------------------------------------------------------
 
 @router.post(
     "/refresh",
@@ -115,12 +130,13 @@ async def refresh_access_token(
             detail="Invalid refresh token",
         )
 
-    # Check whether the user still exists
+    # Check whether user still exists
 
     try:
         user = await db.users.find_one(
             {"_id": ObjectId(user_id)}
         )
+
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -133,7 +149,7 @@ async def refresh_access_token(
             detail="User not found",
         )
 
-    # Check whether the user is still active
+    # Check whether user is still active
 
     if not user.get("is_active", True):
         raise HTTPException(
@@ -141,20 +157,26 @@ async def refresh_access_token(
             detail="User account is inactive",
         )
 
-    # Create a new access token
+    # Rotation: the old refresh token is revoked now,
+    # so it can never be used a second time
 
-    new_access_token = create_access_token(
-        user_id
+    await revoke_token(
+        refresh_jti,
+        payload["exp"],
     )
 
+    # Issue a brand new access token AND a brand new refresh token
+
     return TokenResponse(
-        access_token=new_access_token,
-        refresh_token=data.refresh_token,
+        access_token=create_access_token(user_id),
+        refresh_token=create_refresh_token(user_id),
         token_type="bearer",
     )
 
 
-# Sign up
+# ---------------------------------------------------------
+# Register
+# ---------------------------------------------------------
 
 @router.post("/register")
 async def register(data: RegisterRequest):
@@ -175,46 +197,70 @@ async def register(data: RegisterRequest):
     }
 
 
-# Protected user endpoint
+# ---------------------------------------------------------
+# Protected User Endpoint
+# ---------------------------------------------------------
 
-@router.get("/me")
+@router.get(
+    "/me",
+    response_model=MeResponse,
+)
 async def get_me(
     current_user=Depends(get_current_user),
 ):
+    # get_current_user already checked the token is valid.
+    # Here we load the user to return who they are.
+    user = await db.users.find_one(
+        {"_id": ObjectId(current_user["sub"])}
+    )
+
+    role = user.get("role")
+
     return {
-        "message": "You are authenticated",
-        "user": current_user,
+        "id": str(user["_id"]),
+        "email": user["email"],
+        "role": role,
+        "is_active": user.get("is_active", True),
+        "permissions": ROLE_PERMISSIONS.get(role, []),
     }
 
 
-# RBAC permission test
+# ---------------------------------------------------------
+# Change My Password
+# ---------------------------------------------------------
 
-@router.get("/test-medicine-write")
-async def test_medicine_write(
-    current_user=Depends(
-        require_permission(MEDICINE_WRITE)
-    ),
+@router.post("/change-password")
+async def change_password(
+    data: ChangePasswordRequest,
+    current_user=Depends(get_current_user),
 ):
+    await change_user_password(
+        user_id=current_user["sub"],
+        current_password=data.current_password,
+        new_password=data.new_password,
+    )
+
+    # The token used for this request stops working,
+    # so the person must log in again with the new password
+    await revoke_token(
+        current_user["jti"],
+        current_user["exp"],
+    )
+
     return {
-        "message": "You have medicine:write permission",
-        "email": current_user["email"],
-        "role": current_user["role"],
+        "message": "Password changed. Please log in again.",
     }
 
 
+# ---------------------------------------------------------
 # Logout
+# ---------------------------------------------------------
 
 @router.post("/logout")
 async def logout(
     data: LogoutRequest,
-    credentials: HTTPAuthorizationCredentials = Depends(
-        bearer_scheme
-    ),
+    access_token: str = Depends(oauth2_scheme),
 ):
-    # Get access token
-
-    access_token = credentials.credentials
-
     # Decode access token
 
     access_payload = decode_access_token(
@@ -257,20 +303,16 @@ async def logout(
 
     # Revoke access token
 
-    await db.revoked_tokens.insert_one(
-        {
-            "jti": access_jti,
-            "expires_at": access_payload.get("exp"),
-        }
+    await revoke_token(
+        access_jti,
+        access_payload["exp"],
     )
 
     # Revoke refresh token
 
-    await db.revoked_tokens.insert_one(
-        {
-            "jti": refresh_jti,
-            "expires_at": refresh_payload.get("exp"),
-        }
+    await revoke_token(
+        refresh_jti,
+        refresh_payload["exp"],
     )
 
     return {

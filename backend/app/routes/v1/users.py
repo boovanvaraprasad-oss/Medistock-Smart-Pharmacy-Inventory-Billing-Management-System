@@ -10,6 +10,7 @@ from app.schemas.staff import (
 from app.services.users import (
     create_staff_user,
     get_all_staff_users,
+    get_staff_user,
     update_staff_user,
 )
 
@@ -45,6 +46,18 @@ async def get_staff_users(
 ):
     return await get_all_staff_users()
 
+
+@router.get(
+    "/{user_id}",
+    response_model=StaffResponse,
+)
+async def get_one_staff_user(
+    user_id: str,
+    current_user=Depends(require_permission(USER_READ)),
+):
+    return await get_staff_user(user_id)
+
+
 @router.patch(
     "/{user_id}",
     response_model=StaffResponse,
@@ -54,8 +67,11 @@ async def update_staff(
     data: UpdateStaffRequest,
     current_user=Depends(require_permission(USER_WRITE)),
 ):
+    # require_permission returns the logged-in user's record,
+    # so we pass their ID to know who is making the change
     return await update_staff_user(
         user_id=user_id,
+        acting_user_id=str(current_user["_id"]),
         role=data.role,
         is_active=data.is_active,
     )
