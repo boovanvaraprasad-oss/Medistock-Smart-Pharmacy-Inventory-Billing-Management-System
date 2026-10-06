@@ -1,9 +1,8 @@
 from bson import ObjectId
-
 from fastapi import HTTPException, status
 
 from app.core.database import db
-
+from app.services.stock_batches import create_stock_batch
 from app.services.stock_transactions import (
     create_stock_transaction,
 )
@@ -96,7 +95,9 @@ async def update_purchase_order(
         )
 
     purchase_order = await db.purchase_orders.find_one(
-        {"_id": object_id}
+        {
+            "_id": object_id
+        }
     )
 
     if not purchase_order:
@@ -123,12 +124,18 @@ async def update_purchase_order(
         )
 
     await db.purchase_orders.update_one(
-        {"_id": object_id},
-        {"$set": update_data},
+        {
+            "_id": object_id
+        },
+        {
+            "$set": update_data
+        },
     )
 
     updated_purchase_order = await db.purchase_orders.find_one(
-        {"_id": object_id}
+        {
+            "_id": object_id
+        }
     )
 
     return {
@@ -160,7 +167,9 @@ async def receive_purchase_order(
 
     # Find purchase order
     purchase_order = await db.purchase_orders.find_one(
-        {"_id": object_id}
+        {
+            "_id": object_id
+        }
     )
 
     if not purchase_order:
@@ -177,19 +186,27 @@ async def receive_purchase_order(
         )
 
     # Get all items belonging to this purchase order
-    purchase_items = db.purchase_items.find(
-        {"purchase_order_id": object_id}
+    purchase_items = []
+
+    cursor = db.purchase_items.find(
+        {
+            "purchase_order_id": object_id
+        }
     )
 
-    items_found = False
+    async for purchase_item in cursor:
+        purchase_items.append(purchase_item)
 
-    async for purchase_item in purchase_items:
-        items_found = True
+    if not purchase_items:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Purchase order has no items",
+        )
 
+    # Validate all items before changing stock
+    for purchase_item in purchase_items:
         medicine_id = purchase_item["medicine_id"]
-        quantity = purchase_item["quantity"]
 
-        # Get current medicine stock
         medicine = await db.medicines.find_one(
             {
                 "_id": medicine_id,
@@ -203,6 +220,36 @@ async def receive_purchase_order(
                 detail="Medicine not found or inactive",
             )
 
+        # Batch information is required for receiving stock
+        if not purchase_item.get("batch_number"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    "Purchase item is missing batch number"
+                ),
+            )
+
+        if not purchase_item.get("expiry_date"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    "Purchase item is missing expiry date"
+                ),
+            )
+
+    # Process each purchase item
+    for purchase_item in purchase_items:
+        medicine_id = purchase_item["medicine_id"]
+        quantity = purchase_item["quantity"]
+
+        # Get current medicine stock
+        medicine = await db.medicines.find_one(
+            {
+                "_id": medicine_id,
+                "is_active": True,
+            }
+        )
+
         current_stock = medicine.get(
             "stock",
             0,
@@ -210,9 +257,29 @@ async def receive_purchase_order(
 
         new_stock = current_stock + quantity
 
+        # Create stock batch
+        await create_stock_batch(
+            medicine_id=str(medicine_id),
+            batch_number=purchase_item[
+                "batch_number"
+            ],
+            quantity=quantity,
+            purchase_price=purchase_item[
+                "unit_price"
+            ],
+            manufacturing_date=purchase_item.get(
+                "manufacturing_date"
+            ),
+            expiry_date=purchase_item[
+                "expiry_date"
+            ],
+        )
+
         # Increase medicine stock
         await db.medicines.update_one(
-            {"_id": medicine_id},
+            {
+                "_id": medicine_id
+            },
             {
                 "$set": {
                     "stock": new_stock
@@ -230,15 +297,11 @@ async def receive_purchase_order(
             reason="Purchase order received",
         )
 
-    if not items_found:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Purchase order has no items",
-        )
-
     # Change purchase order status
     await db.purchase_orders.update_one(
-        {"_id": object_id},
+        {
+            "_id": object_id
+        },
         {
             "$set": {
                 "status": "received"
@@ -247,7 +310,9 @@ async def receive_purchase_order(
     )
 
     updated_purchase_order = await db.purchase_orders.find_one(
-        {"_id": object_id}
+        {
+            "_id": object_id
+        }
     )
 
     return {

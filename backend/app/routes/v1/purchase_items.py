@@ -16,6 +16,7 @@ from app.services.purchase_items import (
     update_purchase_item,
 )
 
+
 router = APIRouter(
     prefix="/purchase-items",
     tags=["Purchase Items"],
@@ -38,7 +39,11 @@ async def add_purchase_item(
         medicine_id=data.medicine_id,
         quantity=data.quantity,
         unit_price=data.unit_price,
+        batch_number=data.batch_number,
+        manufacturing_date=data.manufacturing_date,
+        expiry_date=data.expiry_date,
     )
+
 
 @router.get(
     "",
@@ -50,6 +55,7 @@ async def get_purchase_items(
     ),
 ):
     return await get_all_purchase_items()
+
 
 @router.patch(
     "/{purchase_item_id}",
@@ -66,4 +72,7 @@ async def edit_purchase_item(
         purchase_item_id=purchase_item_id,
         quantity=data.quantity,
         unit_price=data.unit_price,
+        batch_number=data.batch_number,
+        manufacturing_date=data.manufacturing_date,
+        expiry_date=data.expiry_date,
     )

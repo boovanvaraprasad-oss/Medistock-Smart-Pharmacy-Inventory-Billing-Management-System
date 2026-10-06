@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
 from app.core.dependencies import require_permission
 from app.core.permissions import STOCK_READ, STOCK_WRITE
@@ -51,14 +51,8 @@ async def get_transactions(
 
 @router.get("/low-stock")
 async def get_low_stock(
-    threshold: int = Query(
-        default=10,
-        ge=0,
-    ),
     current_user=Depends(
         require_permission(STOCK_READ)
     ),
 ):
-    return await get_low_stock_medicines(
-        threshold=threshold,
-    )
+    return await get_low_stock_medicines()

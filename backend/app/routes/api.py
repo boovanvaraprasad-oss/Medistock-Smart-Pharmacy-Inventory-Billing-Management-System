@@ -15,6 +15,9 @@ from app.routes.v1.purchase_items import (
     router as purchase_items_router,
 )
 from app.routes.v1.stock import router as stock_router
+from app.routes.v1.stock_batches import (
+    router as stock_batches_router,
+)
 from app.routes.v1.bills import router as bills_router
 
 
@@ -32,4 +35,5 @@ api_router.include_router(medicines_router)
 api_router.include_router(purchase_orders_router)
 api_router.include_router(purchase_items_router)
 api_router.include_router(stock_router)
+api_router.include_router(stock_batches_router)
 api_router.include_router(bills_router)
