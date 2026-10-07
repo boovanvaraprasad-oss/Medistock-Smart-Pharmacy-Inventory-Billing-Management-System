@@ -17,6 +17,19 @@ async def create_indexes():
     except Exception as error:
         print(f"[indexes] users.email FAILED: {error}")
 
+    # 1b. Two medicines can never share the same SKU.
+    #     The rule only applies to medicines that have a SKU,
+    #     so older medicines without one do not clash with each other.
+    try:
+        await db.medicines.create_index(
+            "sku",
+            unique=True,
+            partialFilterExpression={"sku": {"$type": "string"}},
+        )
+        print("[indexes] medicines.sku (unique) ready")
+    except Exception as error:
+        print(f"[indexes] medicines.sku FAILED: {error}")
+
     # 2. Fast lookup when checking whether a token was revoked.
     try:
         await db.revoked_tokens.create_index("jti")

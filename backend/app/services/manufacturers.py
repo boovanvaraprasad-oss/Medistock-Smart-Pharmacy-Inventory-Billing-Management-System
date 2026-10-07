@@ -3,10 +3,12 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
+from app.services.name_utils import normalize_name
 
 
 async def create_manufacturer(name: str):
-    # Check whether the manufacturer already exists
+    name = normalize_name(name)
+
     existing_manufacturer = await db.manufacturers.find_one(
         {"name": name}
     )
@@ -22,7 +24,9 @@ async def create_manufacturer(name: str):
         "is_active": True,
     }
 
-    result = await db.manufacturers.insert_one(manufacturer)
+    result = await db.manufacturers.insert_one(
+        manufacturer
+    )
 
     return {
         "id": str(result.inserted_id),
@@ -37,11 +41,16 @@ async def get_all_manufacturers():
     cursor = db.manufacturers.find({})
 
     async for manufacturer in cursor:
-        manufacturers.append({
-            "id": str(manufacturer["_id"]),
-            "name": manufacturer["name"],
-            "is_active": manufacturer.get("is_active", True),
-        })
+        manufacturers.append(
+            {
+                "id": str(manufacturer["_id"]),
+                "name": manufacturer["name"],
+                "is_active": manufacturer.get(
+                    "is_active",
+                    True,
+                ),
+            }
+        )
 
     return manufacturers
 
@@ -51,7 +60,6 @@ async def update_manufacturer(
     name: str | None = None,
     is_active: bool | None = None,
 ):
-    # Validate the manufacturer ID
     try:
         object_id = ObjectId(manufacturer_id)
     except Exception:
@@ -60,7 +68,6 @@ async def update_manufacturer(
             detail="Invalid manufacturer ID",
         )
 
-    # Check whether the manufacturer exists
     manufacturer = await db.manufacturers.find_one(
         {"_id": object_id}
     )
@@ -71,8 +78,9 @@ async def update_manufacturer(
             detail="Manufacturer not found",
         )
 
-    # Check for duplicate manufacturer name
     if name is not None:
+        name = normalize_name(name)
+
         existing_manufacturer = await db.manufacturers.find_one(
             {
                 "name": name,
@@ -86,7 +94,25 @@ async def update_manufacturer(
                 detail="A manufacturer with this name already exists",
             )
 
-    # Fields to update
+    # Prevent deactivation when an active medicine
+    # is still using this manufacturer.
+    if is_active is False:
+        active_medicine = await db.medicines.find_one(
+            {
+                "manufacturer_id": object_id,
+                "is_active": {"$ne": False},
+            }
+        )
+
+        if active_medicine:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Cannot deactivate manufacturer because "
+                    "an active medicine is using it"
+                ),
+            )
+
     update_data = {}
 
     if name is not None:
@@ -95,7 +121,6 @@ async def update_manufacturer(
     if is_active is not None:
         update_data["is_active"] = is_active
 
-    # Nothing was provided to update
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -107,7 +132,6 @@ async def update_manufacturer(
         {"$set": update_data},
     )
 
-    # Get the updated manufacturer
     updated_manufacturer = await db.manufacturers.find_one(
         {"_id": object_id}
     )
@@ -115,5 +139,8 @@ async def update_manufacturer(
     return {
         "id": str(updated_manufacturer["_id"]),
         "name": updated_manufacturer["name"],
-        "is_active": updated_manufacturer.get("is_active", True),
+        "is_active": updated_manufacturer.get(
+            "is_active",
+            True,
+        ),
     }
