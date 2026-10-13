@@ -6,14 +6,17 @@ from fastapi import HTTPException, status
 from app.core.database import db
 
 
+EDITABLE_ORDER_STATUSES = {"draft", "ordered"}
+
+
 def date_to_datetime(value):
     if value is None:
         return None
 
-    return datetime.combine(
-        value,
-        time.min,
-    )
+    if isinstance(value, datetime):
+        return value
+
+    return datetime.combine(value, time.min)
 
 
 def datetime_to_date(value):
@@ -29,6 +32,37 @@ def datetime_to_date(value):
     return value
 
 
+async def get_editable_purchase_order(purchase_order_id):
+    try:
+        order_object_id = ObjectId(purchase_order_id)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid purchase order ID",
+        )
+
+    purchase_order = await db.purchase_orders.find_one(
+        {
+            "_id": order_object_id,
+            "is_active": True,
+        }
+    )
+
+    if not purchase_order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Purchase order not found or inactive",
+        )
+
+    if purchase_order.get("status") not in EDITABLE_ORDER_STATUSES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Purchase items can only be changed for draft or ordered purchase orders",
+        )
+
+    return purchase_order
+
+
 async def create_purchase_item(
     purchase_order_id: str,
     medicine_id: str,
@@ -38,32 +72,10 @@ async def create_purchase_item(
     manufacturing_date,
     expiry_date,
 ):
-    # Validate purchase order ID
-    try:
-        purchase_order_object_id = ObjectId(
-            purchase_order_id
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid purchase order ID",
-        )
-
-    # Check purchase order exists
-    purchase_order = await db.purchase_orders.find_one(
-        {
-            "_id": purchase_order_object_id,
-            "is_active": True,
-        }
+    purchase_order = await get_editable_purchase_order(
+        purchase_order_id
     )
 
-    if not purchase_order:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Purchase order not found or inactive",
-        )
-
-    # Validate medicine ID
     try:
         medicine_object_id = ObjectId(medicine_id)
     except Exception:
@@ -72,7 +84,6 @@ async def create_purchase_item(
             detail="Invalid medicine ID",
         )
 
-    # Check medicine exists and is active
     medicine = await db.medicines.find_one(
         {
             "_id": medicine_object_id,
@@ -86,7 +97,6 @@ async def create_purchase_item(
             detail="Medicine not found or inactive",
         )
 
-    # Validate expiry date
     if (
         manufacturing_date is not None
         and expiry_date <= manufacturing_date
@@ -96,27 +106,19 @@ async def create_purchase_item(
             detail="Expiry date must be after manufacturing date",
         )
 
-    # Calculate total price
     total_price = quantity * unit_price
 
-    # Convert dates for MongoDB
-    manufacturing_datetime = date_to_datetime(
-        manufacturing_date
-    )
-
-    expiry_datetime = date_to_datetime(
-        expiry_date
-    )
-
     purchase_item = {
-        "purchase_order_id": purchase_order_object_id,
+        "purchase_order_id": purchase_order["_id"],
         "medicine_id": medicine_object_id,
         "quantity": quantity,
         "unit_price": unit_price,
         "total_price": total_price,
         "batch_number": batch_number,
-        "manufacturing_date": manufacturing_datetime,
-        "expiry_date": expiry_datetime,
+        "manufacturing_date": date_to_datetime(
+            manufacturing_date
+        ),
+        "expiry_date": date_to_datetime(expiry_date),
     }
 
     result = await db.purchase_items.insert_one(
@@ -158,14 +160,10 @@ async def get_all_purchase_items():
                     "batch_number"
                 ),
                 "manufacturing_date": datetime_to_date(
-                    purchase_item.get(
-                        "manufacturing_date"
-                    )
+                    purchase_item.get("manufacturing_date")
                 ),
                 "expiry_date": datetime_to_date(
-                    purchase_item.get(
-                        "expiry_date"
-                    )
+                    purchase_item.get("expiry_date")
                 ),
             }
         )
@@ -181,7 +179,6 @@ async def update_purchase_item(
     manufacturing_date=None,
     expiry_date=None,
 ):
-    # Validate purchase item ID
     try:
         object_id = ObjectId(purchase_item_id)
     except Exception:
@@ -190,11 +187,8 @@ async def update_purchase_item(
             detail="Invalid purchase item ID",
         )
 
-    # Check purchase item exists
     purchase_item = await db.purchase_items.find_one(
-        {
-            "_id": object_id
-        }
+        {"_id": object_id}
     )
 
     if not purchase_item:
@@ -203,7 +197,10 @@ async def update_purchase_item(
             detail="Purchase item not found",
         )
 
-    # Make sure at least one field is provided
+    await get_editable_purchase_order(
+        str(purchase_item["purchase_order_id"])
+    )
+
     if (
         quantity is None
         and unit_price is None
@@ -216,7 +213,6 @@ async def update_purchase_item(
             detail="No fields to update",
         )
 
-    # Use existing values when a field is not changed
     new_quantity = (
         quantity
         if quantity is not None
@@ -255,7 +251,6 @@ async def update_purchase_item(
         else existing_expiry_date
     )
 
-    # Validate expiry date
     if (
         new_manufacturing_date is not None
         and new_expiry_date is not None
@@ -266,7 +261,6 @@ async def update_purchase_item(
             detail="Expiry date must be after manufacturing date",
         )
 
-    # Recalculate total price
     total_price = new_quantity * new_unit_price
 
     update_data = {
@@ -277,48 +271,32 @@ async def update_purchase_item(
         "manufacturing_date": date_to_datetime(
             new_manufacturing_date
         ),
-        "expiry_date": date_to_datetime(
-            new_expiry_date
-        ),
+        "expiry_date": date_to_datetime(new_expiry_date),
     }
 
     await db.purchase_items.update_one(
-        {
-            "_id": object_id
-        },
-        {
-            "$set": update_data
-        },
+        {"_id": object_id},
+        {"$set": update_data},
     )
 
-    updated_purchase_item = await db.purchase_items.find_one(
-        {
-            "_id": object_id
-        }
+    updated_item = await db.purchase_items.find_one(
+        {"_id": object_id}
     )
 
     return {
-        "id": str(updated_purchase_item["_id"]),
+        "id": str(updated_item["_id"]),
         "purchase_order_id": str(
-            updated_purchase_item["purchase_order_id"]
+            updated_item["purchase_order_id"]
         ),
-        "medicine_id": str(
-            updated_purchase_item["medicine_id"]
-        ),
-        "quantity": updated_purchase_item["quantity"],
-        "unit_price": updated_purchase_item["unit_price"],
-        "total_price": updated_purchase_item["total_price"],
-        "batch_number": updated_purchase_item.get(
-            "batch_number"
-        ),
+        "medicine_id": str(updated_item["medicine_id"]),
+        "quantity": updated_item["quantity"],
+        "unit_price": updated_item["unit_price"],
+        "total_price": updated_item["total_price"],
+        "batch_number": updated_item.get("batch_number"),
         "manufacturing_date": datetime_to_date(
-            updated_purchase_item.get(
-                "manufacturing_date"
-            )
+            updated_item.get("manufacturing_date")
         ),
         "expiry_date": datetime_to_date(
-            updated_purchase_item.get(
-                "expiry_date"
-            )
+            updated_item.get("expiry_date")
         ),
     }

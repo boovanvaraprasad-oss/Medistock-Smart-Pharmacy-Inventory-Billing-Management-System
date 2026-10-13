@@ -12,6 +12,7 @@ async def create_stock_transaction(
     previous_stock: int,
     new_stock: int,
     reason: str,
+    session=None,
 ):
     transaction = {
         "medicine_id": medicine_id,
@@ -24,7 +25,8 @@ async def create_stock_transaction(
     }
 
     result = await db.stock_transactions.insert_one(
-        transaction
+        transaction,
+        session=session,
     )
 
     return {
@@ -44,7 +46,6 @@ async def get_stock_transactions(
     transaction_type: str | None = None,
 ):
     transactions = []
-
     query = {}
 
     if medicine_id is not None:
@@ -55,13 +56,9 @@ async def get_stock_transactions(
 
     cursor = db.stock_transactions.find(
         query
-    ).sort(
-        "created_at",
-        -1,
-    )
+    ).sort("created_at", -1)
 
     async for transaction in cursor:
-
         medicine = await db.medicines.find_one(
             {
                 "_id": ObjectId(

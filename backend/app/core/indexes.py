@@ -24,11 +24,30 @@ async def create_indexes():
         await db.medicines.create_index(
             "sku",
             unique=True,
-            partialFilterExpression={"sku": {"$type": "string"}},
+            partialFilterExpression={
+                "sku": {"$type": "string"}
+            },
         )
         print("[indexes] medicines.sku (unique) ready")
     except Exception as error:
         print(f"[indexes] medicines.sku FAILED: {error}")
+
+    # 1c. Two bills can never share the same invoice number.
+    #     The partial filter allows older bills without an
+    #     invoice_number field to remain in the database.
+    try:
+        await db.bills.create_index(
+            "invoice_number",
+            unique=True,
+            partialFilterExpression={
+                "invoice_number": {"$type": "string"}
+            },
+        )
+        print("[indexes] bills.invoice_number (unique) ready")
+    except Exception as error:
+        print(
+            f"[indexes] bills.invoice_number FAILED: {error}"
+        )
 
     # 2. Fast lookup when checking whether a token was revoked.
     try:
@@ -45,6 +64,12 @@ async def create_indexes():
             "expires_at",
             expireAfterSeconds=0,
         )
-        print("[indexes] revoked_tokens.expires_at (auto-delete) ready")
+        print(
+            "[indexes] revoked_tokens.expires_at "
+            "(auto-delete) ready"
+        )
     except Exception as error:
-        print(f"[indexes] revoked_tokens.expires_at FAILED: {error}")
+        print(
+            "[indexes] revoked_tokens.expires_at "
+            f"FAILED: {error}"
+        )

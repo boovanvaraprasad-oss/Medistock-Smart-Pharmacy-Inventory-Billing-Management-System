@@ -5,7 +5,7 @@ class CreatePurchaseOrderRequest(BaseModel):
     supplier_id: str
     status: str = Field(
         default="draft",
-        pattern="^(draft|ordered|received|cancelled)$"
+        pattern="^(draft|ordered|cancelled)$"
     )
     notes: str | None = Field(
         default=None,
@@ -24,7 +24,7 @@ class PurchaseOrderResponse(BaseModel):
 class UpdatePurchaseOrderRequest(BaseModel):
     status: str | None = Field(
         default=None,
-        pattern="^(draft|ordered|received|cancelled)$"
+        pattern="^(draft|ordered|cancelled)$"
     )
     notes: str | None = Field(
         default=None,

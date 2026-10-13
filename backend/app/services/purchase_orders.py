@@ -1,7 +1,7 @@
 from bson import ObjectId
 from fastapi import HTTPException, status
 
-from app.core.database import db
+from app.core.database import client, db
 from app.services.stock_batches import create_stock_batch
 from app.services.stock_transactions import (
     create_stock_transaction,
@@ -15,11 +15,16 @@ async def create_purchase_order(
 ):
     try:
         supplier_object_id = ObjectId(supplier_id)
-
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid supplier ID",
+        )
+
+    if status_value != "draft":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Purchase orders must be created as draft",
         )
 
     supplier = await db.suppliers.find_one(
@@ -37,7 +42,7 @@ async def create_purchase_order(
 
     purchase_order = {
         "supplier_id": supplier_object_id,
-        "status": status_value,
+        "status": "draft",
         "notes": notes,
         "is_active": True,
     }
@@ -49,7 +54,7 @@ async def create_purchase_order(
     return {
         "id": str(result.inserted_id),
         "supplier_id": supplier_id,
-        "status": status_value,
+        "status": "draft",
         "notes": notes,
         "is_active": True,
     }
@@ -70,8 +75,7 @@ async def get_all_purchase_orders():
                 "status": purchase_order["status"],
                 "notes": purchase_order.get("notes"),
                 "is_active": purchase_order.get(
-                    "is_active",
-                    True,
+                    "is_active", True
                 ),
             }
         )
@@ -87,7 +91,6 @@ async def update_purchase_order(
 ):
     try:
         object_id = ObjectId(purchase_order_id)
-
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -95,9 +98,7 @@ async def update_purchase_order(
         )
 
     purchase_order = await db.purchase_orders.find_one(
-        {
-            "_id": object_id
-        }
+        {"_id": object_id}
     )
 
     if not purchase_order:
@@ -106,9 +107,26 @@ async def update_purchase_order(
             detail="Purchase order not found",
         )
 
+    if purchase_order.get("status") == "received":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Received purchase orders cannot be edited",
+        )
+
+    if status_value is not None and status_value == "received":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Use the receive endpoint to receive stock",
+        )
+
     update_data = {}
 
     if status_value is not None:
+        if status_value not in {"draft", "ordered", "cancelled"}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid purchase order status",
+            )
         update_data["status"] = status_value
 
     if notes is not None:
@@ -124,206 +142,196 @@ async def update_purchase_order(
         )
 
     await db.purchase_orders.update_one(
-        {
-            "_id": object_id
-        },
-        {
-            "$set": update_data
-        },
+        {"_id": object_id},
+        {"$set": update_data},
     )
 
-    updated_purchase_order = await db.purchase_orders.find_one(
-        {
-            "_id": object_id
-        }
+    updated = await db.purchase_orders.find_one(
+        {"_id": object_id}
     )
 
     return {
-        "id": str(updated_purchase_order["_id"]),
-        "supplier_id": str(
-            updated_purchase_order["supplier_id"]
-        ),
-        "status": updated_purchase_order["status"],
-        "notes": updated_purchase_order.get("notes"),
-        "is_active": updated_purchase_order.get(
-            "is_active",
-            True,
-        ),
+        "id": str(updated["_id"]),
+        "supplier_id": str(updated["supplier_id"]),
+        "status": updated["status"],
+        "notes": updated.get("notes"),
+        "is_active": updated.get("is_active", True),
     }
 
 
 async def receive_purchase_order(
     purchase_order_id: str,
 ):
-    # Validate purchase order ID
     try:
         object_id = ObjectId(purchase_order_id)
-
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid purchase order ID",
         )
 
-    # Find purchase order
-    purchase_order = await db.purchase_orders.find_one(
-        {
-            "_id": object_id
-        }
-    )
-
-    if not purchase_order:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Purchase order not found",
-        )
-
-    # Make sure the order has not already been received
-    if purchase_order.get("status") == "received":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Purchase order has already been received",
-        )
-
-    # Get all items belonging to this purchase order
-    purchase_items = []
-
-    cursor = db.purchase_items.find(
-        {
-            "purchase_order_id": object_id
-        }
-    )
-
-    async for purchase_item in cursor:
-        purchase_items.append(purchase_item)
-
-    if not purchase_items:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Purchase order has no items",
-        )
-
-    # Validate all items before changing stock
-    for purchase_item in purchase_items:
-        medicine_id = purchase_item["medicine_id"]
-
-        medicine = await db.medicines.find_one(
+    async def transaction_work(session):
+        purchase_order = await db.purchase_orders.find_one(
             {
-                "_id": medicine_id,
+                "_id": object_id,
                 "is_active": True,
-            }
+                "status": {"$in": ["draft", "ordered"]},
+            },
+            session=session,
         )
 
-        if not medicine:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Medicine not found or inactive",
+        if not purchase_order:
+            existing = await db.purchase_orders.find_one(
+                {"_id": object_id},
+                session=session,
             )
 
-        # Batch information is required for receiving stock
-        if not purchase_item.get("batch_number"):
+            if not existing or not existing.get("is_active", True):
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Purchase order not found or inactive",
+                )
+
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Purchase order is not eligible for receiving",
+            )
+
+        items_cursor = db.purchase_items.find(
+            {"purchase_order_id": object_id},
+            session=session,
+        )
+        purchase_items = await items_cursor.to_list(length=None)
+
+        if not purchase_items:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "Purchase item is missing batch number"
-                ),
+                detail="Purchase order has no items",
             )
 
-        if not purchase_item.get("expiry_date"):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "Purchase item is missing expiry date"
-                ),
+        # Validate all items before changing any stock.
+        for item in purchase_items:
+            medicine_id = item.get("medicine_id")
+            quantity = item.get("quantity", 0)
+            batch_number = item.get("batch_number")
+            expiry_date = item.get("expiry_date")
+
+            if not isinstance(medicine_id, ObjectId):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid medicine reference in purchase item",
+                )
+
+            if (
+                not isinstance(quantity, int)
+                or isinstance(quantity, bool)
+                or quantity <= 0
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Purchase quantity must be a positive integer",
+                )
+
+            if not batch_number or expiry_date is None:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Purchase item requires batch number and expiry date",
+                )
+
+            medicine = await db.medicines.find_one(
+                {
+                    "_id": medicine_id,
+                    "is_active": True,
+                },
+                session=session,
             )
 
-    # Process each purchase item
-    for purchase_item in purchase_items:
-        medicine_id = purchase_item["medicine_id"]
-        quantity = purchase_item["quantity"]
+            if not medicine:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Medicine not found or inactive",
+                )
 
-        # Get current medicine stock
-        medicine = await db.medicines.find_one(
+        # Receive each item inside the same transaction.
+        for item in purchase_items:
+            medicine_id = item["medicine_id"]
+            quantity = item["quantity"]
+
+            medicine = await db.medicines.find_one(
+                {
+                    "_id": medicine_id,
+                    "is_active": True,
+                },
+                session=session,
+            )
+
+            current_stock = medicine.get("stock", 0)
+            new_stock = current_stock + quantity
+
+            await create_stock_batch(
+                medicine_id=str(medicine_id),
+                batch_number=item["batch_number"],
+                quantity=quantity,
+                purchase_price=item["unit_price"],
+                manufacturing_date=item.get("manufacturing_date"),
+                expiry_date=item["expiry_date"],
+                session=session,
+            )
+
+            stock_update = await db.medicines.update_one(
+                {
+                    "_id": medicine_id,
+                    "is_active": True,
+                    "stock": current_stock,
+                },
+                {"$set": {"stock": new_stock}},
+                session=session,
+            )
+
+            if stock_update.modified_count != 1:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Medicine stock changed. Please try again.",
+                )
+
+            await create_stock_transaction(
+                medicine_id=str(medicine_id),
+                transaction_type="STOCK_IN",
+                quantity=quantity,
+                previous_stock=current_stock,
+                new_stock=new_stock,
+                reason="Purchase order received",
+                session=session,
+            )
+
+        order_update = await db.purchase_orders.update_one(
             {
-                "_id": medicine_id,
+                "_id": object_id,
                 "is_active": True,
-            }
-        )
-
-        current_stock = medicine.get(
-            "stock",
-            0,
-        )
-
-        new_stock = current_stock + quantity
-
-        # Create stock batch
-        await create_stock_batch(
-            medicine_id=str(medicine_id),
-            batch_number=purchase_item[
-                "batch_number"
-            ],
-            quantity=quantity,
-            purchase_price=purchase_item[
-                "unit_price"
-            ],
-            manufacturing_date=purchase_item.get(
-                "manufacturing_date"
-            ),
-            expiry_date=purchase_item[
-                "expiry_date"
-            ],
-        )
-
-        # Increase medicine stock
-        await db.medicines.update_one(
-            {
-                "_id": medicine_id
+                "status": {"$in": ["draft", "ordered"]},
             },
-            {
-                "$set": {
-                    "stock": new_stock
-                }
-            },
+            {"$set": {"status": "received"}},
+            session=session,
         )
 
-        # Create STOCK_IN transaction
-        await create_stock_transaction(
-            medicine_id=str(medicine_id),
-            transaction_type="STOCK_IN",
-            quantity=quantity,
-            previous_stock=current_stock,
-            new_stock=new_stock,
-            reason="Purchase order received",
+        if order_update.modified_count != 1:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Purchase order status changed. Please retry.",
+            )
+
+        updated = await db.purchase_orders.find_one(
+            {"_id": object_id},
+            session=session,
         )
 
-    # Change purchase order status
-    await db.purchase_orders.update_one(
-        {
-            "_id": object_id
-        },
-        {
-            "$set": {
-                "status": "received"
-            }
-        },
-    )
-
-    updated_purchase_order = await db.purchase_orders.find_one(
-        {
-            "_id": object_id
+        return {
+            "id": str(updated["_id"]),
+            "supplier_id": str(updated["supplier_id"]),
+            "status": updated["status"],
+            "notes": updated.get("notes"),
+            "is_active": updated.get("is_active", True),
         }
-    )
 
-    return {
-        "id": str(updated_purchase_order["_id"]),
-        "supplier_id": str(
-            updated_purchase_order["supplier_id"]
-        ),
-        "status": updated_purchase_order["status"],
-        "notes": updated_purchase_order.get("notes"),
-        "is_active": updated_purchase_order.get(
-            "is_active",
-            True,
-        ),
-    }
+    async with await client.start_session() as session:
+        return await session.with_transaction(transaction_work)

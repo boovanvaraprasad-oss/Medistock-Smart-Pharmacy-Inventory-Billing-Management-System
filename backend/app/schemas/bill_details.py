@@ -11,6 +11,7 @@ class BillItemDetails(BaseModel):
 
 class BillDetailsResponse(BaseModel):
     id: str
+    invoice_number: str
     customer_name: str
     customer_phone: str
     items: list[BillItemDetails]

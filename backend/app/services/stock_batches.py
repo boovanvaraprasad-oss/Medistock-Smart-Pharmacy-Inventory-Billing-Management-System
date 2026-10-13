@@ -23,7 +23,15 @@ async def create_stock_batch(
     purchase_price: float,
     manufacturing_date,
     expiry_date,
+    session=None,
 ):
+    """
+    Create a stock batch.
+
+    When a MongoDB session is provided, all database
+    operations participate in the caller's transaction.
+    """
+
     # Validate medicine ID
     try:
         medicine_object_id = ObjectId(medicine_id)
@@ -33,12 +41,26 @@ async def create_stock_batch(
             detail="Invalid medicine ID",
         )
 
+    # Validate quantity and purchase price
+    if quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Batch quantity must be greater than zero",
+        )
+
+    if purchase_price < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Purchase price cannot be negative",
+        )
+
     # Check medicine exists and is active
     medicine = await db.medicines.find_one(
         {
             "_id": medicine_object_id,
             "is_active": True,
-        }
+        },
+        session=session,
     )
 
     if not medicine:
@@ -47,9 +69,10 @@ async def create_stock_batch(
             detail="Medicine not found or inactive",
         )
 
-    # Check expiry date
+    # Validate manufacturing and expiry dates
     if (
         manufacturing_date is not None
+        and expiry_date is not None
         and expiry_date <= manufacturing_date
     ):
         raise HTTPException(
@@ -57,12 +80,19 @@ async def create_stock_batch(
             detail="Expiry date must be after manufacturing date",
         )
 
-    # Check duplicate batch number for the same medicine
+    if expiry_date is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Expiry date is required",
+        )
+
+    # Check duplicate batch number for this medicine
     existing_batch = await db.stock_batches.find_one(
         {
             "medicine_id": medicine_object_id,
             "batch_number": batch_number,
-        }
+        },
+        session=session,
     )
 
     if existing_batch:
@@ -71,7 +101,7 @@ async def create_stock_batch(
             detail="Batch number already exists for this medicine",
         )
 
-    # Convert Python date objects to MongoDB datetime values
+    # Convert date values to MongoDB datetime values
     manufacturing_datetime = date_to_datetime(
         manufacturing_date
     )
@@ -80,7 +110,7 @@ async def create_stock_batch(
         expiry_date
     )
 
-    # Create stock batch
+    # Prepare batch document
     stock_batch = {
         "medicine_id": medicine_object_id,
         "batch_number": batch_number,
@@ -91,8 +121,10 @@ async def create_stock_batch(
         "is_active": True,
     }
 
+    # Insert batch using the supplied session
     result = await db.stock_batches.insert_one(
-        stock_batch
+        stock_batch,
+        session=session,
     )
 
     return {
@@ -110,6 +142,11 @@ async def create_stock_batch(
 async def get_stock_batches(
     medicine_id: str | None = None,
 ):
+    """
+    Return active stock batches, ordered by expiry date.
+    This is a read-only operation.
+    """
+
     query = {
         "is_active": True,
     }

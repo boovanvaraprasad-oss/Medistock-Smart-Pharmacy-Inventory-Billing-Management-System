@@ -4,6 +4,83 @@ from fastapi import HTTPException, status
 from app.core.database import db
 
 
+async def recalculate_bill_subtotal(
+    bill_object_id: ObjectId,
+):
+    """
+    Recalculate the bill subtotal from all bill items.
+
+    Tax and final total are calculated separately
+    by the billing service.
+    """
+
+    bill_items = db.bill_items.find(
+        {
+            "bill_id": bill_object_id,
+        }
+    )
+
+    subtotal = 0.0
+
+    async for item in bill_items:
+        subtotal += float(
+            item.get(
+                "total_price",
+                0,
+            )
+        )
+
+    bill = await db.bills.find_one(
+        {
+            "_id": bill_object_id,
+            "is_active": True,
+        }
+    )
+
+    if not bill:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Bill not found or inactive",
+        )
+
+    tax_percentage = float(
+        bill.get(
+            "tax_percentage",
+            0.0,
+        )
+    )
+
+    tax_amount = round(
+        subtotal * tax_percentage / 100,
+        2,
+    )
+
+    total_amount = round(
+        subtotal + tax_amount,
+        2,
+    )
+
+    await db.bills.update_one(
+        {
+            "_id": bill_object_id,
+        },
+        {
+            "$set": {
+                "subtotal": subtotal,
+                "tax_amount": tax_amount,
+                "total_amount": total_amount,
+            }
+        },
+    )
+
+    return {
+        "subtotal": subtotal,
+        "tax_percentage": tax_percentage,
+        "tax_amount": tax_amount,
+        "total_amount": total_amount,
+    }
+
+
 async def create_bill_item(
     bill_id: str,
     medicine_id: str,
@@ -16,6 +93,12 @@ async def create_bill_item(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid bill ID",
+        )
+
+    if quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Quantity must be greater than zero",
         )
 
     # Check whether bill exists
@@ -102,31 +185,9 @@ async def create_bill_item(
         bill_item
     )
 
-    # Recalculate complete bill total
-    bill_items = db.bill_items.find(
-        {
-            "bill_id": bill_object_id,
-        }
-    )
-
-    bill_total = 0.0
-
-    async for item in bill_items:
-        bill_total += item.get(
-            "total_price",
-            0,
-        )
-
-    # Update bill total
-    await db.bills.update_one(
-        {
-            "_id": bill_object_id,
-        },
-        {
-            "$set": {
-                "total_amount": bill_total,
-            }
-        },
+    # Recalculate subtotal and tax
+    totals = await recalculate_bill_subtotal(
+        bill_object_id
     )
 
     return {
@@ -137,6 +198,14 @@ async def create_bill_item(
         "quantity": quantity,
         "unit_price": unit_price,
         "total_price": total_price,
+        "subtotal": totals["subtotal"],
+        "tax_percentage": totals[
+            "tax_percentage"
+        ],
+        "tax_amount": totals["tax_amount"],
+        "total_amount": totals[
+            "total_amount"
+        ],
     }
 
 
@@ -153,6 +222,12 @@ async def update_bill_item(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid bill item ID",
+        )
+
+    if quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Quantity must be greater than zero",
         )
 
     # Find bill item
@@ -246,31 +321,9 @@ async def update_bill_item(
         },
     )
 
-    # Recalculate bill total
-    bill_items = db.bill_items.find(
-        {
-            "bill_id": bill_object_id,
-        }
-    )
-
-    bill_total = 0.0
-
-    async for item in bill_items:
-        bill_total += item.get(
-            "total_price",
-            0,
-        )
-
-    # Update bill total
-    await db.bills.update_one(
-        {
-            "_id": bill_object_id,
-        },
-        {
-            "$set": {
-                "total_amount": bill_total,
-            }
-        },
+    # Recalculate subtotal and tax
+    totals = await recalculate_bill_subtotal(
+        bill_object_id
     )
 
     return {
@@ -283,6 +336,14 @@ async def update_bill_item(
         "quantity": quantity,
         "unit_price": unit_price,
         "total_price": total_price,
+        "subtotal": totals["subtotal"],
+        "tax_percentage": totals[
+            "tax_percentage"
+        ],
+        "tax_amount": totals["tax_amount"],
+        "total_amount": totals[
+            "total_amount"
+        ],
     }
 
 
@@ -343,36 +404,21 @@ async def delete_bill_item(
         }
     )
 
-    # Recalculate bill total
-    bill_items = db.bill_items.find(
-        {
-            "bill_id": bill_object_id,
-        }
-    )
-
-    bill_total = 0.0
-
-    async for item in bill_items:
-        bill_total += item.get(
-            "total_price",
-            0,
-        )
-
-    # Update bill total
-    await db.bills.update_one(
-        {
-            "_id": bill_object_id,
-        },
-        {
-            "$set": {
-                "total_amount": bill_total,
-            }
-        },
+    # Recalculate subtotal and tax
+    totals = await recalculate_bill_subtotal(
+        bill_object_id
     )
 
     return {
         "message": "Bill item deleted successfully",
         "bill_item_id": bill_item_id,
         "bill_id": str(bill_object_id),
-        "total_amount": bill_total,
+        "subtotal": totals["subtotal"],
+        "tax_percentage": totals[
+            "tax_percentage"
+        ],
+        "tax_amount": totals["tax_amount"],
+        "total_amount": totals[
+            "total_amount"
+        ],
     }
