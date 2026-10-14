@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, time, timedelta, timezone
 
 from bson import ObjectId
 from fastapi import HTTPException, status
@@ -6,6 +6,10 @@ from pymongo import ReturnDocument
 
 from app.core.database import client, db
 from app.services.stock_transactions import create_stock_transaction
+
+
+# India Standard Time (UTC+05:30)
+INDIA_TIMEZONE = timezone(timedelta(hours=5, minutes=30))
 
 
 async def generate_invoice_number() -> str:
@@ -69,7 +73,10 @@ async def deduct_stock_fefo(
             detail="Quantity must be greater than zero",
         )
 
-    now = datetime.now(timezone.utc)
+    today_start = datetime.combine(
+        datetime.now(INDIA_TIMEZONE).date(),
+        time.min,
+    )
     remaining = quantity
     batches_used = []
 
@@ -79,7 +86,7 @@ async def deduct_stock_fefo(
                 "medicine_id": medicine_id,
                 "is_active": True,
                 "quantity": {"$gt": 0},
-                "expiry_date": {"$gte": now},
+                "expiry_date": {"$gte": today_start},
             },
             session=session,
         )
@@ -200,8 +207,9 @@ async def complete_bill(bill_id: str):
     """
     Complete a draft bill atomically.
 
-    Batch deductions, medicine stock changes, stock transaction
-    records, bill totals, and final bill status commit together.
+    Batch deductions, saved batch allocations, medicine stock changes,
+    stock transaction records, bill totals, and final bill status
+    commit together.
     """
     try:
         bill_object_id = ObjectId(bill_id)
@@ -255,7 +263,11 @@ async def complete_bill(bill_id: str):
         for item in items:
             quantity = item.get("quantity", 0)
 
-            if not isinstance(quantity, int) or isinstance(quantity, bool) or quantity <= 0:
+            if (
+                not isinstance(quantity, int)
+                or isinstance(quantity, bool)
+                or quantity <= 0
+            ):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Bill item quantities must be positive integers",
@@ -278,7 +290,13 @@ async def complete_bill(bill_id: str):
             session=session,
         )
 
-        now = datetime.now(timezone.utc)
+        today_start = datetime.combine(
+            datetime.now(INDIA_TIMEZONE).date(),
+            time.min,
+        )
+
+        # These records connect the bill to the batches used.
+        bill_batch_allocations = []
 
         for entry in quantities.values():
             medicine_id = entry["medicine_id"]
@@ -312,7 +330,7 @@ async def complete_bill(bill_id: str):
                     "medicine_id": medicine_id,
                     "is_active": True,
                     "quantity": {"$gt": 0},
-                    "expiry_date": {"$gte": now},
+                    "expiry_date": {"$gte": today_start},
                 },
                 session=session,
             )
@@ -330,12 +348,24 @@ async def complete_bill(bill_id: str):
                     ),
                 )
 
-            # Deduct eligible batches using FEFO.
-            await deduct_stock_fefo(
+            # Deduct using FEFO and retain the batch-level quantities.
+            batches_used = await deduct_stock_fefo(
                 medicine_id=medicine_id,
                 quantity=quantity,
                 session=session,
             )
+
+            for batch in batches_used:
+                bill_batch_allocations.append(
+                    {
+                        "medicine_id": str(medicine_id),
+                        "batch_id": batch["batch_id"],
+                        "batch_number": batch["batch_number"],
+                        "expiry_date": batch["expiry_date"],
+                        "quantity_sold": batch["quantity_deducted"],
+                        "quantity_returned": 0,
+                    }
+                )
 
             new_stock = previous_stock - quantity
 
@@ -378,6 +408,7 @@ async def complete_bill(bill_id: str):
                 "$set": {
                     "status": "completed",
                     "payment_status": "paid",
+                    "batch_allocations": bill_batch_allocations,
                 }
             },
             session=session,
@@ -463,6 +494,7 @@ async def get_bill_details(bill_id: str):
         "customer_name": bill["customer_name"],
         "customer_phone": bill["customer_phone"],
         "items": items,
+        "batch_allocations": bill.get("batch_allocations", []),
         "subtotal": totals["subtotal"],
         "tax_percentage": totals["tax_percentage"],
         "tax_amount": totals["tax_amount"],

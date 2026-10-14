@@ -1,9 +1,13 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta, timezone
 
 from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
+
+
+# The application uses India local dates for batch expiry.
+INDIA_TIMEZONE = timezone(timedelta(hours=5, minutes=30))
 
 
 def date_to_datetime(value):
@@ -32,7 +36,6 @@ async def create_stock_batch(
     operations participate in the caller's transaction.
     """
 
-    # Validate medicine ID
     try:
         medicine_object_id = ObjectId(medicine_id)
     except Exception:
@@ -41,7 +44,6 @@ async def create_stock_batch(
             detail="Invalid medicine ID",
         )
 
-    # Validate quantity and purchase price
     if quantity <= 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -54,7 +56,6 @@ async def create_stock_batch(
             detail="Purchase price cannot be negative",
         )
 
-    # Check medicine exists and is active
     medicine = await db.medicines.find_one(
         {
             "_id": medicine_object_id,
@@ -69,7 +70,6 @@ async def create_stock_batch(
             detail="Medicine not found or inactive",
         )
 
-    # Validate manufacturing and expiry dates
     if (
         manufacturing_date is not None
         and expiry_date is not None
@@ -86,7 +86,6 @@ async def create_stock_batch(
             detail="Expiry date is required",
         )
 
-    # Check duplicate batch number for this medicine
     existing_batch = await db.stock_batches.find_one(
         {
             "medicine_id": medicine_object_id,
@@ -101,7 +100,6 @@ async def create_stock_batch(
             detail="Batch number already exists for this medicine",
         )
 
-    # Convert date values to MongoDB datetime values
     manufacturing_datetime = date_to_datetime(
         manufacturing_date
     )
@@ -110,7 +108,6 @@ async def create_stock_batch(
         expiry_date
     )
 
-    # Prepare batch document
     stock_batch = {
         "medicine_id": medicine_object_id,
         "batch_number": batch_number,
@@ -121,7 +118,6 @@ async def create_stock_batch(
         "is_active": True,
     }
 
-    # Insert batch using the supplied session
     result = await db.stock_batches.insert_one(
         stock_batch,
         session=session,
@@ -207,3 +203,104 @@ async def get_stock_batches(
         )
 
     return batches
+
+
+async def get_expiring_stock_batches(
+    days: int = 30,
+    medicine_id: str | None = None,
+):
+    """
+    Return batches with remaining stock that are already expired
+    or will expire within the requested number of days.
+    """
+
+    if (
+        not isinstance(days, int)
+        or isinstance(days, bool)
+        or days < 0
+        or days > 365
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Days must be between 0 and 365",
+        )
+
+    today = datetime.now(
+        INDIA_TIMEZONE
+    ).date()
+
+    # Include the whole final day in the requested date range.
+    final_date = today + timedelta(days=days)
+    cutoff_exclusive = datetime.combine(
+        final_date + timedelta(days=1),
+        time.min,
+    )
+
+    query = {
+        "is_active": True,
+        "quantity": {"$gt": 0},
+        "expiry_date": {"$lt": cutoff_exclusive},
+    }
+
+    if medicine_id:
+        try:
+            medicine_object_id = ObjectId(medicine_id)
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid medicine ID",
+            )
+
+        query["medicine_id"] = medicine_object_id
+
+    alerts = []
+
+    cursor = db.stock_batches.find(
+        query
+    ).sort(
+        "expiry_date",
+        1,
+    )
+
+    async for batch in cursor:
+        expiry_datetime = batch.get("expiry_date")
+
+        if expiry_datetime is None:
+            continue
+
+        expiry_date = expiry_datetime.date()
+        days_until_expiry = (expiry_date - today).days
+
+        medicine = await db.medicines.find_one(
+            {"_id": batch["medicine_id"]},
+            {"name": 1},
+        )
+
+        if days_until_expiry < 0:
+            alert_status = "expired"
+        else:
+            alert_status = "expiring_soon"
+
+        alerts.append(
+            {
+                "batch_id": str(batch["_id"]),
+                "medicine_id": str(batch["medicine_id"]),
+                "medicine_name": (
+                    medicine.get("name", "Unknown Medicine")
+                    if medicine
+                    else "Unknown Medicine"
+                ),
+                "batch_number": batch.get("batch_number", ""),
+                "quantity": batch.get("quantity", 0),
+                "purchase_price": batch.get("purchase_price", 0),
+                "expiry_date": expiry_date,
+                "days_until_expiry": days_until_expiry,
+                "alert_status": alert_status,
+            }
+        )
+
+    return {
+        "days_checked": days,
+        "count": len(alerts),
+        "items": alerts,
+    }

@@ -13,6 +13,7 @@ async def create_stock_transaction(
     new_stock: int,
     reason: str,
     session=None,
+    batch_id: str | None = None,
 ):
     transaction = {
         "medicine_id": medicine_id,
@@ -24,6 +25,9 @@ async def create_stock_transaction(
         "created_at": datetime.now(timezone.utc),
     }
 
+    if batch_id is not None:
+        transaction["batch_id"] = batch_id
+
     result = await db.stock_transactions.insert_one(
         transaction,
         session=session,
@@ -32,6 +36,7 @@ async def create_stock_transaction(
     return {
         "id": str(result.inserted_id),
         "medicine_id": medicine_id,
+        "batch_id": batch_id,
         "transaction_type": transaction_type,
         "quantity": quantity,
         "previous_stock": previous_stock,
@@ -44,6 +49,7 @@ async def create_stock_transaction(
 async def get_stock_transactions(
     medicine_id: str | None = None,
     transaction_type: str | None = None,
+    batch_id: str | None = None,
 ):
     transactions = []
     query = {}
@@ -54,9 +60,15 @@ async def get_stock_transactions(
     if transaction_type is not None:
         query["transaction_type"] = transaction_type
 
+    if batch_id is not None:
+        query["batch_id"] = batch_id
+
     cursor = db.stock_transactions.find(
         query
-    ).sort("created_at", -1)
+    ).sort(
+        "created_at",
+        -1,
+    )
 
     async for transaction in cursor:
         medicine = await db.medicines.find_one(
@@ -76,6 +88,7 @@ async def get_stock_transactions(
             {
                 "id": str(transaction["_id"]),
                 "medicine_id": transaction["medicine_id"],
+                "batch_id": transaction.get("batch_id"),
                 "medicine_name": medicine_name,
                 "transaction_type": transaction[
                     "transaction_type"

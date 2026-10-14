@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.core.dependencies import require_permission
 from app.core.permissions import STOCK_READ, STOCK_WRITE
 
 from app.schemas.stock_batch import CreateStockBatchRequest
 
+from app.services.stock_batch_intake import (
+    create_stock_batch_and_update_total,
+)
 from app.services.stock_batches import (
-    create_stock_batch,
+    get_expiring_stock_batches,
     get_stock_batches,
 )
 
@@ -24,7 +27,7 @@ async def create_batch(
         require_permission(STOCK_WRITE)
     ),
 ):
-    return await create_stock_batch(
+    return await create_stock_batch_and_update_total(
         medicine_id=data.medicine_id,
         batch_number=data.batch_number,
         quantity=data.quantity,
@@ -42,5 +45,24 @@ async def get_batches(
     ),
 ):
     return await get_stock_batches(
+        medicine_id=medicine_id,
+    )
+
+
+@router.get("/expiring")
+async def get_expiring_batches(
+    days: int = Query(
+        default=30,
+        ge=0,
+        le=365,
+        description="Include batches expiring within this many days",
+    ),
+    medicine_id: str | None = None,
+    current_user=Depends(
+        require_permission(STOCK_READ)
+    ),
+):
+    return await get_expiring_stock_batches(
+        days=days,
         medicine_id=medicine_id,
     )

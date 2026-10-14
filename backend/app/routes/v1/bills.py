@@ -5,33 +5,34 @@ from app.core.permissions import (
     BILL_CREATE,
     BILL_READ,
 )
-
 from app.schemas.bill import (
     CreateBillRequest,
     BillResponse,
 )
-
+from app.schemas.bill_details import (
+    BillDetailsResponse,
+)
 from app.schemas.bill_item import (
     CreateBillItemRequest,
     BillItemResponse,
     UpdateBillItemRequest,
 )
-
-from app.schemas.bill_details import (
-    BillDetailsResponse,
+from app.schemas.bill_return import (
+    CreateBillReturnRequest,
 )
-
+from app.services.bill_items import (
+    create_bill_item,
+    update_bill_item,
+    delete_bill_item,
+)
+from app.services.bill_returns import (
+    return_bill_batch_stock,
+)
 from app.services.bills import (
     create_bill,
     complete_bill,
     get_bill_details,
     get_all_bills,
-)
-
-from app.services.bill_items import (
-    create_bill_item,
-    update_bill_item,
-    delete_bill_item,
 )
 
 
@@ -55,6 +56,7 @@ async def create_new_bill(
     return await create_bill(
         customer_name=data.customer_name,
         customer_phone=data.customer_phone,
+        tax_percentage=data.tax_percentage,
     )
 
 
@@ -119,6 +121,25 @@ async def complete_existing_bill(
 ):
     return await complete_bill(
         bill_id=bill_id,
+    )
+
+
+@router.post(
+    "/{bill_id}/returns",
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_bill_return(
+    bill_id: str,
+    data: CreateBillReturnRequest,
+    current_user=Depends(
+        require_permission(BILL_CREATE)
+    ),
+):
+    return await return_bill_batch_stock(
+        bill_id=bill_id,
+        batch_id=data.batch_id,
+        quantity=data.quantity,
+        reason=data.reason,
     )
 
 
