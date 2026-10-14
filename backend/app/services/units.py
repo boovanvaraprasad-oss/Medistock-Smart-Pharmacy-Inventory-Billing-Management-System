@@ -3,10 +3,12 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
+from app.services.name_utils import normalize_name
 
 
 async def create_unit(name: str):
-    # Check whether the unit already exists
+    name = normalize_name(name)
+
     existing_unit = await db.units.find_one(
         {"name": name}
     )
@@ -37,11 +39,16 @@ async def get_all_units():
     cursor = db.units.find({})
 
     async for unit in cursor:
-        units.append({
-            "id": str(unit["_id"]),
-            "name": unit["name"],
-            "is_active": unit.get("is_active", True),
-        })
+        units.append(
+            {
+                "id": str(unit["_id"]),
+                "name": unit["name"],
+                "is_active": unit.get(
+                    "is_active",
+                    True,
+                ),
+            }
+        )
 
     return units
 
@@ -69,8 +76,9 @@ async def update_unit(
             detail="Unit not found",
         )
 
-    # Check duplicate name
     if name is not None:
+        name = normalize_name(name)
+
         existing_unit = await db.units.find_one(
             {
                 "name": name,
@@ -82,6 +90,25 @@ async def update_unit(
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="A unit with this name already exists",
+            )
+
+    # Prevent deactivation when an active medicine
+    # is still using this unit.
+    if is_active is False:
+        active_medicine = await db.medicines.find_one(
+            {
+                "unit_id": object_id,
+                "is_active": {"$ne": False},
+            }
+        )
+
+        if active_medicine:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Cannot deactivate unit because "
+                    "an active medicine is using it"
+                ),
             )
 
     update_data = {}
@@ -110,5 +137,8 @@ async def update_unit(
     return {
         "id": str(updated_unit["_id"]),
         "name": updated_unit["name"],
-        "is_active": updated_unit.get("is_active", True),
+        "is_active": updated_unit.get(
+            "is_active",
+            True,
+        ),
     }

@@ -1,19 +1,22 @@
 from bson import ObjectId
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import OAuth2PasswordBearer
 
 from app.core.database import db
 from app.core.permissions import ROLE_PERMISSIONS
 from app.core.security import decode_access_token
 
-security = HTTPBearer()
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/api/v1/auth/token"
+)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    token: str = Depends(oauth2_scheme),
 ):
-    token = credentials.credentials
+    # Decode access token
 
     payload = decode_access_token(token)
 
@@ -23,7 +26,8 @@ async def get_current_user(
             detail="Invalid or expired access token",
         )
 
-    # Check whether this token has been revoked
+    # Check token identifier
+
     jti = payload.get("jti")
 
     if not jti:
@@ -31,6 +35,8 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has no identifier",
         )
+
+    # Check whether token was revoked
 
     revoked_token = await db.revoked_tokens.find_one(
         {"jti": jti}
@@ -42,7 +48,8 @@ async def get_current_user(
             detail="Token has been revoked",
         )
 
-    # Get user ID from the token
+    # Get user ID from token
+
     user_id = payload.get("sub")
 
     if not user_id:
@@ -51,11 +58,13 @@ async def get_current_user(
             detail="Invalid token",
         )
 
-    # Check whether the user still exists
+    # Find user
+
     try:
         user = await db.users.find_one(
             {"_id": ObjectId(user_id)}
         )
+
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -68,7 +77,8 @@ async def get_current_user(
             detail="User not found",
         )
 
-    # Check whether the user is active
+    # Check whether user is active
+
     if not user.get("is_active", True):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -95,6 +105,7 @@ def require_permission(permission: str):
             user = await db.users.find_one(
                 {"_id": ObjectId(user_id)}
             )
+
         except Exception:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

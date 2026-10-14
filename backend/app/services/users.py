@@ -2,8 +2,29 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
-from app.core.permissions import ROLES
+from app.core.permissions import OWNER, ROLES
 from app.core.security import hash_password
+
+
+def to_object_id(user_id: str) -> ObjectId:
+    # Turns the text ID from the URL into a MongoDB ID,
+    # or answers 400 if the text is not a valid ID.
+    try:
+        return ObjectId(user_id)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid user ID",
+        )
+
+
+def to_staff_response(user: dict) -> dict:
+    return {
+        "id": str(user["_id"]),
+        "email": user["email"],
+        "role": user["role"],
+        "is_active": user.get("is_active", True),
+    }
 
 
 async def create_staff_user(
@@ -42,6 +63,8 @@ async def create_staff_user(
         "role": role,
         "is_active": True,
     }
+
+
 async def get_all_staff_users():
     users = []
 
@@ -53,17 +76,31 @@ async def get_all_staff_users():
     )
 
     async for user in cursor:
-        users.append({
-            "id": str(user["_id"]),
-            "email": user["email"],
-            "role": user["role"],
-            "is_active": user.get("is_active", True),
-        })
+        users.append(to_staff_response(user))
 
     return users
 
+
+async def get_staff_user(user_id: str):
+    object_id = to_object_id(user_id)
+
+    user = await db.users.find_one(
+        {"_id": object_id},
+        {"password_hash": 0},
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+
+    return to_staff_response(user)
+
+
 async def update_staff_user(
     user_id: str,
+    acting_user_id: str,
     role: str | None = None,
     is_active: bool | None = None,
 ):
@@ -75,13 +112,7 @@ async def update_staff_user(
         )
 
     # Check whether the user ID is valid
-    try:
-        object_id = ObjectId(user_id)
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid user ID",
-        )
+    object_id = to_object_id(user_id)
 
     # Find the user
     user = await db.users.find_one(
@@ -110,6 +141,43 @@ async def update_staff_user(
             detail="No fields to update",
         )
 
+    changing_role = (
+        role is not None and role != user.get("role")
+    )
+    deactivating = is_active is False
+
+    # Protection 1: nobody can lock themselves out
+    if str(user["_id"]) == acting_user_id and (
+        changing_role or deactivating
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "You cannot change your own role "
+                "or deactivate your own account"
+            ),
+        )
+
+    # Protection 2: the system must always keep an active owner
+    if (
+        user.get("role") == OWNER
+        and user.get("is_active", True)
+        and (changing_role or deactivating)
+    ):
+        other_active_owners = await db.users.count_documents(
+            {
+                "role": OWNER,
+                "is_active": {"$ne": False},
+                "_id": {"$ne": object_id},
+            }
+        )
+
+        if other_active_owners == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="At least one active owner is required",
+            )
+
     await db.users.update_one(
         {"_id": object_id},
         {"$set": update_data},
@@ -120,9 +188,4 @@ async def update_staff_user(
         {"password_hash": 0},
     )
 
-    return {
-        "id": str(updated_user["_id"]),
-        "email": updated_user["email"],
-        "role": updated_user["role"],
-        "is_active": updated_user.get("is_active", True),
-    }
+    return to_staff_response(updated_user)

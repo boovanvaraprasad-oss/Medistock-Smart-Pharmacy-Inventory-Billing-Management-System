@@ -3,6 +3,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
+from app.services.name_utils import normalize_name
 
 
 async def create_supplier(
@@ -11,7 +12,8 @@ async def create_supplier(
     email: str | None = None,
     address: str | None = None,
 ):
-    # Check whether the supplier already exists
+    name = normalize_name(name)
+
     existing_supplier = await db.suppliers.find_one(
         {"name": name}
     )
@@ -30,7 +32,9 @@ async def create_supplier(
         "is_active": True,
     }
 
-    result = await db.suppliers.insert_one(supplier)
+    result = await db.suppliers.insert_one(
+        supplier
+    )
 
     return {
         "id": str(result.inserted_id),
@@ -48,14 +52,19 @@ async def get_all_suppliers():
     cursor = db.suppliers.find({})
 
     async for supplier in cursor:
-        suppliers.append({
-            "id": str(supplier["_id"]),
-            "name": supplier["name"],
-            "phone": supplier["phone"],
-            "email": supplier.get("email"),
-            "address": supplier.get("address"),
-            "is_active": supplier.get("is_active", True),
-        })
+        suppliers.append(
+            {
+                "id": str(supplier["_id"]),
+                "name": supplier["name"],
+                "phone": supplier["phone"],
+                "email": supplier.get("email"),
+                "address": supplier.get("address"),
+                "is_active": supplier.get(
+                    "is_active",
+                    True,
+                ),
+            }
+        )
 
     return suppliers
 
@@ -86,8 +95,9 @@ async def update_supplier(
             detail="Supplier not found",
         )
 
-    # Check duplicate supplier name
     if name is not None:
+        name = normalize_name(name)
+
         existing_supplier = await db.suppliers.find_one(
             {
                 "name": name,
@@ -99,6 +109,25 @@ async def update_supplier(
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="A supplier with this name already exists",
+            )
+
+    # Prevent deactivation when an active medicine
+    # is still using this supplier.
+    if is_active is False:
+        active_medicine = await db.medicines.find_one(
+            {
+                "supplier_id": object_id,
+                "is_active": {"$ne": False},
+            }
+        )
+
+        if active_medicine:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Cannot deactivate supplier because "
+                    "an active medicine is using it"
+                ),
             )
 
     update_data = {}
@@ -139,5 +168,8 @@ async def update_supplier(
         "phone": updated_supplier["phone"],
         "email": updated_supplier.get("email"),
         "address": updated_supplier.get("address"),
-        "is_active": updated_supplier.get("is_active", True),
+        "is_active": updated_supplier.get(
+            "is_active",
+            True,
+        ),
     }

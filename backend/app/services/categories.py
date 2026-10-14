@@ -3,10 +3,12 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import db
+from app.services.name_utils import normalize_name
 
 
 async def create_category(name: str):
-    # checks the category if it already exists
+    name = normalize_name(name)
+
     existing_category = await db.categories.find_one(
         {"name": name}
     )
@@ -34,16 +36,19 @@ async def create_category(name: str):
 async def get_all_categories():
     categories = []
 
-    cursor = db.categories.find(
-        {}
-    )
+    cursor = db.categories.find({})
 
     async for category in cursor:
-        categories.append({
-            "id": str(category["_id"]),
-            "name": category["name"],
-            "is_active": category.get("is_active", True),
-        })
+        categories.append(
+            {
+                "id": str(category["_id"]),
+                "name": category["name"],
+                "is_active": category.get(
+                    "is_active",
+                    True,
+                ),
+            }
+        )
 
     return categories
 
@@ -53,7 +58,6 @@ async def update_category(
     name: str | None = None,
     is_active: bool | None = None,
 ):
-    # Validate the category ID
     try:
         object_id = ObjectId(category_id)
     except Exception:
@@ -62,7 +66,6 @@ async def update_category(
             detail="Invalid category ID",
         )
 
-    # Check whether the category exists
     category = await db.categories.find_one(
         {"_id": object_id}
     )
@@ -73,8 +76,9 @@ async def update_category(
             detail="Category not found",
         )
 
-    # Check for duplicate category name
     if name is not None:
+        name = normalize_name(name)
+
         existing_category = await db.categories.find_one(
             {
                 "name": name,
@@ -88,7 +92,25 @@ async def update_category(
                 detail="A category with this name already exists",
             )
 
-    # Fields to update
+    # Prevent deactivation when an active medicine
+    # is still using this category.
+    if is_active is False:
+        active_medicine = await db.medicines.find_one(
+            {
+                "category_id": object_id,
+                "is_active": {"$ne": False},
+            }
+        )
+
+        if active_medicine:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Cannot deactivate category because "
+                    "an active medicine is using it"
+                ),
+            )
+
     update_data = {}
 
     if name is not None:
@@ -97,7 +119,6 @@ async def update_category(
     if is_active is not None:
         update_data["is_active"] = is_active
 
-    # Nothing was provided to update
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -109,7 +130,6 @@ async def update_category(
         {"$set": update_data},
     )
 
-    # Get the updated category
     updated_category = await db.categories.find_one(
         {"_id": object_id}
     )
@@ -117,5 +137,8 @@ async def update_category(
     return {
         "id": str(updated_category["_id"]),
         "name": updated_category["name"],
-        "is_active": updated_category.get("is_active", True),
+        "is_active": updated_category.get(
+            "is_active",
+            True,
+        ),
     }
