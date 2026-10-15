@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import USER_READ, USER_WRITE
+from app.core.permissions import USER_DELETE, USER_READ, USER_WRITE
 from app.schemas.staff import (
     CreateStaffRequest,
     StaffResponse,
@@ -9,6 +9,7 @@ from app.schemas.staff import (
 )
 from app.services.users import (
     create_staff_user,
+    delete_staff_user,
     get_all_staff_users,
     get_staff_user,
     update_staff_user,
@@ -74,4 +75,16 @@ async def update_staff(
         acting_user_id=str(current_user["_id"]),
         role=data.role,
         is_active=data.is_active,
+    )
+
+
+@router.delete("/{user_id}")
+async def delete_inactive_staff(
+    user_id: str,
+    current_user=Depends(require_permission(USER_DELETE)),
+):
+    return await delete_staff_user(
+        user_id=user_id,
+        acting_user_id=str(current_user["_id"]),
+        acting_user_role=current_user["role"],
     )

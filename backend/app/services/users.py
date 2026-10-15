@@ -1,7 +1,9 @@
+from datetime import datetime, timezone
+
 from bson import ObjectId
 from fastapi import HTTPException, status
 
-from app.core.database import db
+from app.core.database import client, db
 from app.core.permissions import OWNER, ROLES
 from app.core.security import hash_password
 
@@ -189,3 +191,96 @@ async def update_staff_user(
     )
 
     return to_staff_response(updated_user)
+
+
+async def delete_staff_user(
+    user_id: str,
+    acting_user_id: str,
+    acting_user_role: str,
+) -> dict:
+    """Permanently delete an inactive non-owner account with no audit history."""
+
+    object_id = to_object_id(user_id)
+    acting_object_id = to_object_id(acting_user_id)
+
+    if object_id == acting_object_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cannot permanently delete your own account",
+        )
+
+    async def transaction_work(session):
+        user = await db.users.find_one(
+            {"_id": object_id},
+            session=session,
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+
+        if user.get("role") == OWNER:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Owner accounts cannot be permanently deleted",
+            )
+
+        if user.get("is_active", True):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Deactivate the user before permanently deleting the account",
+            )
+
+        existing_audit = await db.audit_logs.find_one(
+            {
+                "$or": [
+                    {"actor_user_id": object_id},
+                    {"target_user_id": object_id},
+                ]
+            },
+            {"_id": 1},
+            session=session,
+        )
+
+        if existing_audit:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "User is referenced by audit history and cannot be "
+                    "permanently deleted; keep the account deactivated"
+                ),
+            )
+
+        result = await db.users.delete_one(
+            {"_id": object_id, "is_active": False},
+            session=session,
+        )
+
+        if result.deleted_count != 1:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="User changed while deletion was in progress; retry",
+            )
+
+        await db.audit_logs.insert_one(
+            {
+                "action": "USER_DELETE",
+                "entity_type": "users",
+                "entity_id": str(object_id),
+                "entity_label": user.get("email", str(object_id)),
+                "actor_user_id": acting_object_id,
+                "actor_role": acting_user_role,
+                "created_at": datetime.now(timezone.utc),
+            },
+            session=session,
+        )
+
+        return {
+            "id": str(object_id),
+            "message": "Inactive staff account permanently deleted",
+        }
+
+    async with await client.start_session() as session:
+        return await session.with_transaction(transaction_work)

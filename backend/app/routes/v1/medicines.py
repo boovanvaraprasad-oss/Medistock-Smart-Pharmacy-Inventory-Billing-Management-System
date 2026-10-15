@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from app.core.dependencies import require_permission
 from app.core.permissions import (
+    MASTER_DATA_DELETE,
     MEDICINE_READ,
     MEDICINE_WRITE,
 )
@@ -19,6 +20,7 @@ from app.services.medicines import (
     list_medicines,
     update_medicine,
 )
+from app.services.master_data_deletion import delete_master_data_record
 
 
 router = APIRouter(
@@ -116,4 +118,19 @@ async def update_existing_medicine(
         reorder_threshold=data.reorder_threshold,
         is_controlled_substance=data.is_controlled_substance,
         is_active=data.is_active,
+    )
+
+
+@router.delete("/{medicine_id}")
+async def delete_unused_medicine(
+    medicine_id: str,
+    current_user=Depends(
+        require_permission(MASTER_DATA_DELETE)
+    ),
+):
+    return await delete_master_data_record(
+        collection_name="medicines",
+        record_id=medicine_id,
+        actor_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )

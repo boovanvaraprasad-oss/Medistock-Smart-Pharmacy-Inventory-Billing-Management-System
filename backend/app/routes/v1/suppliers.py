@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import SUPPLIER_READ, SUPPLIER_WRITE
+from app.core.permissions import (
+    MASTER_DATA_DELETE,
+    SUPPLIER_READ,
+    SUPPLIER_WRITE,
+)
 from app.schemas.supplier import (
     CreateSupplierRequest,
     SupplierResponse,
@@ -12,6 +16,7 @@ from app.services.suppliers import (
     get_all_suppliers,
     update_supplier,
 )
+from app.services.master_data_deletion import delete_master_data_record
 
 
 router = APIRouter(
@@ -69,4 +74,19 @@ async def edit_supplier(
         email=data.email,
         address=data.address,
         is_active=data.is_active,
+    )
+
+
+@router.delete("/{supplier_id}")
+async def delete_unused_supplier(
+    supplier_id: str,
+    current_user=Depends(
+        require_permission(MASTER_DATA_DELETE)
+    ),
+):
+    return await delete_master_data_record(
+        collection_name="suppliers",
+        record_id=supplier_id,
+        actor_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )

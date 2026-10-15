@@ -18,6 +18,7 @@ ROLES = [
 
 USER_READ = "user:read"
 USER_WRITE = "user:write"
+USER_DELETE = "user:delete"
 
 MEDICINE_READ = "medicine:read"
 MEDICINE_WRITE = "medicine:write"
@@ -35,11 +36,13 @@ BILL_CREATE = "bill:create"
 BILL_READ = "bill:read"
 
 REPORT_VIEW = "report:view"
+MASTER_DATA_DELETE = "master_data:delete"
 
 
 PERMISSIONS = [
     USER_READ,
     USER_WRITE,
+    USER_DELETE,
     MEDICINE_READ,
     MEDICINE_WRITE,
     STOCK_READ,
@@ -51,6 +54,7 @@ PERMISSIONS = [
     BILL_CREATE,
     BILL_READ,
     REPORT_VIEW,
+    MASTER_DATA_DELETE,
 ]
 
 

@@ -19,6 +19,7 @@ from app.routes.v1.stock_batches import (
     router as stock_batches_router,
 )
 from app.routes.v1.bills import router as bills_router
+from app.routes.v1.dashboard import router as dashboard_router
 
 
 api_router = APIRouter()
@@ -37,3 +38,4 @@ api_router.include_router(purchase_items_router)
 api_router.include_router(stock_router)
 api_router.include_router(stock_batches_router)
 api_router.include_router(bills_router)
+api_router.include_router(dashboard_router)

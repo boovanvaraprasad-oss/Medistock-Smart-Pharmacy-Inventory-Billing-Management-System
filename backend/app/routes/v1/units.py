@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import MEDICINE_READ, MEDICINE_WRITE
+from app.core.permissions import (
+    MASTER_DATA_DELETE,
+    MEDICINE_READ,
+    MEDICINE_WRITE,
+)
 from app.schemas.unit import (
     CreateUnitRequest,
     UnitResponse,
@@ -12,6 +16,7 @@ from app.services.units import (
     get_all_units,
     update_unit,
 )
+from app.services.master_data_deletion import delete_master_data_record
 
 
 router = APIRouter(
@@ -63,4 +68,17 @@ async def edit_unit(
         unit_id=unit_id,
         name=data.name,
         is_active=data.is_active,
+    )
+
+
+@router.delete("/{unit_id}")
+async def delete_unused_unit(
+    unit_id: str,
+    current_user=Depends(require_permission(MASTER_DATA_DELETE)),
+):
+    return await delete_master_data_record(
+        collection_name="units",
+        record_id=unit_id,
+        actor_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
