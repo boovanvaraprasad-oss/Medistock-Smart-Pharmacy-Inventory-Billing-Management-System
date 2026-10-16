@@ -12,7 +12,7 @@
             <div>
                 <p class="eyebrow">Inventory</p>
                 <h1>Medicines</h1>
-                <p class="subtitle">Search and review your medicine list.</p>
+                <p class="subtitle">Search and manage your medicine list.</p>
             </div>
             <a class="button button-secondary" href="dashboard.html">Back to dashboard</a>
         </header>
@@ -22,8 +22,8 @@
         <p id="successMessage" class="success-message" role="status" hidden></p>
 
         <section id="createMedicineSection" class="panel" hidden>
-            <h2>Add medicine</h2>
-            <p class="form-help">New medicines start with zero stock. Stock is added through purchase receiving.</p>
+            <h2 id="medicineFormTitle">Add medicine</h2>
+            <p class="form-help">New medicines start with zero stock. Add stock through purchase receiving.</p>
 
             <form id="createMedicineForm" class="medicine-form">
                 <label>
@@ -84,9 +84,14 @@
                     Controlled substance
                 </label>
 
-                <button id="createMedicineButton" class="button button-primary" type="submit">
-                    Create medicine
-                </button>
+                <div class="form-actions">
+                    <button id="createMedicineButton" class="button button-primary" type="submit">
+                        Create medicine
+                    </button>
+                    <button id="cancelEditButton" class="button button-secondary" type="button" hidden>
+                        Cancel
+                    </button>
+                </div>
             </form>
         </section>
 
@@ -100,9 +105,7 @@
                     placeholder="Search medicines"
                 >
                 <button class="button button-primary" type="submit">Search</button>
-                <button class="button button-secondary" id="clearButton" type="button">
-                    Clear
-                </button>
+                <button class="button button-secondary" id="clearButton" type="button">Clear</button>
             </div>
         </form>
 
@@ -119,6 +122,7 @@
                         <th>Price</th>
                         <th>Reorder at</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="medicineRows"></tbody>
@@ -126,13 +130,9 @@
         </div>
 
         <nav class="pagination" aria-label="Medicine list pages">
-            <button class="button button-secondary" id="previousButton" type="button">
-                Previous
-            </button>
+            <button class="button button-secondary" id="previousButton" type="button">Previous</button>
             <span id="pageInfo"></span>
-            <button class="button button-secondary" id="nextButton" type="button">
-                Next
-            </button>
+            <button class="button button-secondary" id="nextButton" type="button">Next</button>
         </nav>
     </main>
 

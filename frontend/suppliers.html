@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Suppliers</title>
+    <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/suppliers.css">
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Master data</p>
+                <h1>Suppliers</h1>
+                <p class="subtitle">Manage supplier contacts and status.</p>
+            </div>
+            <a class="button button-secondary" href="dashboard.html">Back to dashboard</a>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="successMessage" class="message message-success" role="status" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading suppliers…</p>
+
+        <section id="formSection" class="panel" hidden>
+            <h2 id="formTitle">Add supplier</h2>
+            <p class="helper-text">
+                Email and address are optional. When editing, leave them blank to keep their current values.
+            </p>
+
+            <form id="supplierForm" class="supplier-form">
+                <label>
+                    Supplier name
+                    <input id="supplierName" type="text" minlength="2" maxlength="100" required>
+                </label>
+
+                <label>
+                    Phone
+                    <input id="supplierPhone" type="tel" minlength="10" maxlength="15" required>
+                </label>
+
+                <label>
+                    Email
+                    <input id="supplierEmail" type="email" maxlength="254">
+                </label>
+
+                <label>
+                    Address
+                    <input id="supplierAddress" type="text" maxlength="250">
+                </label>
+
+                <div class="form-actions">
+                    <button id="saveButton" class="button button-primary" type="submit">
+                        Create supplier
+                    </button>
+                    <button id="cancelButton" class="button button-secondary" type="button" hidden>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Supplier list</h2>
+                    <p id="listDescription" class="helper-text">Loading…</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supplierRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/suppliers.js"></script>
+</body>
+</html>
