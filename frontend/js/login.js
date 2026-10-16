@@ -2,6 +2,7 @@ const loginForm = document.getElementById("loginForm");
 const message = document.getElementById("message");
 const checkSessionButton = document.getElementById("checkSessionButton");
 const logoutButton = document.getElementById("logoutButton");
+const signupButton = document.getElementById("signupButton");
 
 async function checkSession() {
     try {
@@ -23,9 +24,8 @@ loginForm.addEventListener("submit", async (event) => {
 
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
-        checkSessionButton.hidden = false;
-        logoutButton.hidden = false;
-        await checkSession();
+
+        window.location.href = "dashboard.html";
     } catch (error) {
         message.textContent = error.message;
     }
@@ -47,8 +47,6 @@ logoutButton.addEventListener("click", async () => {
         logoutButton.disabled = false;
     }
 });
-
-const signupButton = document.getElementById("signupButton");
 
 signupButton.addEventListener("click", () => {
     window.location.href = "signup.html";

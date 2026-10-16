@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <main class="dashboard">
+        <header class="dashboard-header">
+            <div>
+                <p class="eyebrow">Pharmacy management</p>
+                <h1>MediStock</h1>
+                <p class="subtitle">Inventory and business overview</p>
+            </div>
+
+            <div class="header-actions">
+                <a id="staffUsersLink" class="button button-secondary" href="users.html" hidden>
+                    Staff &amp; users
+                </a>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
+                <button id="logoutButton" class="button button-primary" type="button">
+                    Log out
+                </button>
+            </div>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="loadingMessage" class="message" role="status">Loading dashboard…</p>
+
+        <section id="dashboardContent" hidden>
+            <div class="section-heading">
+                <div>
+                    <h2>Overview</h2>
+                    <p>Current stock and all-time totals</p>
+                </div>
+                <p id="updatedAt" class="updated-at"></p>
+            </div>
+
+            <div class="card-grid">
+                <a
+                    href="medicines.html"
+                    class="metric-card"
+                    style="display: block; color: inherit; text-decoration: none;"
+                    aria-label="View medicine list"
+                >
+                    <p class="metric-label">Active medicines</p>
+                    <p id="activeMedicineCount" class="metric-value">—</p>
+                    <span style="color: #147a61; font-size: 0.9rem;">
+                        View medicine list →
+                    </span>
+                </a>
+
+                <article class="metric-card metric-card-warning">
+                    <p class="metric-label">Low stock</p>
+                    <p id="lowStockCount" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card metric-card-danger">
+                    <p class="metric-label">Out of stock</p>
+                    <p id="outOfStockCount" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card">
+                    <p class="metric-label">Units in batches</p>
+                    <p id="totalStockUnits" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card">
+                    <p class="metric-label">Inventory purchase value</p>
+                    <p id="inventoryValue" class="metric-value metric-value-small">—</p>
+                </article>
+
+                <article class="metric-card metric-card-danger">
+                    <p class="metric-label">Expired batches with stock</p>
+                    <p id="expiredBatchCount" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card metric-card-warning">
+                    <p class="metric-label">Expiring within 30 days</p>
+                    <p id="expiringBatchCount" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card">
+                    <p class="metric-label">Completed bills, all time</p>
+                    <p id="completedBillCount" class="metric-value">—</p>
+                </article>
+
+                <article class="metric-card">
+                    <p class="metric-label">Sales total, all time</p>
+                    <p id="completedSalesTotal" class="metric-value metric-value-small">—</p>
+                </article>
+
+                <article class="metric-card">
+                    <p class="metric-label">Open purchase orders</p>
+                    <p id="openPurchaseOrderCount" class="metric-value">—</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Staff &amp; Users</title>
+    <link rel="stylesheet" href="css/users.css">
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Administration</p>
+                <h1>Staff &amp; users</h1>
+                <p class="subtitle">Manage staff access and account status.</p>
+            </div>
+            <a class="button button-secondary" href="dashboard.html">Back to dashboard</a>
+        </header>
+
+        <p id="statusMessage" class="message" role="status" hidden></p>
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="successMessage" class="message message-success" role="status" hidden></p>
+
+        <section id="createSection" class="panel" hidden>
+            <h2>Add staff account</h2>
+            <p class="helper-text">Passwords must contain at least 10 characters, including a letter and a number.</p>
+            <form id="createForm" class="create-form">
+                <label>
+                    Email
+                    <input id="newEmail" type="email" autocomplete="off" maxlength="254" required>
+                </label>
+                <label>
+                    Temporary password
+                    <input id="newPassword" type="password" autocomplete="new-password" minlength="10" maxlength="72" required>
+                </label>
+                <label>
+                    Role
+                    <select id="newRole" required></select>
+                </label>
+                <button id="createButton" class="button button-primary" type="submit">Create account</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Staff accounts</h2>
+                    <p id="listDescription" class="helper-text">Loading accounts…</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/users.js"></script>
+</body>
+</html>
