@@ -1,0 +1,91 @@
+.purchase-form {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(180px, 2fr);
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: 18px;
+}
+
+.purchase-form label {
+    color: #33453d;
+    font-weight: 700;
+}
+
+.purchase-form input,
+.purchase-form select,
+.purchase-form textarea {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cbd7d2;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #17231f;
+    font: inherit;
+}
+
+.purchase-form textarea {
+    resize: vertical;
+}
+
+.purchase-form .form-actions {
+    grid-column: 1 / -1;
+}
+
+.item-form {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    margin-bottom: 28px;
+}
+
+.item-form label {
+    align-self: end;
+}
+
+#orderDetailsSection h3 {
+    margin: 24px 0 12px;
+    color: #263b33;
+}
+
+.order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.order-status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #edf3f0;
+    color: #33453d;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.order-status[data-status="received"] {
+    background: #e6f5ef;
+    color: #12664f;
+}
+
+.order-status[data-status="cancelled"] {
+    background: #fff2f1;
+    color: #8f2d26;
+}
+
+@media (max-width: 640px) {
+    .purchase-form,
+    .item-form {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-form label,
+    .purchase-form .form-actions {
+        grid-column: auto;
+    }
+
+    .purchase-form .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
