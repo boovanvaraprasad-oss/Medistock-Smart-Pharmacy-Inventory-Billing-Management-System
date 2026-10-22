@@ -4,6 +4,7 @@ const dashboardContent = document.getElementById("dashboardContent");
 const refreshButton = document.getElementById("refreshButton");
 const logoutButton = document.getElementById("logoutButton");
 const staffUsersLink = document.getElementById("staffUsersLink");
+const billingLink = document.getElementById("billingLink");
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
 
@@ -26,6 +27,7 @@ async function loadDashboard() {
     try {
         const currentUser = await apiRequest("/api/v1/auth/me");
         const permissions = currentUser.permissions || [];
+        billingLink.hidden = !permissions.includes("bill:read");
         staffUsersLink.hidden = !(
             permissions.includes("user:read") || permissions.includes("user:write")
         );
