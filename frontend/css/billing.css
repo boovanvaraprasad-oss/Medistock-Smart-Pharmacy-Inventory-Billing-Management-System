@@ -112,6 +112,78 @@
         align-items: stretch;
     }
 }
+
+.invoice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 16mm;
+    }
+
+    body,
+    body * {
+        visibility: hidden !important;
+    }
+
+    body > main.page {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body > main.page > *:not(#billDetailsSection) {
+        display: none !important;
+    }
+
+    #billDetailsSection,
+    #billDetailsSection * {
+        visibility: visible !important;
+    }
+
+    #billDetailsSection {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+    }
+
+    #billDetailsSection [hidden],
+    #billDetailsSection .invoice-actions,
+    #billDetailsSection #batchAllocationsSection {
+        display: none !important;
+    }
+
+    #billDetailsSection .table-wrapper {
+        overflow: visible !important;
+    }
+
+    #billDetailsSection table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    #billDetailsSection th,
+    #billDetailsSection td {
+        color: #111 !important;
+        border: 1px solid #bbb !important;
+    }
+
+    #billDetailsSection .bill-totals {
+        break-inside: avoid;
+        margin-left: auto !important;
+        background: #fff !important;
+    }
+}
 #batchAllocationsSection .table-wrapper {
     margin-top: 12px;
 }

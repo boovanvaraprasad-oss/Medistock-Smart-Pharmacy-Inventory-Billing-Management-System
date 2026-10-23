@@ -16,6 +16,7 @@ const billDetailsSection = document.getElementById("billDetailsSection");
 const billDetailsTitle = document.getElementById("billDetailsTitle");
 const billDetailsDescription = document.getElementById("billDetailsDescription");
 const closeDetailsButton = document.getElementById("closeDetailsButton");
+const printInvoiceButton = document.getElementById("printInvoiceButton");
 const addBillItemSection = document.getElementById("addBillItemSection");
 const addBillItemForm = document.getElementById("addBillItemForm");
 const medicineSelect = document.getElementById("medicineSelect");
@@ -170,6 +171,7 @@ function renderBillDetails() {
     billDetailsDescription.textContent =
         `${selectedBill.customer_name} · ${selectedBill.customer_phone} · ` +
         `${selectedBill.status} · ${selectedBill.payment_status}`;
+    printInvoiceButton.hidden = selectedBill.status !== "completed";
 
     const canModify = permissions.includes("bill:create") &&
         selectedBill.status === "draft";
@@ -555,6 +557,13 @@ refreshButton.addEventListener("click", loadBills);
 closeDetailsButton.addEventListener("click", () => {
     selectedBill = null;
     billDetailsSection.hidden = true;
+});
+
+printInvoiceButton.addEventListener("click", () => {
+    if (selectedBill?.status !== "completed") {
+        return;
+    }
+    window.print();
 });
 
 async function initializePage() {
