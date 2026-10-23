@@ -1,0 +1,114 @@
+.confirm-dialog {
+    width: min(390px, calc(100% - 32px));
+    max-width: none;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 16px;
+    background: transparent;
+    color: #172a24;
+    box-shadow: 0 24px 70px rgb(0 0 0 / 24%);
+}
+
+.confirm-dialog::backdrop {
+    background: rgb(6 34 25 / 54%);
+    backdrop-filter: blur(3px);
+}
+
+.confirm-card {
+    padding: 25px 24px 20px;
+    border: 1px solid #e2ece7;
+    border-radius: 16px;
+    background: #ffffff;
+    text-align: center;
+}
+
+.confirm-dialog-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff0ef;
+    color: #c83d35;
+}
+
+.confirm-dialog-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.confirm-dialog-content {
+    margin-top: 15px;
+}
+
+.confirm-dialog-title {
+    margin: 0;
+    color: #18372b;
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.confirm-dialog-message {
+    margin: 8px 0 0;
+    color: #66786f;
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.confirm-dialog-actions {
+    display: grid;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.confirm-dialog-actions button {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.confirm-dialog-actions button:active {
+    transform: translateY(1px);
+}
+
+.confirm-dialog-submit {
+    background: #c83d35;
+    color: #ffffff;
+}
+
+.confirm-dialog-submit:hover {
+    background: #ad302a;
+}
+
+.confirm-dialog-cancel {
+    border-color: #d5e2dc !important;
+    background: #ffffff;
+    color: #315044;
+}
+
+.confirm-dialog-cancel:hover {
+    background: #f3f8f6;
+}
+
+.confirm-dialog-actions button:focus-visible {
+    outline: 3px solid rgb(34 173 122 / 35%);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confirm-dialog-actions button {
+        transition: none;
+    }
+}

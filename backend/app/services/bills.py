@@ -408,6 +408,7 @@ async def complete_bill(bill_id: str):
                 "$set": {
                     "status": "completed",
                     "payment_status": "paid",
+                    "completed_at": datetime.now(timezone.utc),
                     "batch_allocations": bill_batch_allocations,
                 }
             },

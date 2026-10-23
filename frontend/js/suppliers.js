@@ -149,9 +149,11 @@ function resetForm() {
 
 async function toggleStatus(supplier) {
     const activating = !supplier.is_active;
-    const action = activating ? "activate" : "deactivate";
 
-    if (!window.confirm(`Are you sure you want to ${action} "${supplier.name}"?`)) {
+    if (!activating && !(await window.showConfirmDialog({
+        title: "Deactivate supplier?",
+        message: `“${supplier.name}” will no longer be available for new purchase orders. Existing order history will be kept, and you can reactivate this supplier later.`
+    }))) {
         return;
     }
 
@@ -176,9 +178,11 @@ async function toggleStatus(supplier) {
 }
 
 async function deleteSupplier(supplier) {
-    const confirmed = window.confirm(
-        `Permanently delete "${supplier.name}"? This cannot be undone. The server may prevent deletion if it is in use.`
-    );
+    const confirmed = await window.showConfirmDialog({
+        title: "Delete supplier permanently?",
+        message: `“${supplier.name}” will be permanently removed. This cannot be undone, and deletion may be blocked if the supplier has linked records.`,
+        confirmText: "Delete permanently"
+    });
 
     if (!confirmed) {
         return;

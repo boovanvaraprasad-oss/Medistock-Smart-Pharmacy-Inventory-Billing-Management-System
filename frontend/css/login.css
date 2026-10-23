@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    color-scheme: light;
+    font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
+    color: #14251e;
+    background: #032d22;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+.login-screen {
+    position: relative;
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    overflow: hidden;
+    padding: 32px 20px;
+    isolation: isolate;
+    background: #188451;
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 330px);
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0, 20, 12, 0.3);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    margin-bottom: 15px;
+    color: #075c3e;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    text-decoration: none;
+}
+
+.brand-plus {
+    color: #168957;
+    font-size: 2rem;
+    line-height: 0.7;
+}
+
+.login-card h1 {
+    margin: 0 0 14px;
+    color: #14251e;
+    font-size: 1.5rem;
+}
+
+.form-field {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+    border: 0;
+}
+
+.form-field input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid #cbd9d2;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: #14251e;
+    font: inherit;
+}
+
+.form-field input::placeholder {
+    color: #85958d;
+}
+
+.form-field input:focus {
+    border-color: #168957;
+    box-shadow: 0 0 0 3px rgba(22, 137, 87, 0.15);
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 2px 0 14px;
+    font-size: 0.9rem;
+}
+
+.login-options a {
+    color: #08704b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-options a:hover,
+.login-options a:focus-visible {
+    text-decoration: underline;
+}
+
+.login-button {
+    width: 100%;
+    min-height: 42px;
+    border: 0;
+    border-radius: 8px;
+    background: #075c3e;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.login-button:hover {
+    background: #064b34;
+}
+
+.login-button:active {
+    transform: translateY(1px);
+}
+
+.login-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.message {
+    margin: 16px 0 0;
+    padding: 11px 13px;
+    border: 1px solid #f1b9b9;
+    border-radius: 8px;
+    background: #fff0f0;
+    color: #9d2727;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+.medical-plus {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    left: max(4vw, calc(50% - 585px));
+    width: min(580px, 46vw);
+    height: min(500px, 96vh);
+    transform: translateY(-50%);
+    opacity: 0.95;
+    pointer-events: none;
+    filter:
+        drop-shadow(0 0 8px #8af4bb)
+        drop-shadow(0 0 18px rgba(111, 231, 168, 0.7));
+}
+
+.medical-art {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: 4vw;
+    width: min(31vw, 390px);
+    height: min(70vh, 590px);
+    transform: translateY(-50%);
+    opacity: 0.9;
+}
+
+.art-capsule,
+.art-tablet,
+.art-bottle,
+.art-syringe {
+    position: absolute;
+    display: block;
+    border: 3px solid #a7f3c8;
+    background-color: rgba(44, 172, 112, 0.25);
+    box-shadow:
+        0 0 12px rgba(111, 231, 168, 0.7),
+        inset 0 0 8px rgba(184, 247, 210, 0.18);
+}
+
+.art-capsule {
+    width: 76px;
+    height: 145px;
+    overflow: hidden;
+    border-radius: 999px;
+    transform: rotate(-28deg);
+}
+
+.art-capsule::after {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #b8f7d2;
+    content: "";
+}
+
+.capsule-one {
+    top: 7%;
+    right: 30%;
+}
+
+.capsule-two {
+    top: 34%;
+    left: 8%;
+    width: 53px;
+    height: 98px;
+    transform: rotate(42deg);
+}
+
+.art-tablet {
+    top: 33%;
+    right: 4%;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: linear-gradient(
+        to bottom,
+        rgba(184, 247, 210, 0.85) 0 49%,
+        rgba(15, 106, 69, 0.55) 50% 100%
+    );
+}
+
+.art-bottle {
+    top: 42%;
+    right: 28%;
+    display: grid;
+    width: 100px;
+    height: 170px;
+    place-items: center;
+    border-radius: 18px 18px 26px 26px;
+    transform: rotate(-12deg);
+}
+
+.art-bottle::before {
+    position: absolute;
+    top: -24px;
+    left: 20px;
+    width: 54px;
+    height: 24px;
+    border: 3px solid #a7f3c8;
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    background: rgba(44, 172, 112, 0.3);
+    content: "";
+}
+
+.art-bottle::after {
+    position: absolute;
+    top: 54px;
+    left: 12px;
+    width: 70px;
+    height: 58px;
+    border-radius: 7px;
+    background: rgba(232, 255, 241, 0.92);
+    content: "";
+}
+
+.art-bottle span {
+    z-index: 1;
+    margin-top: 25px;
+    color: #08704b;
+    font-size: 2.8rem;
+    font-weight: 800;
+}
+
+.art-syringe {
+    right: 0;
+    bottom: 1%;
+    width: 48px;
+    height: 210px;
+    border-radius: 20px;
+    transform: rotate(34deg);
+}
+
+.art-syringe::before {
+    position: absolute;
+    top: -24px;
+    left: -13px;
+    width: 68px;
+    height: 17px;
+    border: 3px solid #a7f3c8;
+    border-radius: 5px;
+    content: "";
+}
+
+.art-syringe::after {
+    position: absolute;
+    top: 35px;
+    left: 9px;
+    width: 25px;
+    height: 90px;
+    border-top: 3px solid #b8f7d2;
+    border-bottom: 3px solid #b8f7d2;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 15px,
+        #b8f7d2 16px 18px
+    );
+    content: "";
+}
+
+@media (max-width: 760px) {
+    .medical-plus {
+        left: -100px;
+        width: 250px;
+        height: 250px;
+        opacity: 0.3;
+    }
+
+    .medical-art {
+        right: -125px;
+        width: 280px;
+        opacity: 0.38;
+    }
+
+    .login-card {
+        padding: 30px 26px;
+    }
+}
+
+@media (max-width: 420px) {
+    .login-screen {
+        padding: 18px 14px;
+    }
+
+    .login-card {
+        padding: 27px 22px;
+    }
+
+    .login-options {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

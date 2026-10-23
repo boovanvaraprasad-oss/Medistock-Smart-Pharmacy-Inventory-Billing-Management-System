@@ -1,23 +1,29 @@
 const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+const loginButton = document.getElementById("loginButton");
 const message = document.getElementById("message");
-const checkSessionButton = document.getElementById("checkSessionButton");
-const logoutButton = document.getElementById("logoutButton");
-const signupButton = document.getElementById("signupButton");
 
-async function checkSession() {
-    try {
-        await apiRequest("/api/v1/auth/me");
-        message.textContent = "Your protected session is active.";
-    } catch (error) {
-        message.textContent = error.message;
-    }
+function showMessage(text) {
+    message.textContent = text;
+    message.hidden = !text;
 }
+
+forgotPasswordLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    showMessage("Password reset is not available yet. Please contact your MediStock owner.");
+});
 
 loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    showMessage("");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    loginButton.disabled = true;
+    loginButton.textContent = "Signing in…";
 
     try {
         const data = await loginUser(email, password);
@@ -27,27 +33,9 @@ loginForm.addEventListener("submit", async (event) => {
 
         window.location.href = "dashboard.html";
     } catch (error) {
-        message.textContent = error.message;
-    }
-});
-
-checkSessionButton.addEventListener("click", checkSession);
-
-logoutButton.addEventListener("click", async () => {
-    logoutButton.disabled = true;
-
-    try {
-        await logoutUser();
-        checkSessionButton.hidden = true;
-        logoutButton.hidden = true;
-        message.textContent = "Logged out successfully.";
-    } catch (error) {
-        message.textContent = error.message;
+        showMessage(error.message || "Unable to sign in. Check your details and try again.");
     } finally {
-        logoutButton.disabled = false;
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
     }
-});
-
-signupButton.addEventListener("click", () => {
-    window.location.href = "signup.html";
 });

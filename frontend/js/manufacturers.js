@@ -142,9 +142,11 @@ function resetForm() {
 
 async function toggleStatus(manufacturer) {
     const activating = !manufacturer.is_active;
-    const action = activating ? "activate" : "deactivate";
 
-    if (!window.confirm(`Are you sure you want to ${action} "${manufacturer.name}"?`)) {
+    if (!activating && !(await window.showConfirmDialog({
+        title: "Deactivate manufacturer?",
+        message: `“${manufacturer.name}” will no longer be available for new selections. Existing medicine records will be kept, and you can reactivate it later.`
+    }))) {
         return;
     }
 
@@ -172,9 +174,11 @@ async function toggleStatus(manufacturer) {
 }
 
 async function deleteManufacturer(manufacturer) {
-    const confirmed = window.confirm(
-        `Permanently delete "${manufacturer.name}"? This cannot be undone. The server may prevent deletion if it is in use.`
-    );
+    const confirmed = await window.showConfirmDialog({
+        title: "Delete manufacturer permanently?",
+        message: `“${manufacturer.name}” will be permanently removed. This cannot be undone, and deletion may be blocked if medicines are linked to this manufacturer.`,
+        confirmText: "Delete permanently"
+    });
 
     if (!confirmed) {
         return;

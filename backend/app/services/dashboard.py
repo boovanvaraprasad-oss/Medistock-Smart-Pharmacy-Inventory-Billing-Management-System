@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta, timezone
+from collections import defaultdict
 
 from app.core.database import db
 
@@ -83,24 +84,44 @@ async def get_dashboard_summary():
         }
     )
 
-    # These are all-time totals because bills do not currently store
-    # a completion timestamp.
+    # Track completed sales by year for the all-time dashboard graph. Older
+    # bills predate completed_at, so their ObjectId creation time is used.
     completed_bills = db.bills.find(
         {
             "status": "completed",
             "is_active": {"$ne": False},
         },
-        {"total_amount": 1},
+        {"total_amount": 1, "completed_at": 1},
     )
 
     completed_bill_count = 0
     completed_sales_total = 0.0
+    sales_by_year = defaultdict(float)
+    sales_by_hour_today = defaultdict(float)
+    sales_by_day_current_month = defaultdict(float)
 
     async for bill in completed_bills:
         completed_bill_count += 1
-        completed_sales_total += float(
-            bill.get("total_amount", 0)
-        )
+        amount = float(bill.get("total_amount", 0))
+        completed_sales_total += amount
+
+        sale_date = bill.get("completed_at")
+        if not isinstance(sale_date, datetime):
+            sale_date = bill["_id"].generation_time
+        elif sale_date.tzinfo is None:
+            sale_date = sale_date.replace(tzinfo=timezone.utc)
+
+        local_sale_date = sale_date.astimezone(INDIA_TIMEZONE)
+        sales_by_year[local_sale_date.year] += amount
+
+        if local_sale_date.date() == now.date():
+            sales_by_hour_today[local_sale_date.hour] += amount
+
+        if (
+            local_sale_date.year == now.year
+            and local_sale_date.month == now.month
+        ):
+            sales_by_day_current_month[local_sale_date.day] += amount
 
     open_purchase_order_count = await db.purchase_orders.count_documents(
         {
@@ -131,6 +152,43 @@ async def get_dashboard_summary():
                 completed_sales_total,
                 2,
             ),
+            "yearly_totals": [
+                {
+                    "year": year,
+                    "total_amount": round(amount, 2),
+                }
+                for year, amount in sorted(sales_by_year.items())
+            ],
+            "current_date": now.date().isoformat(),
+            "daily_sales_total": round(
+                sum(sales_by_hour_today.values()),
+                2,
+            ),
+            "daily_hourly_totals": [
+                {
+                    "hour": hour,
+                    "total_amount": round(
+                        sales_by_hour_today[hour],
+                        2,
+                    ),
+                }
+                for hour in range(now.hour + 1)
+            ],
+            "current_month": now.strftime("%B %Y"),
+            "monthly_sales_total": round(
+                sum(sales_by_day_current_month.values()),
+                2,
+            ),
+            "monthly_daily_totals": [
+                {
+                    "day": day,
+                    "total_amount": round(
+                        sales_by_day_current_month[day],
+                        2,
+                    ),
+                }
+                for day in range(1, now.day + 1)
+            ],
         },
         "purchasing": {
             "open_purchase_order_count": open_purchase_order_count,

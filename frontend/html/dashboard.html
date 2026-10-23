@@ -3,122 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock Dashboard</title>
+    <title>MediStock Owner Dashboard</title>
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-    <main class="dashboard">
-        <header class="dashboard-header">
-            <div>
-                <p class="eyebrow">Pharmacy management</p>
-                <h1>MediStock</h1>
-                <p class="subtitle">Inventory and business overview</p>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <a class="brand" href="dashboard.html" aria-label="MediStock overview">
+                <span class="brand-mark" aria-hidden="true">✚</span>
+                <span>
+                    <strong>MediStock</strong>
+                    <small>Pharmacy inventory</small>
+                </span>
+            </a>
+
+            <nav class="side-nav" aria-label="Main navigation">
+                <a class="nav-link active" href="dashboard.html"><span>⌂</span>Overview</a>
+                <a id="staffUsersLink" class="nav-link" href="users.html" hidden><span>♙</span>Staff &amp; Users</a>
+                <a class="nav-link" href="medicines.html"><span>✚</span>Medicines</a>
+                <a class="nav-link" href="categories.html"><span>▦</span>Categories</a>
+                <a class="nav-link" href="manufacturers.html"><span>▤</span>Manufacturers</a>
+                <a class="nav-link" href="units.html"><span>◫</span>Units</a>
+                <a class="nav-link" href="suppliers.html"><span>♧</span>Suppliers</a>
+                <a class="nav-link" href="purchase_orders.html"><span>▣</span>Purchase Orders</a>
+                <a id="billingLink" class="nav-link" href="billing.html" hidden><span>▤</span>Billing</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="owner-avatar" aria-hidden="true">O</span>
+                <span class="owner-label">
+                    <strong>Owner</strong>
+                    <small>Dashboard</small>
+                </span>
+                <button id="logoutButton" class="logout-button" type="button" title="Log out" aria-label="Log out">↪</button>
             </div>
+        </aside>
 
-            <div class="header-actions">
-                <a id="staffUsersLink" class="button button-secondary" href="users.html" hidden>
-                    Staff &amp; users
-                </a>
-                <a class="button button-secondary" href="categories.html">
-                    Categories
-                </a>
-                <a class="button button-secondary" href="manufacturers.html">
-                    Manufacturers
-                </a>
-                <a class="button button-secondary" href="units.html">
-                    Units
-                </a>
-                <a class="button button-secondary" href="suppliers.html">
-                    Suppliers
-                </a>   
-                <a class="button button-secondary" href="purchase_orders.html">
-                    Purchase Orders
-                </a> 
-                <a id="billingLink" class="button button-secondary" href="billing.html" hidden>
-                    Billing
-                </a>
-                <button id="refreshButton" class="button button-secondary" type="button">
-                    Refresh
-                </button>
-                <button id="logoutButton" class="button button-primary" type="button">
-                    Log out
-                </button>
-            </div>
-        </header>
-
-        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
-        <p id="loadingMessage" class="message" role="status">Loading dashboard…</p>
-
-        <section id="dashboardContent" hidden>
-            <div class="section-heading">
+        <main class="main-area">
+            <header class="topbar">
                 <div>
-                    <h2>Overview</h2>
-                    <p>Current stock and all-time totals</p>
+                    <p class="topbar-title">Overview</p>
                 </div>
-                <p id="updatedAt" class="updated-at"></p>
-            </div>
+                <div class="topbar-actions">
+                    <span id="todayDate" class="today-date"></span>
+                    <span id="updatedAt" class="updated-at"></span>
+                    <button id="refreshButton" class="refresh-button" type="button">
+                        <span aria-hidden="true">↻</span> Refresh
+                    </button>
+                </div>
+            </header>
 
-            <div class="card-grid">
-                <a
-                    href="medicines.html"
-                    class="metric-card"
-                    style="display: block; color: inherit; text-decoration: none;"
-                    aria-label="View medicine list"
-                >
-                    <p class="metric-label">Active medicines</p>
-                    <p id="activeMedicineCount" class="metric-value">—</p>
-                    <span style="color: #147a61; font-size: 0.9rem;">
-                        View medicine list →
-                    </span>
-                </a>
+            <section class="page-content">
+                <p id="loadingMessage" class="message" role="status">Loading dashboard…</p>
+                <p id="errorMessage" class="message message-error" role="alert" hidden></p>
 
-                <article class="metric-card metric-card-warning">
-                    <p class="metric-label">Low stock</p>
-                    <p id="lowStockCount" class="metric-value">—</p>
-                </article>
+                <section id="dashboardContent" hidden>
+                    <div class="overview-layout">
+                      <div class="metric-grid">
+                        <a href="medicines.html" class="metric-card metric-card-green">
+                            <span class="metric-icon" aria-hidden="true">✚</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Active medicines</span>
+                                <strong id="activeMedicineCount" class="metric-value">—</strong>
+                            </span>
+                            <span class="metric-arrow" aria-hidden="true">›</span>
+                        </a>
 
-                <article class="metric-card metric-card-danger">
-                    <p class="metric-label">Out of stock</p>
-                    <p id="outOfStockCount" class="metric-value">—</p>
-                </article>
+                        <article class="metric-card metric-card-warning">
+                            <span class="metric-icon" aria-hidden="true">!</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Low stock</span>
+                                <strong id="lowStockCount" class="metric-value">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card">
-                    <p class="metric-label">Units in batches</p>
-                    <p id="totalStockUnits" class="metric-value">—</p>
-                </article>
+                        <article class="metric-card metric-card-danger">
+                            <span class="metric-icon" aria-hidden="true">⊘</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Out of stock</span>
+                                <strong id="outOfStockCount" class="metric-value">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card">
-                    <p class="metric-label">Inventory purchase value</p>
-                    <p id="inventoryValue" class="metric-value metric-value-small">—</p>
-                </article>
+                        <article class="metric-card metric-card-green">
+                            <span class="metric-icon" aria-hidden="true">▦</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Units in batches</span>
+                                <strong id="totalStockUnits" class="metric-value">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card metric-card-danger">
-                    <p class="metric-label">Expired batches with stock</p>
-                    <p id="expiredBatchCount" class="metric-value">—</p>
-                </article>
+                        <article class="metric-card">
+                            <span class="metric-icon" aria-hidden="true">₹</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Inventory purchase value</span>
+                                <strong id="inventoryValue" class="metric-value metric-value-small">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card metric-card-warning">
-                    <p class="metric-label">Expiring within 30 days</p>
-                    <p id="expiringBatchCount" class="metric-value">—</p>
-                </article>
+                        <article class="metric-card metric-card-danger">
+                            <span class="metric-icon" aria-hidden="true">!</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Expired batches with stock</span>
+                                <strong id="expiredBatchCount" class="metric-value">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card">
-                    <p class="metric-label">Completed bills, all time</p>
-                    <p id="completedBillCount" class="metric-value">—</p>
-                </article>
+                        <article class="metric-card metric-card-warning">
+                            <span class="metric-icon" aria-hidden="true">◷</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Expiring within 30 days</span>
+                                <strong id="expiringBatchCount" class="metric-value">—</strong>
+                            </span>
+                        </article>
 
-                <article class="metric-card">
-                    <p class="metric-label">Sales total, all time</p>
-                    <p id="completedSalesTotal" class="metric-value metric-value-small">—</p>
-                </article>
+                        <a href="purchase_orders.html" class="metric-card">
+                            <span class="metric-icon" aria-hidden="true">▣</span>
+                            <span class="metric-copy">
+                                <span class="metric-label">Open purchase orders</span>
+                                <strong id="openPurchaseOrderCount" class="metric-value">—</strong>
+                            </span>
+                            <span class="metric-arrow" aria-hidden="true">›</span>
+                        </a>
+                      </div>
 
-                <article class="metric-card">
-                    <p class="metric-label">Open purchase orders</p>
-                    <p id="openPurchaseOrderCount" class="metric-value">—</p>
-                </article>
-            </div>
-        </section>
-    </main>
+                      <section class="content-panel inventory-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <p class="eyebrow">Stock overview</p>
+                                    <h2>Inventory health</h2>
+                                </div>
+                            </div>
+
+                            <div class="inventory-health">
+                                <div id="stockDonut" class="stock-donut" role="img" aria-label="Inventory status chart">
+                                    <div class="donut-center">
+                                        <strong id="donutTotal">—</strong>
+                                        <span>Active<br>medicines</span>
+                                    </div>
+                                </div>
+
+                                <div class="stock-legend">
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-healthy"></span>
+                                        <span>Healthy stock</span>
+                                        <strong id="healthyStockCount">—</strong>
+                                    </div>
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-low"></span>
+                                        <span>Low stock</span>
+                                        <strong id="legendLowStock">—</strong>
+                                    </div>
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-empty"></span>
+                                        <span>Out of stock</span>
+                                        <strong id="legendOutOfStock">—</strong>
+                                    </div>
+                                </div>
+                            </div>
+                      </section>
+                    </div>
+
+                    <section class="content-panel sales-panel" aria-labelledby="salesChartTitle">
+                        <div class="sales-panel-top">
+                            <div>
+                                <p class="eyebrow">Sales performance</p>
+                                <h2 id="salesChartTitle">Sales overview</h2>
+                                <p id="salesRangeCaption" class="sales-chart-caption">Today by hour</p>
+                            </div>
+                            <div class="sales-panel-controls">
+                                <div class="cir-tabs" role="radiogroup" aria-label="Sales graph range">
+                                    <input class="cir-tabs__r" type="radio" name="sales-range" id="cir-r-day" value="day" checked>
+                                    <label class="cir-tabs__t" for="cir-r-day">Day</label>
+                                    <input class="cir-tabs__r" type="radio" name="sales-range" id="cir-r-month" value="month">
+                                    <label class="cir-tabs__t" for="cir-r-month">Month</label>
+                                    <input class="cir-tabs__r" type="radio" name="sales-range" id="cir-r-year" value="year">
+                                    <label class="cir-tabs__t" for="cir-r-year">Year</label>
+                                </div>
+                                <div class="sales-all-time">
+                                    <span>All-time sales</span>
+                                    <strong id="salesGraphTotal">₹—</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="salesChart" class="sales-chart" role="img" aria-label="Today's sales by hour"></div>
+                        <p id="salesChartEmpty" class="chart-empty" hidden>No completed sales to graph yet.</p>
+                    </section>
+
+                    <div class="bottom-grid">
+                        <section class="content-panel attention-panel">
+                            <div class="panel-heading">
+                                <div>
+                                    <p class="eyebrow">Action needed</p>
+                                    <h2>Stock alerts</h2>
+                                </div>
+                            </div>
+
+                            <a class="alert-row alert-row-danger" href="medicines.html">
+                                <span class="alert-symbol">!</span>
+                                <span>
+                                    <strong>Expired batches</strong>
+                                    <small>Batches with remaining stock</small>
+                                </span>
+                                <strong id="alertExpiredCount">—</strong>
+                            </a>
+
+                            <a class="alert-row alert-row-warning" href="medicines.html">
+                                <span class="alert-symbol">◷</span>
+                                <span>
+                                    <strong>Expiring soon</strong>
+                                    <small>Expiry date is within 30 days</small>
+                                </span>
+                                <strong id="alertExpiringCount">—</strong>
+                            </a>
+
+                            <a class="alert-row alert-row-neutral" href="purchase_orders.html">
+                                <span class="alert-symbol">▣</span>
+                                <span>
+                                    <strong>Open purchase orders</strong>
+                                    <small>Draft or ordered purchases</small>
+                                </span>
+                                <strong id="alertOrdersCount">—</strong>
+                            </a>
+                        </section>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
 
     <script src="js/api/client.js"></script>
     <script src="js/dashboard.js"></script>

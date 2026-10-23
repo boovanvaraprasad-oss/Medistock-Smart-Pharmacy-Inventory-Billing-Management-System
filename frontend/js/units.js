@@ -140,9 +140,11 @@ function resetForm() {
 
 async function toggleStatus(unit) {
     const activating = !unit.is_active;
-    const action = activating ? "activate" : "deactivate";
 
-    if (!window.confirm(`Are you sure you want to ${action} "${unit.name}"?`)) {
+    if (!activating && !(await window.showConfirmDialog({
+        title: "Deactivate unit?",
+        message: `“${unit.name}” will no longer be available for new selections. Existing records will be kept, and you can reactivate it later.`
+    }))) {
         return;
     }
 
@@ -167,9 +169,11 @@ async function toggleStatus(unit) {
 }
 
 async function deleteUnit(unit) {
-    const confirmed = window.confirm(
-        `Permanently delete "${unit.name}"? This cannot be undone. The server may prevent deletion if it is in use.`
-    );
+    const confirmed = await window.showConfirmDialog({
+        title: "Delete unit permanently?",
+        message: `“${unit.name}” will be permanently removed. This cannot be undone, and deletion may be blocked if the unit is still in use.`,
+        confirmText: "Delete permanently"
+    });
 
     if (!confirmed) {
         return;

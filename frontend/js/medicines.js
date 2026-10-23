@@ -230,7 +230,10 @@ function stopEditingMedicine() {
 async function toggleMedicineStatus(medicine) {
     const action = medicine.is_active ? "deactivate" : "activate";
 
-    if (!window.confirm(`Are you sure you want to ${action} ${medicine.name}?`)) {
+    if (medicine.is_active && !(await window.showConfirmDialog({
+        title: "Deactivate medicine?",
+        message: `“${medicine.name}” will no longer be available for new sales. Its stock and history will be kept, and you can reactivate it later.`
+    }))) {
         return;
     }
 

@@ -132,11 +132,18 @@ function renderUsers() {
             const statusButton = makeButton(
                 user.is_active ? "Deactivate" : "Activate",
                 "button button-secondary button-small",
-                () => updateUser(
-                    user,
-                    { is_active: !user.is_active },
-                    user.is_active ? "Staff account deactivated." : "Staff account activated."
-                )
+                async () => {
+                    if (user.is_active && !(await window.showConfirmDialog({
+                        title: "Deactivate staff account?",
+                        message: `The account for ${user.email} will no longer be able to sign in. Its records will be kept, and you can reactivate it later.`
+                    }))) return;
+
+                    await updateUser(
+                        user,
+                        { is_active: !user.is_active },
+                        user.is_active ? "Staff account deactivated." : "Staff account activated."
+                    );
+                }
             );
             if (user.id === currentUser.id) {
                 statusButton.disabled = true;
@@ -155,9 +162,11 @@ function renderUsers() {
                 "Delete permanently",
                 "button button-danger button-small",
                 async () => {
-                    const confirmed = window.confirm(
-                        `Permanently delete ${user.email}? This cannot be undone. Accounts referenced in audit history cannot be deleted.`
-                    );
+                    const confirmed = await window.showConfirmDialog({
+                        title: "Delete staff account permanently?",
+                        message: `The account for ${user.email} will be permanently removed. This cannot be undone, and accounts referenced in audit history cannot be deleted.`,
+                        confirmText: "Delete permanently"
+                    });
                     if (!confirmed) return;
 
                     showMessage(errorMessage, "");

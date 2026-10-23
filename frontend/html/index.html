@@ -4,42 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Login</title>
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
+    <main class="login-screen">
+        <svg class="medical-plus" viewBox="0 0 300 300" aria-hidden="true">
+            <path fill="#b8f7d2" fill-rule="evenodd" d="
+                M110 10 H190 Q210 10 210 30 V90 H270 Q290 90 290 110 V190
+                Q290 210 270 210 H210 V270 Q210 290 190 290 H110
+                Q90 290 90 270 V210 H30 Q10 210 10 190 V110
+                Q10 90 30 90 H90 V30 Q90 10 110 10 Z
+                M110 20 H190 Q200 20 200 30 V100 H270 Q280 100 280 110 V190
+                Q280 200 270 200 H200 V270 Q200 280 190 280 H110
+                Q100 280 100 270 V200 H30 Q20 200 20 190 V110
+                Q20 100 30 100 H100 V30 Q100 20 110 20 Z
+            "/>
+        </svg>
 
-    <main>
-        <h1>MediStock</h1>
-        <h2>Login</h2>
+        <div class="medical-art" aria-hidden="true">
+            <span class="art-capsule capsule-one"></span>
+            <span class="art-capsule capsule-two"></span>
+            <span class="art-tablet"></span>
+            <span class="art-bottle"><span>+</span></span>
+            <span class="art-syringe"></span>
+        </div>
 
-        <form id="loginForm">
-            <div>
-                <label for="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                >
-            </div>
+        <section class="login-card" aria-labelledby="loginTitle">
+            <a class="brand" href="/" aria-label="MediStock home">
+                <span>MediStock</span>
+                <span class="brand-plus" aria-hidden="true">+</span>
+            </a>
 
-            <div>
-                <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    required
-                >
-            </div>
+            <h1 id="loginTitle">Login</h1>
 
-            <button type="submit">Login</button>
-        </form>
+            <form id="loginForm">
+                <div class="form-field">
+                    <label class="visually-hidden" for="email">Email address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Email address"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
 
-        <button type="button" id="signupButton">Sign Up</button>
-        <button type="button" id="checkSessionButton" hidden>Check Session</button>
-        <button type="button" id="logoutButton" hidden>Log Out</button>
+                <div class="form-field">
+                    <label class="visually-hidden" for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
 
-        <div id="message"></div>
+                <div class="login-options">
+                    <a href="#" id="forgotPasswordLink">Forgot password?</a>
+                </div>
+
+                <button class="login-button" id="loginButton" type="submit">
+                    Login
+                </button>
+            </form>
+
+            <p id="message" class="message" role="status" aria-live="polite" hidden></p>
+        </section>
     </main>
 
     <script src="js/api/client.js"></script>
