@@ -12,12 +12,13 @@
     ];
 
     function addSidebar(currentUser) {
+        const overviewPage = getDashboardForRole(currentUser.role);
         const sidebar = document.createElement("aside");
         sidebar.className = "app-sidebar";
 
         const brand = document.createElement("a");
         brand.className = "app-sidebar-brand";
-        brand.href = "dashboard.html";
+        brand.href = overviewPage;
         brand.setAttribute("aria-label", "MediStock overview");
 
         const mark = document.createElement("span");
@@ -57,8 +58,9 @@
 
             const link = document.createElement("a");
             link.className = "app-side-link";
-            link.href = item.href;
-            if (currentFile === item.href) link.setAttribute("aria-current", "page");
+            const pageHref = item.label === "Overview" ? overviewPage : item.href;
+            link.href = pageHref;
+            if (currentFile === pageHref) link.setAttribute("aria-current", "page");
 
             const icon = document.createElement("span");
             icon.className = "app-side-icon";
@@ -100,6 +102,7 @@
             } catch {
                 localStorage.removeItem("access_token");
                 localStorage.removeItem("refresh_token");
+                sessionStorage.removeItem("medistock_current_user");
             } finally {
                 window.location.href = "/";
             }
@@ -122,15 +125,38 @@
 
     async function initializeAppShell() {
         if (!localStorage.getItem("access_token")) {
+            sessionStorage.removeItem("medistock_current_user");
             window.location.href = "/";
             return;
         }
 
+        const cachedUser = getCachedCurrentUser();
+        if (cachedUser) {
+            addSidebar(cachedUser);
+            window.addEventListener("medistock:current-user", (event) => {
+                const sidebar = document.querySelector(".app-sidebar");
+                if (!sidebar) return;
+                sidebar.remove();
+                document.body.classList.remove("has-app-sidebar");
+                addSidebar(event.detail);
+            });
+            return;
+        }
+
         try {
-            const currentUser = await apiRequest("/api/v1/auth/me");
+            const currentUser = await getCurrentUser();
             addSidebar(currentUser);
         } catch {
             window.location.href = "/";
+        }
+    }
+
+    function getCachedCurrentUser() {
+        try {
+            return JSON.parse(sessionStorage.getItem("medistock_current_user") || "null");
+        } catch {
+            sessionStorage.removeItem("medistock_current_user");
+            return null;
         }
     }
 

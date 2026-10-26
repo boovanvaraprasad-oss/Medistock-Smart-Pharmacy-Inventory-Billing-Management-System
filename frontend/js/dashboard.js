@@ -5,6 +5,8 @@ const refreshButton = document.getElementById("refreshButton");
 const logoutButton = document.getElementById("logoutButton");
 const staffUsersLink = document.getElementById("staffUsersLink");
 const billingLink = document.getElementById("billingLink");
+const dashboardUserInitial = document.getElementById("dashboardUserInitial");
+const dashboardUserRole = document.getElementById("dashboardUserRole");
 let salesSummary = null;
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
@@ -158,8 +160,31 @@ async function loadDashboard() {
     refreshButton.disabled = true;
 
     try {
-        const currentUser = await apiRequest("/api/v1/auth/me");
+        const currentUser = await getCurrentUser();
         const permissions = currentUser.permissions || [];
+
+        // Roles with a dedicated dashboard should not load this owner overview,
+        // even when they open its URL directly.
+        const roleDashboard = getDashboardForRole(currentUser.role);
+        if (roleDashboard !== "dashboard.html") {
+            window.location.replace(roleDashboard);
+            return;
+        }
+
+        const roleLabel = (currentUser.role || "staff")
+            .replaceAll("_", " ")
+            .replace(/\b\w/g, (letter) => letter.toUpperCase());
+        dashboardUserRole.textContent = roleLabel;
+        dashboardUserInitial.textContent = roleLabel.charAt(0).toUpperCase();
+
+        // Avoid showing a raw API 403 for roles whose dashboards have not
+        // been built yet. The summary endpoint is intentionally report-only.
+        if (!permissions.includes("report:view")) {
+            loadingMessage.hidden = true;
+            errorMessage.textContent = `The ${roleLabel} dashboard is not available yet. Please contact the owner.`;
+            errorMessage.hidden = false;
+            return;
+        }
 
         billingLink.hidden = !permissions.includes("bill:read");
         staffUsersLink.hidden = !(

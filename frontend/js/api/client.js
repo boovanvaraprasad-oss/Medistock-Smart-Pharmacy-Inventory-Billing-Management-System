@@ -1,4 +1,60 @@
 const API_BASE_URL = "http://127.0.0.1:8000";
+const CURRENT_USER_CACHE_KEY = "medistock_current_user";
+let currentUserRequest = null;
+
+function getDashboardForRole(role) {
+    const roleDashboards = {
+        pharmacist: "pharmacist_dashboard.html",
+        inventory_executive: "inventory_dashboard.html",
+        purchase_executive: "purchase_dashboard.html"
+    };
+
+    return roleDashboards[role] || "dashboard.html";
+}
+
+function getCachedCurrentUser() {
+    try {
+        return JSON.parse(sessionStorage.getItem(CURRENT_USER_CACHE_KEY) || "null");
+    } catch {
+        sessionStorage.removeItem(CURRENT_USER_CACHE_KEY);
+        return null;
+    }
+}
+
+function cacheCurrentUser(user) {
+    sessionStorage.setItem(CURRENT_USER_CACHE_KEY, JSON.stringify(user));
+    window.dispatchEvent(new CustomEvent("medistock:current-user", { detail: user }));
+}
+
+function clearCachedCurrentUser() {
+    sessionStorage.removeItem(CURRENT_USER_CACHE_KEY);
+}
+
+function getCurrentUser() {
+    const cachedUser = getCachedCurrentUser();
+    if (cachedUser) {
+        if (!currentUserRequest) {
+            requestCurrentUser().catch(() => {
+                if (!localStorage.getItem("access_token")) {
+                    clearCachedCurrentUser();
+                    window.location.href = "/";
+                }
+            });
+        }
+        return Promise.resolve(cachedUser);
+    }
+
+    return requestCurrentUser();
+}
+
+function requestCurrentUser() {
+    if (!currentUserRequest) {
+        currentUserRequest = apiRequest("/api/v1/auth/me").finally(() => {
+            currentUserRequest = null;
+        });
+    }
+    return currentUserRequest;
+}
 
 async function readResponse(response) {
     const data = await response.json().catch(() => ({}));
@@ -73,13 +129,18 @@ async function apiRequest(path, options = {}) {
         } catch (error) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
+            clearCachedCurrentUser();
             throw error;
         }
 
         response = await sendRequest(accessToken);
     }
 
-    return readResponse(response);
+    const data = await readResponse(response);
+    if (path === "/api/v1/auth/me") {
+        cacheCurrentUser(data);
+    }
+    return data;
 }
 
 async function logoutUser() {
@@ -89,6 +150,7 @@ async function logoutUser() {
     if (!accessToken || !refreshToken) {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        clearCachedCurrentUser();
         return;
     }
 
@@ -111,6 +173,7 @@ async function logoutUser() {
         } catch (error) {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
+            clearCachedCurrentUser();
             throw error;
         }
 
@@ -120,4 +183,5 @@ async function logoutUser() {
     await readResponse(response);
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    clearCachedCurrentUser();
 }

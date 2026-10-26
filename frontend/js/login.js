@@ -24,15 +24,25 @@ loginForm.addEventListener("submit", async (event) => {
 
     loginButton.disabled = true;
     loginButton.textContent = "Signing in…";
+    let tokensWereSaved = false;
 
     try {
         const data = await loginUser(email, password);
 
+        sessionStorage.removeItem("medistock_current_user");
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
+        tokensWereSaved = true;
 
-        window.location.href = "dashboard.html";
+        const currentUser = await getCurrentUser();
+        const destination = getDashboardForRole(currentUser.role);
+        window.location.href = destination;
     } catch (error) {
+        if (tokensWereSaved) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            sessionStorage.removeItem("medistock_current_user");
+        }
         showMessage(error.message || "Unable to sign in. Check your details and try again.");
     } finally {
         loginButton.disabled = false;

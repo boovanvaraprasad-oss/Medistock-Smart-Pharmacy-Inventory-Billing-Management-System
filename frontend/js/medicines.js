@@ -261,7 +261,7 @@ async function initializeMedicinePage() {
     }
 
     try {
-        const currentUser = await apiRequest("/api/v1/auth/me");
+        const currentUser = await getCurrentUser();
         const permissions = currentUser.permissions || [];
         canWriteMedicines = permissions.includes("medicine:write");
 

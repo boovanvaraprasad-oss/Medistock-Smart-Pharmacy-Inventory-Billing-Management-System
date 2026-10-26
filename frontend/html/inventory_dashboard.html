@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediStock Inventory Dashboard</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/inventory_dashboard.css">
+</head>
+<body>
+    <main class="page inventory-page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Stock control</p>
+                <h1>Inventory dashboard</h1>
+                <p class="subtitle">A focused view of medicine levels and batch expiry.</p>
+            </div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading inventory…</p>
+
+        <section id="dashboardContent" hidden>
+            <div class="inventory-welcome">
+                <div>
+                    <p class="eyebrow">Inventory workspace</p>
+                    <h2>Keep stock accurate and ready</h2>
+                    <p>Review medicine levels, act on low stock, and monitor batches nearing expiry.</p>
+                </div>
+                <a class="button button-primary" href="medicines.html">Manage medicines</a>
+            </div>
+
+            <div class="inventory-metrics">
+                <article class="inventory-metric inventory-metric-green">
+                    <span class="inventory-icon">✚</span>
+                    <span><span class="metric-label">Active medicines</span><strong id="activeMedicineCount">—</strong></span>
+                </article>
+                <article class="inventory-metric inventory-metric-warning">
+                    <span class="inventory-icon">!</span>
+                    <span><span class="metric-label">Low stock</span><strong id="lowStockCount">—</strong></span>
+                </article>
+                <article class="inventory-metric inventory-metric-danger">
+                    <span class="inventory-icon">⊘</span>
+                    <span><span class="metric-label">Out of stock</span><strong id="outOfStockCount">—</strong></span>
+                </article>
+                <article class="inventory-metric inventory-metric-green">
+                    <span class="inventory-icon">▦</span>
+                    <span><span class="metric-label">Units in batches</span><strong id="totalUnits">—</strong></span>
+                </article>
+                <article class="inventory-metric inventory-metric-danger">
+                    <span class="inventory-icon">!</span>
+                    <span><span class="metric-label">Expired batches with stock</span><strong id="expiredBatchCount">—</strong></span>
+                </article>
+                <article class="inventory-metric inventory-metric-warning">
+                    <span class="inventory-icon">◷</span>
+                    <span><span class="metric-label">Expiring in 30 days</span><strong id="expiringBatchCount">—</strong></span>
+                </article>
+            </div>
+
+            <div class="inventory-panels">
+                <section class="inventory-panel">
+                    <div class="inventory-panel-heading">
+                        <div>
+                            <p class="eyebrow">Reorder attention</p>
+                            <h2>Low-stock medicines</h2>
+                        </div>
+                        <a href="medicines.html">Open medicine list</a>
+                    </div>
+                    <div class="inventory-table-wrap">
+                        <table>
+                            <thead><tr><th>Medicine</th><th>SKU</th><th>Current stock</th><th>Reorder at</th></tr></thead>
+                            <tbody id="lowStockRows"></tbody>
+                        </table>
+                    </div>
+                    <p id="lowStockEmpty" class="inventory-empty" hidden>No medicines are currently at or below their reorder threshold.</p>
+                </section>
+
+                <section class="inventory-panel">
+                    <div class="inventory-panel-heading">
+                        <div>
+                            <p class="eyebrow">Expiry monitoring</p>
+                            <h2>Batch alerts</h2>
+                        </div>
+                        <a href="medicines.html">Review stock</a>
+                    </div>
+                    <div id="batchAlerts" class="batch-alert-list"></div>
+                    <p id="batchAlertsEmpty" class="inventory-empty" hidden>No expired or soon-to-expire batches with remaining stock.</p>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/inventory_dashboard.js"></script>
+</body>
+</html>

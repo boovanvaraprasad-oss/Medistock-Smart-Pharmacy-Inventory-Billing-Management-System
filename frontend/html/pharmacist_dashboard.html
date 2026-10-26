@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Pharmacist Dashboard</title>
+    <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/pharmacist_dashboard.css">
+</head>
+<body>
+    <main class="page pharmacist-page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Counter workspace</p>
+                <h1>Pharmacist dashboard</h1>
+                <p class="subtitle">Medicine availability and billing activity.</p>
+            </div>
+            <button id="refreshButton" class="button button-secondary" type="button">
+                Refresh
+            </button>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading your dashboard…</p>
+
+        <section id="dashboardContent" hidden>
+            <div class="welcome-row">
+                <div>
+                    <p class="eyebrow">Today</p>
+                    <h2>Welcome to your counter workspace</h2>
+                    <p class="subtitle">Check medicine availability and continue to billing.</p>
+                </div>
+                <a class="button button-primary" href="billing.html">Open billing</a>
+            </div>
+
+            <div class="pharmacist-metrics">
+                <article class="pharmacist-metric">
+                    <span class="metric-icon">✚</span>
+                    <span>
+                        <span class="metric-label">Active medicines</span>
+                        <strong id="activeMedicineCount">—</strong>
+                    </span>
+                </article>
+
+                <article class="pharmacist-metric">
+                    <span class="metric-icon">▤</span>
+                    <span>
+                        <span class="metric-label">Completed bills</span>
+                        <strong id="completedBillCount">—</strong>
+                    </span>
+                </article>
+
+                <article class="pharmacist-metric">
+                    <span class="metric-icon">◷</span>
+                    <span>
+                        <span class="metric-label">Draft bills</span>
+                        <strong id="draftBillCount">—</strong>
+                    </span>
+                </article>
+            </div>
+
+            <div class="pharmacist-panels">
+                <section class="panel">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Low-stock medicines</h2>
+                            <p class="helper-text">Medicines at or below their reorder threshold.</p>
+                        </div>
+                        <a href="medicines.html">Medicine list</a>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>SKU</th>
+                                    <th>Stock</th>
+                                    <th>Reorder at</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lowStockRows"></tbody>
+                        </table>
+                    </div>
+                    <p id="lowStockEmpty" class="empty-state" hidden>
+                        No low-stock medicines in the loaded list.
+                    </p>
+                </section>
+
+                <section class="panel">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Recent bills</h2>
+                            <p class="helper-text">Latest invoices and their status.</p>
+                        </div>
+                        <a href="billing.html">View billing</a>
+                    </div>
+
+                    <div id="recentBills" class="recent-bills"></div>
+                    <p id="recentBillsEmpty" class="empty-state" hidden>
+                        No bills have been created yet.
+                    </p>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/pharmacist_dashboard.js"></script>
+</body>
+</html>

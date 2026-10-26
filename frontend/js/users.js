@@ -226,7 +226,7 @@ async function initializeUsersPage() {
     }
 
     try {
-        currentUser = await apiRequest("/api/v1/auth/me");
+        currentUser = await getCurrentUser();
         permissions = currentUser.permissions || [];
 
         if (permissions.includes("user:write")) {

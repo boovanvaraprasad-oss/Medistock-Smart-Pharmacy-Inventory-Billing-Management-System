@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Purchasing Dashboard</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/purchase_dashboard.css">
+</head>
+<body>
+    <main class="page purchase-page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Procurement</p>
+                <h1>Purchasing dashboard</h1>
+                <p class="subtitle">Track supplier relationships and keep orders moving.</p>
+            </div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading purchasing overview…</p>
+
+        <section id="dashboardContent" hidden>
+            <div class="purchase-welcome">
+                <div>
+                    <p class="eyebrow">Purchasing workspace</p>
+                    <h2>Plan orders with confidence</h2>
+                    <p>Review drafts, follow ordered purchases, and keep supplier details close at hand.</p>
+                </div>
+                <div class="purchase-shortcuts">
+                    <a class="button button-primary" href="purchase_orders.html">Open purchase orders</a>
+                    <a class="button button-secondary" href="suppliers.html">Manage suppliers</a>
+                </div>
+            </div>
+
+            <div class="purchase-metrics">
+                <article class="purchase-metric purchase-metric-green">
+                    <span class="purchase-icon">▣</span>
+                    <span><span class="metric-label">Open purchase orders</span><strong id="openOrderCount">—</strong></span>
+                </article>
+                <article class="purchase-metric purchase-metric-warning">
+                    <span class="purchase-icon">◷</span>
+                    <span><span class="metric-label">Draft orders</span><strong id="draftOrderCount">—</strong></span>
+                </article>
+                <article class="purchase-metric">
+                    <span class="purchase-icon">➜</span>
+                    <span><span class="metric-label">Ordered, awaiting receipt</span><strong id="orderedCount">—</strong></span>
+                </article>
+                <article class="purchase-metric purchase-metric-green">
+                    <span class="purchase-icon">♧</span>
+                    <span><span class="metric-label">Active suppliers</span><strong id="supplierCount">—</strong></span>
+                </article>
+            </div>
+
+            <div class="purchase-panels">
+                <section class="purchase-panel">
+                    <div class="purchase-panel-heading">
+                        <div>
+                            <p class="eyebrow">Order pipeline</p>
+                            <h2>Purchase orders</h2>
+                        </div>
+                        <a href="purchase_orders.html">View all orders</a>
+                    </div>
+                    <div class="purchase-table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Supplier</th><th>Status</th><th>Items</th><th>Order value</th><th>Notes</th></tr>
+                            </thead>
+                            <tbody id="purchaseOrderRows"></tbody>
+                        </table>
+                    </div>
+                    <p id="ordersEmpty" class="purchase-empty" hidden>No purchase orders yet. Start one from Purchase Orders.</p>
+                </section>
+
+                <section class="purchase-panel supplier-panel">
+                    <div class="purchase-panel-heading">
+                        <div>
+                            <p class="eyebrow">Supplier directory</p>
+                            <h2>Active suppliers</h2>
+                        </div>
+                        <a href="suppliers.html">View suppliers</a>
+                    </div>
+                    <div id="supplierList" class="supplier-list"></div>
+                    <p id="suppliersEmpty" class="purchase-empty" hidden>No active suppliers are available.</p>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/purchase_dashboard.js"></script>
+</body>
+</html>

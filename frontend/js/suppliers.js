@@ -264,7 +264,7 @@ async function initializePage() {
     }
 
     try {
-        const currentUser = await apiRequest("/api/v1/auth/me");
+        const currentUser = await getCurrentUser();
         permissions = currentUser.permissions || [];
 
         if (permissions.includes("supplier:write")) {
