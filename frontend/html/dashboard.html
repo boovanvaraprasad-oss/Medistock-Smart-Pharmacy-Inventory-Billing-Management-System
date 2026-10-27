@@ -4,42 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Owner Dashboard</title>
+    <link rel="stylesheet" href="css/app-shell.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
 </head>
 <body>
-    <div class="app-shell">
-        <aside class="sidebar">
-            <a class="brand" href="dashboard.html" aria-label="MediStock overview">
-                <span class="brand-mark" aria-hidden="true">✚</span>
-                <span>
-                    <strong>MediStock</strong>
-                    <small>Pharmacy inventory</small>
-                </span>
-            </a>
-
-            <nav class="side-nav" aria-label="Main navigation">
-                <a class="nav-link active" href="dashboard.html"><span>⌂</span>Overview</a>
-                <a id="staffUsersLink" class="nav-link" href="users.html" hidden><span>♙</span>Staff &amp; Users</a>
-                <a class="nav-link" href="medicines.html"><span>✚</span>Medicines</a>
-                <a class="nav-link" href="categories.html"><span>▦</span>Categories</a>
-                <a class="nav-link" href="manufacturers.html"><span>▤</span>Manufacturers</a>
-                <a class="nav-link" href="units.html"><span>◫</span>Units</a>
-                <a class="nav-link" href="suppliers.html"><span>♧</span>Suppliers</a>
-                <a class="nav-link" href="purchase_orders.html"><span>▣</span>Purchase Orders</a>
-                <a id="billingLink" class="nav-link" href="billing.html" hidden><span>▤</span>Billing</a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <span id="dashboardUserInitial" class="owner-avatar" aria-hidden="true">U</span>
-                <span class="owner-label">
-                    <strong id="dashboardUserRole">Dashboard</strong>
-                    <small>Dashboard</small>
-                </span>
-                <button id="logoutButton" class="logout-button" type="button" title="Log out" aria-label="Log out">↪</button>
-            </div>
-        </aside>
-
-        <main class="main-area">
+    <main class="page main-area">
             <header class="topbar">
                 <div>
                     <p class="topbar-title">Overview</p>
@@ -199,6 +169,14 @@
                                 </div>
                             </div>
 
+                            <div class="record-search" role="search">
+                                <label for="ownerAlertSearch">Search dashboard alerts</label>
+                                <input id="ownerAlertSearch" type="search" data-record-search="#ownerAlerts" placeholder="Search stock alerts or purchase orders" autocomplete="off">
+                                <p class="record-search-empty" role="status" hidden>No matching dashboard alerts.</p>
+                            </div>
+
+                            <div id="ownerAlerts" class="owner-alert-records">
+
                             <a class="alert-row alert-row-danger" href="medicines.html">
                                 <span class="alert-symbol">!</span>
                                 <span>
@@ -225,14 +203,16 @@
                                 </span>
                                 <strong id="alertOrdersCount">—</strong>
                             </a>
+                            </div>
                         </section>
                     </div>
                 </section>
             </section>
-        </main>
-    </div>
+    </main>
 
     <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

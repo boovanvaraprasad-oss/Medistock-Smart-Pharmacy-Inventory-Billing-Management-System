@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Login History</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/login_history.css">
+    <link rel="stylesheet" href="css/record-search.css">
+</head>
+<body>
+    <main class="page login-history-page">
+        <header class="page-header">
+            <div><p class="eyebrow">Security &amp; access</p><h1>Login history</h1><p class="subtitle">Review successful and failed sign-in attempts.</p></div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+        <p id="statusMessage" class="message" role="status" hidden></p>
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <section class="history-panel">
+            <div class="history-toolbar">
+                <div><strong id="resultCount">—</strong><span> recorded attempts</span></div>
+                <label for="resultFilter">Show
+                    <select id="resultFilter">
+                        <option value="">All attempts</option>
+                        <option value="true">Successful</option>
+                        <option value="false">Failed</option>
+                    </select>
+                </label>
+            </div>
+            <div class="record-search" role="search">
+                <label for="loginSearch">Search login history on this page</label>
+                <input id="loginSearch" type="search" data-record-search="#loginRows" placeholder="Search account, role, date, result, IP, or browser" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching login records on this page.</p>
+            </div>
+            <div class="history-table-wrap">
+                <table>
+                    <thead><tr><th>Account</th><th>Role</th><th>Date</th><th>Time</th><th>Result</th><th>IP address</th><th>Browser</th></tr></thead>
+                    <tbody id="loginRows"></tbody>
+                </table>
+            </div>
+            <p id="emptyMessage" class="history-empty" hidden>No login attempts match this filter.</p>
+            <nav class="history-pagination" aria-label="Login history pages">
+                <button id="previousPage" class="button button-secondary" type="button" disabled>Previous</button>
+                <span id="pageLabel">Page 1</span>
+                <button id="nextPage" class="button button-secondary" type="button" disabled>Next</button>
+            </nav>
+        </section>
+        <p class="history-note">Older attempts may not include role, IP address, or browser details because those fields were not recorded at the time.</p>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
+    <script src="js/login_history.js"></script>
+</body>
+</html>

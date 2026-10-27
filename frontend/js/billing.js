@@ -28,6 +28,8 @@ const billSubtotal = document.getElementById("billSubtotal");
 const billTax = document.getElementById("billTax");
 const billTotal = document.getElementById("billTotal");
 const billCompletionActions = document.getElementById("billCompletionActions");
+const billApprovalMessage = document.getElementById("billApprovalMessage");
+const billCompletionMessage = document.getElementById("billCompletionMessage");
 const completeBillButton = document.getElementById("completeBillButton");
 const batchAllocationsSection = document.getElementById("batchAllocationsSection");
 const batchAllocationRows = document.getElementById("batchAllocationRows");
@@ -140,6 +142,10 @@ async function loadBills() {
 
 async function openBill(billId, scroll = true) {
     showMessage(errorMessage, "");
+    if (selectedBill?.id !== billId) {
+        showMessage(billCompletionMessage, "");
+        billCompletionMessage.className = "message";
+    }
 
     try {
         selectedBill = await apiRequest(
@@ -175,11 +181,14 @@ function renderBillDetails() {
 
     const canModify = permissions.includes("bill:create") &&
         selectedBill.status === "draft";
+    const canComplete = permissions.includes("bill:complete") &&
+        selectedBill.status === "draft";
     const canReturn = permissions.includes("bill:create") &&
         selectedBill.status === "completed";
 
     addBillItemSection.hidden = !canModify;
-    billCompletionActions.hidden = !canModify;
+    billCompletionActions.hidden = !canComplete;
+    billApprovalMessage.hidden = selectedBill.status !== "draft" || canComplete;
     itemActionsHeading.hidden = !canModify;
     batchReturnActionsHeading.hidden = !canReturn;
 
@@ -208,12 +217,12 @@ function renderBillDetails() {
                 actions.appendChild(makeButton(
                     "Change quantity",
                     "button button-secondary button-small",
-                    () => changeItemQuantity(item)
+                    () => changeItemQuantity(item, actionsCell)
                 ));
                 actions.appendChild(makeButton(
                     "Remove",
                     "button button-secondary button-small",
-                    () => removeBillItem(item)
+                    () => removeBillItem(item, actionsCell)
                 ));
 
                 actionsCell.appendChild(actions);
@@ -360,48 +369,77 @@ async function returnBatchStock(allocation, quantity, reason, submitButton) {
     }
 }
 
-async function changeItemQuantity(item) {
-    const answer = window.prompt(
-        `Enter the new quantity for ${item.medicine_name}:`,
-        String(item.quantity)
+function changeItemQuantity(item, actionsCell) {
+    const editor = document.createElement("form");
+    editor.className = "item-quantity-editor";
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "1";
+    input.step = "1";
+    input.required = true;
+    input.value = String(item.quantity);
+    input.setAttribute("aria-label", `New quantity for ${item.medicine_name}`);
+
+    const saveButton = document.createElement("button");
+    saveButton.type = "submit";
+    saveButton.className = "button button-primary button-small";
+    saveButton.textContent = "Save";
+
+    const cancelButton = makeButton(
+        "Cancel",
+        "button button-secondary button-small",
+        () => renderBillDetails()
     );
 
-    if (answer === null) {
-        return;
-    }
+    editor.append(input, saveButton, cancelButton);
+    actionsCell.replaceChildren(editor);
+    input.focus();
+    input.select();
 
-    const quantity = Number(answer);
-    if (!Number.isInteger(quantity) || quantity <= 0) {
-        showMessage(errorMessage, "Enter a whole number greater than zero.");
-        return;
-    }
+    editor.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const quantity = Number(input.value);
+        if (!Number.isInteger(quantity) || quantity <= 0) {
+            showMessage(errorMessage, "Enter a whole number greater than zero.");
+            input.focus();
+            return;
+        }
 
-    showMessage(errorMessage, "");
+        saveButton.disabled = true;
+        showMessage(errorMessage, "");
+        try {
+            await apiRequest(
+                `/api/v1/bills/items/${encodeURIComponent(item.id)}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ quantity })
+                }
+            );
 
-    try {
-        await apiRequest(
-            `/api/v1/bills/items/${encodeURIComponent(item.id)}`,
-            {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ quantity })
-            }
-        );
-
-        showMessage(successMessage, "Bill item quantity updated.");
-        await openBill(selectedBill.id, false);
-        await loadBills();
-    } catch (error) {
-        showMessage(errorMessage, error.message);
-    }
+            showMessage(successMessage, "Bill item quantity updated.");
+            await openBill(selectedBill.id, false);
+            await loadBills();
+        } catch (error) {
+            showMessage(errorMessage, error.message);
+            saveButton.disabled = false;
+        }
+    });
 }
 
-async function removeBillItem(item) {
-    if (!window.confirm(`Remove ${item.medicine_name} from this draft bill?`)) {
+async function removeBillItem(item, button) {
+    const confirmed = await window.showConfirmDialog({
+        title: "Remove medicine from draft?",
+        message: `Remove ${item.medicine_name} from this draft bill?`,
+        confirmText: "Remove item"
+    });
+    if (!confirmed) {
         return;
     }
 
     showMessage(errorMessage, "");
+    button.disabled = true;
 
     try {
         await apiRequest(
@@ -414,6 +452,7 @@ async function removeBillItem(item) {
         await loadBills();
     } catch (error) {
         showMessage(errorMessage, error.message);
+        button.disabled = false;
     }
 }
 
@@ -522,31 +561,39 @@ completeBillButton.addEventListener("click", async () => {
         return;
     }
 
-    const confirmed = window.confirm(
-        `Complete invoice ${selectedBill.invoice_number} for ${formatMoney(selectedBill.total_amount)}? This will deduct stock from the earliest-expiring eligible batches.`
-    );
+    completeBillButton.disabled = true;
+    const confirmed = await window.showConfirmDialog({
+        title: "Complete bill?",
+        message: `Complete invoice ${selectedBill.invoice_number}? Stock will be deducted.`,
+        confirmText: "Complete bill",
+        variant: "simple"
+    });
 
     if (!confirmed) {
+        completeBillButton.disabled = false;
         return;
     }
 
     showMessage(errorMessage, "");
     showMessage(successMessage, "");
-    completeBillButton.disabled = true;
-
+    showMessage(billCompletionMessage, "");
+    billCompletionMessage.className = "message";
     try {
         await apiRequest(
             `/api/v1/bills/${encodeURIComponent(selectedBill.id)}/complete`,
             { method: "PATCH" }
         );
 
-        showMessage(
-            successMessage,
-            "Sale completed. Stock was deducted and the batch allocation was recorded."
-        );
+        const completionText =
+            "Sale completed. Stock was deducted and the batch allocation was recorded.";
+        billCompletionMessage.className = "message message-success";
+        showMessage(billCompletionMessage, completionText);
+        showMessage(successMessage, completionText);
         await loadBills();
     } catch (error) {
         showMessage(errorMessage, error.message);
+        billCompletionMessage.className = "message message-error";
+        showMessage(billCompletionMessage, error.message);
     } finally {
         completeBillButton.disabled = false;
     }
@@ -573,7 +620,7 @@ async function initializePage() {
     }
 
     try {
-        const currentUser = await getCurrentUser();
+        const currentUser = await requestCurrentUser();
         permissions = currentUser.permissions || [];
 
         if (!permissions.includes("bill:read")) {

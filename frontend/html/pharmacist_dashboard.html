@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/categories.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <link rel="stylesheet" href="css/pharmacist_dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
 </head>
 <body>
     <main class="page pharmacist-page">
@@ -70,6 +71,11 @@
                         <a href="medicines.html">Medicine list</a>
                     </div>
 
+                    <div class="record-search" role="search">
+                        <label for="pharmacistMedicineSearch">Search low-stock medicines</label>
+                        <input id="pharmacistMedicineSearch" type="search" data-record-search="#lowStockRows" placeholder="Search medicine or SKU" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching low-stock medicines.</p>
+                    </div>
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -97,6 +103,11 @@
                         <a href="billing.html">View billing</a>
                     </div>
 
+                    <div class="record-search" role="search">
+                        <label for="pharmacistBillSearch">Search recent bills</label>
+                        <input id="pharmacistBillSearch" type="search" data-record-search="#recentBills" placeholder="Search invoice, customer, or status" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching recent bills.</p>
+                    </div>
                     <div id="recentBills" class="recent-bills"></div>
                     <p id="recentBillsEmpty" class="empty-state" hidden>
                         No bills have been created yet.
@@ -108,6 +119,7 @@
 
     <script src="js/api/client.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/pharmacist_dashboard.js"></script>
 </body>
 </html>

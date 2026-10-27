@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Store Manager</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/store_manager_dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
+</head>
+<body>
+    <main class="page store-manager-page">
+        <header class="page-header">
+            <div><p class="eyebrow">Management overview</p><h1>Store Manager dashboard</h1><p class="subtitle">Monitor sales, inventory health, and purchasing activity.</p></div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading store overview…</p>
+        <section id="dashboardContent" hidden>
+            <div class="manager-metrics">
+                <article class="manager-metric"><span class="manager-metric-icon">✚</span><div><span>Active medicines</span><strong id="activeMedicines">—</strong></div><a href="medicines.html" aria-label="View medicines">›</a></article>
+                <article class="manager-metric manager-warning"><span class="manager-metric-icon">!</span><div><span>Low stock</span><strong id="lowStock">—</strong></div></article>
+                <article class="manager-metric manager-danger"><span class="manager-metric-icon">◉</span><div><span>Out of stock</span><strong id="outOfStock">—</strong></div></article>
+                <article class="manager-metric"><span class="manager-metric-icon">▦</span><div><span>Units in batches</span><strong id="stockUnits">—</strong></div></article>
+                <article class="manager-metric"><span class="manager-metric-icon">₹</span><div><span>Sales, all time</span><strong id="salesAllTime">—</strong></div></article>
+                <article class="manager-metric manager-warning"><span class="manager-metric-icon">▣</span><div><span>Open purchase orders</span><strong id="openOrders">—</strong></div><a href="purchase_orders.html" aria-label="View purchase orders">›</a></article>
+            </div>
+
+            <div class="manager-main-grid">
+                <section class="manager-panel sales-panel">
+                    <div class="manager-panel-heading"><div><p class="eyebrow">Sales performance</p><h2>Sales overview</h2><p id="salesCaption" class="manager-muted"></p></div>
+                        <div class="manager-range" role="group" aria-label="Sales time range">
+                            <button type="button" data-range="day" aria-pressed="true">Day</button><button type="button" data-range="month" aria-pressed="false">Month</button><button type="button" data-range="year" aria-pressed="false">Year</button>
+                        </div>
+                    </div>
+                    <div class="sales-total"><span>All-time sales</span><strong id="salesChartTotal">—</strong></div>
+                    <div id="salesChart" class="manager-sales-chart" role="img" aria-label="Sales chart"></div>
+                    <p id="salesChartEmpty" class="manager-empty" hidden>No sales recorded for this period.</p>
+                </section>
+                <section class="manager-panel alerts-panel">
+                    <div class="manager-panel-heading"><div><p class="eyebrow">Action needed</p><h2>Stock and order alerts</h2></div></div>
+                    <a class="manager-alert alert-danger" href="medicines.html"><span class="alert-symbol">!</span><span><strong>Out of stock</strong><small>Active medicines with no available stock</small></span><b id="alertOut">—</b></a>
+                    <a class="manager-alert alert-warning" href="medicines.html"><span class="alert-symbol">◷</span><span><strong>Expiring within 30 days</strong><small>Stock batches nearing expiry</small></span><b id="alertExpiring">—</b></a>
+                    <a class="manager-alert" href="purchase_orders.html"><span class="alert-symbol">▣</span><span><strong>Open purchase orders</strong><small>Draft or awaiting receipt</small></span><b id="alertOrders">—</b></a>
+                    <a class="manager-alert" href="medicines.html"><span class="alert-symbol">▦</span><span><strong>Expired batches with stock</strong><small>Review and remove from sale</small></span><b id="alertExpired">—</b></a>
+                </section>
+            </div>
+
+            <div class="manager-lower-grid">
+                <section class="manager-panel">
+                    <div class="manager-panel-heading"><div><p class="eyebrow">Sales activity</p><h2>Recent bills</h2></div><a href="billing.html">View billing</a></div>
+                    <div class="record-search" role="search"><label for="managerBillSearch">Search recent bills</label><input id="managerBillSearch" type="search" data-record-search="#recentBillRows" placeholder="Search invoice, customer, or status" autocomplete="off"><p class="record-search-empty" role="status" hidden>No matching recent bills.</p></div>
+                    <div class="manager-table-wrap"><table><thead><tr><th>Invoice</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead><tbody id="recentBillRows"></tbody></table></div>
+                    <p id="billsEmpty" class="manager-empty" hidden>No bills are available.</p>
+                </section>
+                <section class="manager-panel">
+                    <div class="manager-panel-heading"><div><p class="eyebrow">Purchasing</p><h2>Order pipeline</h2></div><a href="purchase_orders.html">View orders</a></div>
+                    <div class="manager-order-stats"><div><span>Draft</span><strong id="draftOrders">—</strong></div><div><span>Awaiting receipt</span><strong id="orderedOrders">—</strong></div><div><span>Active suppliers</span><strong id="activeSuppliers">—</strong></div></div>
+                    <p class="manager-note">Use the purchase order list to review supplier notes and follow each order through receipt.</p>
+                </section>
+            </div>
+        </section>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
+    <script src="js/store_manager_dashboard.js"></script>
+</body>
+</html>

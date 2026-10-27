@@ -477,6 +477,7 @@ async def get_bill_details(bill_id: str):
 
         items.append(
             {
+                "id": str(item["_id"]),
                 "medicine_id": str(item["medicine_id"]),
                 "medicine_name": (
                     medicine["name"] if medicine else "Unknown Medicine"

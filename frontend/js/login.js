@@ -1,6 +1,7 @@
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
+const togglePasswordButton = document.getElementById("togglePassword");
 const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const loginButton = document.getElementById("loginButton");
 const message = document.getElementById("message");
@@ -9,6 +10,16 @@ function showMessage(text) {
     message.textContent = text;
     message.hidden = !text;
 }
+
+togglePasswordButton.addEventListener("click", () => {
+    const shouldShowPassword = passwordInput.type === "password";
+    passwordInput.type = shouldShowPassword ? "text" : "password";
+    togglePasswordButton.setAttribute("aria-pressed", String(shouldShowPassword));
+    togglePasswordButton.setAttribute(
+        "aria-label",
+        shouldShowPassword ? "Hide password" : "Show password"
+    );
+});
 
 forgotPasswordLink.addEventListener("click", (event) => {
     event.preventDefault();

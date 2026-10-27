@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Units</title>
     <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/record-search.css">
     <link rel="stylesheet" href="css/confirm-dialog.css">
     <link rel="stylesheet" href="css/app-shell.css">
 </head>
@@ -49,6 +50,11 @@
                 </button>
             </div>
 
+            <div class="record-search" role="search">
+                <label for="unitSearch">Search units</label>
+                <input id="unitSearch" type="search" data-record-search="#unitRows" placeholder="Type a unit name or status" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching units.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -67,6 +73,7 @@
     <script src="js/api/client.js"></script>
     <script src="js/components/confirm-dialog.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/units.js"></script>
 </body>
 </html>

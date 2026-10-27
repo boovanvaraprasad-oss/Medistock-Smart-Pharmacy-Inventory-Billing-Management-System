@@ -63,8 +63,14 @@
         return dialog;
     }
 
-    window.showConfirmDialog = ({ title, message, confirmText = "Deactivate" }) => {
+    window.showConfirmDialog = ({
+        title,
+        message,
+        confirmText = "Deactivate",
+        variant = "warning"
+    }) => {
         getDialog();
+        dialog.classList.toggle("confirm-dialog-simple", variant === "simple");
         titleElement.textContent = title;
         messageElement.textContent = message;
         confirmButton.textContent = confirmText;

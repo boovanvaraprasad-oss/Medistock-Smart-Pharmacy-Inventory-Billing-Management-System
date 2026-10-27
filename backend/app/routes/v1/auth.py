@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth import (
@@ -14,12 +14,15 @@ from app.schemas.auth import (
 
 from app.services.auth import (
     authenticate_user,
+    get_login_history,
+    log_login_attempt,
     register_user,
     revoke_token,
     change_user_password,
 )
 
 from app.core.database import db
+from app.core.email_rules import MEDISTOCK_EMAIL_DOMAIN
 
 from app.core.security import (
     create_access_token,
@@ -31,9 +34,9 @@ from app.core.security import (
 from app.core.dependencies import (
     get_current_user,
     oauth2_scheme,
+    require_permission,
 )
-
-from app.core.permissions import ROLE_PERMISSIONS
+from app.core.permissions import LOGIN_LOG_READ, ROLE_PERMISSIONS
 
 
 router = APIRouter(
@@ -51,11 +54,29 @@ router = APIRouter(
     response_model=TokenResponse,
 )
 async def oauth2_login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
+    email = form_data.username.strip().lower()
+    ip_address = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    if email.rsplit("@", 1)[-1] != MEDISTOCK_EMAIL_DOMAIN:
+        await log_login_attempt(
+            email,
+            False,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
     user = await authenticate_user(
-        form_data.username,
+        email,
         form_data.password,
+        ip_address=ip_address,
+        user_agent=user_agent,
     )
 
     if not user:
@@ -77,6 +98,16 @@ async def oauth2_login(
         refresh_token=refresh_token,
         token_type="bearer",
     )
+
+
+@router.get("/login-logs")
+async def read_login_history(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=25, ge=1, le=100),
+    success: bool | None = None,
+    current_user=Depends(require_permission(LOGIN_LOG_READ)),
+):
+    return await get_login_history(page=page, limit=limit, success=success)
 
 
 # ---------------------------------------------------------

@@ -13,19 +13,27 @@ from app.core.security import (
 async def log_login_attempt(
     email: str,
     success: bool,
+    user: dict | None = None,
+    ip_address: str | None = None,
+    user_agent: str | None = None,
 ):
-    await db.login_attempts.insert_one(
-        {
-            "email": email,
-            "success": success,
-            "timestamp": datetime.now(timezone.utc),
-        }
-    )
+    attempt = {
+        "email": email[:254],
+        "user_id": str(user["_id"]) if user else None,
+        "role": user.get("role") if user else None,
+        "success": success,
+        "timestamp": datetime.now(timezone.utc),
+        "ip_address": ip_address,
+        "user_agent": user_agent[:500] if user_agent else None,
+    }
+    await db.login_attempts.insert_one(attempt)
 
 
 async def authenticate_user(
     email: str,
     password: str,
+    ip_address: str | None = None,
+    user_agent: str | None = None,
 ):
     user = await db.users.find_one(
         {"email": email}
@@ -35,6 +43,8 @@ async def authenticate_user(
         await log_login_attempt(
             email,
             False,
+            ip_address=ip_address,
+            user_agent=user_agent,
         )
         return None
 
@@ -45,6 +55,9 @@ async def authenticate_user(
         await log_login_attempt(
             email,
             False,
+            user=user,
+            ip_address=ip_address,
+            user_agent=user_agent,
         )
         return None
 
@@ -52,15 +65,50 @@ async def authenticate_user(
         await log_login_attempt(
             email,
             False,
+            user=user,
+            ip_address=ip_address,
+            user_agent=user_agent,
         )
         return None
 
     await log_login_attempt(
         email,
         True,
+        user=user,
+        ip_address=ip_address,
+        user_agent=user_agent,
     )
 
     return user
+
+
+async def get_login_history(
+    page: int = 1,
+    limit: int = 25,
+    success: bool | None = None,
+):
+    query = {"success": success} if success is not None else {}
+    total = await db.login_attempts.count_documents(query)
+    cursor = (
+        db.login_attempts.find(query)
+        .sort("timestamp", -1)
+        .skip((page - 1) * limit)
+        .limit(limit)
+    )
+    items = []
+    async for entry in cursor:
+        items.append(
+            {
+                "id": str(entry["_id"]),
+                "email": entry.get("email", ""),
+                "role": entry.get("role"),
+                "success": entry.get("success", False),
+                "timestamp": entry.get("timestamp"),
+                "ip_address": entry.get("ip_address"),
+                "user_agent": entry.get("user_agent"),
+            }
+        )
+    return {"items": items, "total": total, "page": page, "limit": limit}
 
 
 async def register_user(

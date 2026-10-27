@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, status
 from app.core.dependencies import require_permission
 from app.core.permissions import (
     BILL_CREATE,
+    BILL_COMPLETE,
     BILL_READ,
 )
 from app.schemas.bill import (
@@ -116,7 +117,7 @@ async def delete_existing_bill_item(
 async def complete_existing_bill(
     bill_id: str,
     current_user=Depends(
-        require_permission(BILL_CREATE)
+        require_permission(BILL_COMPLETE)
     ),
 ):
     return await complete_bill(

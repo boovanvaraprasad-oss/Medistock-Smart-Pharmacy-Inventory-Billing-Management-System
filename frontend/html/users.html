@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Staff &amp; Users</title>
     <link rel="stylesheet" href="css/users.css">
+    <link rel="stylesheet" href="css/record-search.css">
     <link rel="stylesheet" href="css/confirm-dialog.css">
     <link rel="stylesheet" href="css/app-shell.css">
 </head>
@@ -28,7 +29,7 @@
             <form id="createForm" class="create-form">
                 <label>
                     Email
-                    <input id="newEmail" type="email" autocomplete="off" maxlength="254" required>
+                    <input id="newEmail" type="email" autocomplete="off" maxlength="254" placeholder="name@medistock.com" required>
                 </label>
                 <label>
                     Temporary password
@@ -51,6 +52,11 @@
                 <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
             </div>
 
+            <div class="record-search" role="search">
+                <label for="userSearch">Search staff accounts</label>
+                <input id="userSearch" type="search" data-record-search="#userRows" placeholder="Search email, role, or status" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching staff accounts.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -70,6 +76,7 @@
     <script src="js/api/client.js"></script>
     <script src="js/components/confirm-dialog.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/users.js"></script>
 </body>
 </html>

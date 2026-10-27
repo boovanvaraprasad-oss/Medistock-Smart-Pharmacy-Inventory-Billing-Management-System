@@ -6,6 +6,7 @@
     <title>MediStock Purchase Orders</title>
     <link rel="stylesheet" href="css/categories.css">
     <link rel="stylesheet" href="css/purchase_orders.css">
+    <link rel="stylesheet" href="css/record-search.css">
     <link rel="stylesheet" href="css/app-shell.css">
 </head>
 <body>
@@ -50,6 +51,11 @@
                 </button>
             </div>
 
+            <div class="record-search" role="search">
+                <label for="orderSearch">Search purchase orders</label>
+                <input id="orderSearch" type="search" data-record-search="#orderRows" placeholder="Search supplier, status, or notes" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching purchase orders.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -107,6 +113,11 @@
 
             <h3>Order items</h3>
             <p id="itemsMessage" class="message">Select an order to view its items.</p>
+            <div class="record-search" role="search">
+                <label for="orderItemSearch">Search items on this order</label>
+                <input id="orderItemSearch" type="search" data-record-search="#itemRows" placeholder="Search medicine, batch, or expiry" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching items.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -127,6 +138,7 @@
 
     <script src="js/api/client.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/purchase_orders.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class BillItemDetails(BaseModel):
+    id: str
     medicine_id: str
     medicine_name: str
     quantity: int

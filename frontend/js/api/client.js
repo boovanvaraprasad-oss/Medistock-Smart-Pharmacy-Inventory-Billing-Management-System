@@ -6,7 +6,9 @@ function getDashboardForRole(role) {
     const roleDashboards = {
         pharmacist: "pharmacist_dashboard.html",
         inventory_executive: "inventory_dashboard.html",
-        purchase_executive: "purchase_dashboard.html"
+        purchase_executive: "purchase_dashboard.html",
+        store_manager: "store_manager_dashboard.html",
+        compliance_officer: "compliance_dashboard.html"
     };
 
     return roleDashboards[role] || "dashboard.html";

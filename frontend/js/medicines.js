@@ -20,8 +20,10 @@ const pageSize = 20;
 let currentPage = 1;
 let currentSearch = "";
 let canWriteMedicines = false;
+let canDeleteMedicines = false;
 let editingMedicineId = null;
 let referencesAvailable = true;
+let batchesByMedicine = new Map();
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -52,6 +54,22 @@ function displayMedicines(medicines) {
         addCell(row, medicine.sku || "—");
         addCell(row, medicine.dosage_form || "—");
         addCell(row, numberFormatter.format(medicine.stock ?? 0));
+        const batchCell = addCell(row, "");
+        const medicineBatches = batchesByMedicine.get(medicine.id) || [];
+        if (medicineBatches.length) {
+            const batchList = document.createElement("span");
+            batchList.className = "medicine-batch-list";
+            batchList.textContent = medicineBatches
+                .map((batch) => `${batch.batch_number || "Batch"} (${numberFormatter.format(batch.quantity ?? 0)})`)
+                .join(", ");
+            batchCell.appendChild(batchList);
+            batchCell.title = medicineBatches
+                .map((batch) => `${batch.batch_number || "Batch"}: ${numberFormatter.format(batch.quantity ?? 0)} units`)
+                .join(" · ");
+        } else {
+            batchCell.textContent = "No batches recorded";
+            batchCell.className = "medicine-batch-empty";
+        }
         addCell(row, currencyFormatter.format(medicine.price ?? 0));
         addCell(row, numberFormatter.format(medicine.reorder_threshold ?? 0));
         addCell(row, medicine.is_active ? "Active" : "Inactive");
@@ -80,6 +98,19 @@ function displayMedicines(medicines) {
             actionsCell.textContent = "—";
         }
 
+        if (canDeleteMedicines) {
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "button button-secondary medicine-delete-button";
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => deleteMedicine(medicine, deleteButton));
+            if (canWriteMedicines) {
+                actionsCell.querySelector(".row-actions")?.appendChild(deleteButton);
+            } else {
+                actionsCell.replaceChildren(deleteButton);
+            }
+        }
+
         medicineRows.appendChild(row);
     }
 }
@@ -101,7 +132,16 @@ async function loadMedicines() {
     }
 
     try {
-        const result = await apiRequest(`/api/v1/medicines?${parameters.toString()}`);
+        const [result, batches] = await Promise.all([
+            apiRequest(`/api/v1/medicines?${parameters.toString()}`),
+            apiRequest("/api/v1/stock-batches")
+        ]);
+        batchesByMedicine = batches.reduce((grouped, batch) => {
+            const medicineBatches = grouped.get(batch.medicine_id) || [];
+            medicineBatches.push(batch);
+            grouped.set(batch.medicine_id, medicineBatches);
+            return grouped;
+        }, new Map());
         displayMedicines(result.items);
 
         const totalPages = Math.max(1, Math.ceil(result.total / result.limit));
@@ -254,6 +294,32 @@ async function toggleMedicineStatus(medicine) {
     }
 }
 
+async function deleteMedicine(medicine, button) {
+    const confirmed = await window.showConfirmDialog({
+        title: "Delete medicine permanently?",
+        message: `Delete ${medicine.name}? Medicines with stock or business history cannot be deleted.`,
+        confirmText: "Delete medicine"
+    });
+
+    if (!confirmed) return;
+
+    button.disabled = true;
+    showMessage(errorMessage, "");
+    showMessage(successMessage, "");
+
+    try {
+        await apiRequest(`/api/v1/medicines/${encodeURIComponent(medicine.id)}`, {
+            method: "DELETE"
+        });
+        showMessage(successMessage, `${medicine.name} was permanently deleted.`);
+        currentPage = 1;
+        await loadMedicines();
+    } catch (error) {
+        showMessage(errorMessage, error.message);
+        button.disabled = false;
+    }
+}
+
 async function initializeMedicinePage() {
     if (!localStorage.getItem("access_token")) {
         window.location.href = "/";
@@ -264,6 +330,7 @@ async function initializeMedicinePage() {
         const currentUser = await getCurrentUser();
         const permissions = currentUser.permissions || [];
         canWriteMedicines = permissions.includes("medicine:write");
+        canDeleteMedicines = permissions.includes("master_data:delete");
 
         if (canWriteMedicines) {
             createMedicineSection.hidden = false;

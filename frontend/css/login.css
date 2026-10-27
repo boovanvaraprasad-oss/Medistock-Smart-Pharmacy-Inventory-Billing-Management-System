@@ -111,6 +111,59 @@ textarea {
     box-shadow: 0 0 0 3px rgba(22, 137, 87, 0.15);
 }
 
+.password-input-wrap {
+    position: relative;
+}
+
+.password-input-wrap input {
+    padding-right: 48px;
+}
+
+.password-visibility-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    padding: 0;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #537166;
+    cursor: pointer;
+}
+
+.password-visibility-toggle:hover {
+    background: #edf7f2;
+    color: #075c3e;
+}
+
+.password-visibility-toggle:focus-visible {
+    outline: 2px solid #168957;
+    outline-offset: 2px;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.eye-slash {
+    display: none;
+}
+
+.password-visibility-toggle[aria-pressed="true"] .eye-slash {
+    display: block;
+}
+
 .login-options {
     display: flex;
     align-items: center;

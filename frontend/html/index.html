@@ -44,7 +44,7 @@
                         type="email"
                         id="email"
                         name="email"
-                        placeholder="Email address"
+                        placeholder="name@medistock.com"
                         autocomplete="email"
                         required
                     >
@@ -52,14 +52,23 @@
 
                 <div class="form-field">
                     <label class="visually-hidden" for="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                        autocomplete="current-password"
-                        required
-                    >
+                    <div class="password-input-wrap">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button class="password-visibility-toggle" id="togglePassword" type="button" aria-label="Show password" aria-pressed="false">
+                            <svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path class="eye-slash" d="m4 4 16 16"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="login-options">

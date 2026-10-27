@@ -28,13 +28,20 @@
 }
 
 .item-form {
-    grid-template-columns: minmax(220px, 2fr) minmax(120px, 1fr) auto;
+    grid-template-columns: minmax(240px, 2fr) minmax(140px, 0.8fr) auto;
     align-items: end;
 }
 
-.item-form label {
+.billing-field {
     display: grid;
-    gap: 7px;
+    gap: 8px;
+    min-width: 0;
+}
+
+.item-form .form-actions {
+    grid-column: auto;
+    align-self: end;
+    margin: 0;
 }
 
 .section-heading {
@@ -81,6 +88,22 @@
     gap: 7px;
 }
 
+.item-quantity-editor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+}
+
+.item-quantity-editor input {
+    width: 100px;
+    min-height: 36px;
+    padding: 6px 9px;
+    border: 1px solid #cbd7d2;
+    border-radius: 7px;
+    font: inherit;
+}
+
 .bill-status {
     display: inline-block;
     padding: 5px 9px;
@@ -104,6 +127,10 @@
     }
 
     .billing-form .form-actions {
+        grid-column: auto;
+    }
+
+    .item-form .form-actions {
         grid-column: auto;
     }
 

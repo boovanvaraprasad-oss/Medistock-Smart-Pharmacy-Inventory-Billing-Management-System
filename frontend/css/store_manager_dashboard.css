@@ -1,0 +1,56 @@
+.store-manager-page { color: #17231f; }
+.store-manager-page .page-header { align-items: flex-start; }
+.manager-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; margin-bottom: 18px; }
+.manager-metric { display: flex; min-width: 0; min-height: 104px; align-items: center; gap: 13px; padding: 17px; border: 1px solid #deebe4; border-radius: 16px; background: linear-gradient(120deg,#e9faf3,#fff); box-shadow: 0 8px 22px rgb(21 62 46 / 5%); }
+.manager-metric > div { min-width: 0; flex: 1; }
+.manager-metric > div span,.sales-total span { display: block; color: #71827b; font-size: .9rem; }
+.manager-metric strong { display: block; margin-top: 3px; color: #103e2e; font-size: 1.65rem; line-height: 1.2; }
+.manager-metric a { color: #07815b; font-size: 1.7rem; text-decoration: none; }
+.manager-metric-icon { display: grid; width: 43px; height: 43px; flex: 0 0 43px; place-items: center; border-radius: 50%; background: #d5f6e8; color: #07815b; font-size: 1.15rem; font-weight: 800; }
+.manager-warning { border-color: #f0dfb4; background: #fffaf0; }
+.manager-warning .manager-metric-icon { background: #ffedbd; color: #9a6200; }
+.manager-danger { border-color: #f4d5d2; background: #fff5f4; }
+.manager-danger .manager-metric-icon { background: #ffe0de; color: #d83b36; }
+.manager-main-grid,.manager-lower-grid { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(300px,.8fr); gap: 18px; margin-bottom: 18px; align-items: start; }
+.manager-panel { min-width: 0; padding: 20px; border: 1px solid #dce8e2; border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgb(21 62 46 / 5%); }
+.manager-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+.manager-panel-heading h2 { margin: 0; color: #173c2f; font-size: 1.18rem; }
+.manager-panel-heading .eyebrow { margin: 0 0 5px; color: #087651; font-size: .73rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.manager-panel-heading a { color: #087651; font-size: .88rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.manager-muted { margin: 5px 0 0; color: #71827b; font-size: .88rem; }
+.manager-range { display: inline-flex; flex: 0 0 auto; gap: 3px; padding: 4px; border: 1px solid #e1e9e5; border-radius: 999px; background: #f8fbf9; }
+.manager-range button { min-width: 56px; padding: 7px 12px; border: 0; border-radius: 999px; background: transparent; color: #687971; cursor: pointer; font: inherit; font-size: .82rem; transition: background-color .2s ease,color .2s ease,box-shadow .2s ease; }
+.manager-range button[aria-pressed="true"] { background: #064d38; color: #fff; box-shadow: 0 5px 12px rgb(6 77 56 / 18%); }
+.sales-total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-top: 1px solid #edf2ef; }
+.sales-total strong { color: #12392c; font-size: 1.25rem; }
+.manager-sales-chart { display: grid; min-height: 200px; grid-template-columns: repeat(var(--manager-points, 12), minmax(10px,1fr)); align-items: stretch; gap: clamp(2px, .6vw, 9px); padding: 15px 4px 0; border-bottom: 1px solid #dfe9e3; background: repeating-linear-gradient(to bottom,transparent 0,transparent 48px,#edf3ef 49px,#edf3ef 50px); }
+.manager-bar-group { display: flex; min-width: 0; flex-direction: column; justify-content: flex-end; align-items: center; gap: 7px; }
+.manager-bar-track { display: flex; width: min(100%,30px); height: 160px; align-items: flex-end; justify-content: center; }
+.manager-bar { display: block; width: 100%; min-height: 2px; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg,#31b781,#07815b); transition: height .25s ease; }
+.manager-bar-group small { max-width: 100%; overflow: hidden; color: #71827b; font-size: .68rem; text-overflow: clip; }
+.manager-empty { padding: 22px 0; color: #71827b; text-align: center; }
+.manager-alert { display: flex; align-items: center; gap: 11px; padding: 13px 2px; border-top: 1px solid #e9efeb; color: inherit; text-decoration: none; }
+.manager-alert:first-of-type { border-top: 0; }
+.manager-alert > span:nth-child(2) { min-width: 0; flex: 1; }
+.manager-alert strong,.manager-alert small { display: block; }
+.manager-alert strong { color: #243a31; font-size: .9rem; }
+.manager-alert small { margin-top: 3px; color: #71827b; line-height: 1.35; }
+.manager-alert > b { color: #173c2f; font-size: 1.1rem; }
+.alert-symbol { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 11px; background: #edf5f1; color: #087651; font-weight: 800; }
+.alert-danger .alert-symbol { background: #fff0ef; color: #d83b36; }
+.alert-warning .alert-symbol { background: #fff5dc; color: #a96600; }
+.manager-table-wrap { overflow-x: auto; }
+.manager-panel table { width: 100%; border-collapse: collapse; text-align: left; }
+.manager-panel th,.manager-panel td { padding: 11px 9px; border-bottom: 1px solid #e8efeb; vertical-align: middle; }
+.manager-panel th { color: #61736b; font-size: .8rem; white-space: nowrap; }
+.manager-panel td { color: #263b33; font-size: .86rem; }
+.manager-bill-status { display: inline-block; padding: 4px 9px; border-radius: 99px; background: #f0f2f1; color: #58645e; font-size: .74rem; font-weight: 700; text-transform: capitalize; }
+.manager-bill-status[data-status="completed"] { background: #e3f5ec; color: #12664f; }
+.manager-bill-total { color: #173c2f!important; font-weight: 700; white-space: nowrap; }
+.manager-order-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.manager-order-stats div { padding: 14px 12px; border-radius: 12px; background: #f2f8f5; }
+.manager-order-stats span { display: block; color: #71827b; font-size: .78rem; }
+.manager-order-stats strong { display: block; margin-top: 6px; color: #12392c; font-size: 1.45rem; }
+.manager-note { margin: 16px 0 0; padding: 13px; border-radius: 11px; background: #f7faf8; color: #71827b; font-size: .86rem; line-height: 1.5; }
+@media (max-width: 1050px) { .manager-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } .manager-main-grid,.manager-lower-grid { grid-template-columns: 1fr; } }
+@media (max-width: 620px) { .manager-metrics { grid-template-columns: 1fr; } .manager-panel { padding: 15px; } .manager-panel-heading { flex-direction: column; } .manager-range { align-self: flex-start; } .manager-order-stats { grid-template-columns: 1fr; } .manager-sales-chart { min-height: 160px; } }

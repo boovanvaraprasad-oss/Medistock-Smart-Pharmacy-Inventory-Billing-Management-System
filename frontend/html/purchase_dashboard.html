@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/medicines.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <link rel="stylesheet" href="css/purchase_dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
 </head>
 <body>
     <main class="page purchase-page">
@@ -63,6 +64,11 @@
                         </div>
                         <a href="purchase_orders.html">View all orders</a>
                     </div>
+                    <div class="record-search" role="search">
+                        <label for="purchaseDashboardOrderSearch">Search purchase orders</label>
+                        <input id="purchaseDashboardOrderSearch" type="search" data-record-search="#purchaseOrderRows" placeholder="Search supplier, status, or notes" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching purchase orders.</p>
+                    </div>
                     <div class="purchase-table-wrap">
                         <table>
                             <thead>
@@ -82,6 +88,11 @@
                         </div>
                         <a href="suppliers.html">View suppliers</a>
                     </div>
+                    <div class="record-search" role="search">
+                        <label for="purchaseDashboardSupplierSearch">Supplier name</label>
+                        <input id="purchaseDashboardSupplierSearch" type="search" data-record-search="#supplierList" placeholder="Search suppliers" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching suppliers.</p>
+                    </div>
                     <div id="supplierList" class="supplier-list"></div>
                     <p id="suppliersEmpty" class="purchase-empty" hidden>No active suppliers are available.</p>
                 </section>
@@ -91,6 +102,7 @@
 
     <script src="js/api/client.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/purchase_dashboard.js"></script>
 </body>
 </html>

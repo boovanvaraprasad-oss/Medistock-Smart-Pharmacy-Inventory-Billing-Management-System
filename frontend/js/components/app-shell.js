@@ -3,12 +3,14 @@
         { label: "Overview", href: "dashboard.html", icon: "⌂", permissions: [] },
         { label: "Staff & Users", href: "users.html", icon: "♙", permissions: ["user:read", "user:write"] },
         { label: "Medicines", href: "medicines.html", icon: "✚", permissions: ["medicine:read", "medicine:write"] },
+        { label: "Stock Batches", href: "batches.html", icon: "▦", permissions: ["stock:read"] },
         { label: "Categories", href: "categories.html", icon: "▦", permissions: ["medicine:read", "medicine:write"] },
         { label: "Manufacturers", href: "manufacturers.html", icon: "▤", permissions: ["medicine:read", "medicine:write"] },
         { label: "Units", href: "units.html", icon: "◫", permissions: ["medicine:read", "medicine:write"] },
         { label: "Suppliers", href: "suppliers.html", icon: "♧", permissions: ["supplier:read", "supplier:write"] },
         { label: "Purchase Orders", href: "purchase_orders.html", icon: "▣", permissions: ["purchase:read", "purchase:write"] },
-        { label: "Billing", href: "billing.html", icon: "▤", permissions: ["bill:read", "bill:create"] }
+        { label: "Billing", href: "billing.html", icon: "▤", permissions: ["bill:read", "bill:create"] },
+        { label: "Login History", href: "login_history.html", icon: "◷", permissions: [], roles: ["owner", "store_manager"] }
     ];
 
     function addSidebar(currentUser) {
@@ -52,6 +54,9 @@
         const permissions = currentUser.permissions || [];
 
         for (const item of navigationItems) {
+            if (item.roles && !item.roles.includes(currentUser.role)) {
+                continue;
+            }
             if (item.permissions.length && !item.permissions.some((permission) => permissions.includes(permission))) {
                 continue;
             }
@@ -94,7 +99,14 @@
         logout.type = "button";
         logout.setAttribute("aria-label", "Log out");
         logout.title = "Log out";
-        logout.textContent = "↪";
+        logout.innerHTML = `
+            <span class="app-sidebar-logout-sign" aria-hidden="true">
+                <svg viewBox="0 0 512 512" focusable="false">
+                    <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+                </svg>
+            </span>
+            <span class="app-sidebar-logout-text">Logout</span>
+        `;
         logout.addEventListener("click", async () => {
             logout.disabled = true;
             try {
@@ -108,7 +120,8 @@
             }
         });
 
-        footer.append(avatar, userInfo, logout);
+        userInfo.append(logout);
+        footer.append(avatar, userInfo);
         menu.append(nav, footer);
         sidebar.append(brand, menu);
 

@@ -135,7 +135,7 @@
 
 .app-sidebar-footer {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     margin-top: auto;
     padding: 17px 5px 0;
@@ -164,19 +164,80 @@
 }
 
 .app-sidebar-logout {
-    width: 37px;
-    height: 37px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 42px;
+    height: 34px;
+    margin-top: 9px;
+    padding: 0;
+    overflow: hidden;
     border: 0;
-    border-radius: 9px;
-    background: transparent;
-    color: #d8eee5;
-    font-size: 1.25rem;
+    border-radius: 999px;
+    background: #c83c43;
+    color: #ffffff;
     cursor: pointer;
-    transition: background-color 150ms ease;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+    transition: width 220ms ease, border-radius 220ms ease, background-color 160ms ease,
+        transform 160ms ease;
 }
 
-.app-sidebar-logout:hover {
-    background: rgb(255 255 255 / 12%);
+.app-sidebar-logout-sign {
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    transition: width 220ms ease, padding-left 220ms ease;
+}
+
+.app-sidebar-logout-sign svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.app-sidebar-logout-text {
+    position: absolute;
+    right: 0;
+    width: 0;
+    overflow: hidden;
+    opacity: 0;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: width 220ms ease, opacity 160ms ease, padding-right 220ms ease;
+}
+
+.app-sidebar-logout:hover,
+.app-sidebar-logout:focus-visible {
+    width: 108px;
+    border-radius: 22px;
+    background: #b92f37;
+}
+
+.app-sidebar-logout:hover .app-sidebar-logout-sign,
+.app-sidebar-logout:focus-visible .app-sidebar-logout-sign {
+    width: 32%;
+    padding-left: 9px;
+}
+
+.app-sidebar-logout:hover .app-sidebar-logout-text,
+.app-sidebar-logout:focus-visible .app-sidebar-logout-text {
+    width: 68%;
+    padding-right: 9px;
+    opacity: 1;
+}
+
+.app-sidebar-logout:active {
+    transform: translateY(1px);
+}
+
+.app-sidebar-logout:disabled {
+    cursor: wait;
+    opacity: 0.65;
 }
 
 body.has-app-sidebar {
@@ -272,7 +333,9 @@ body.has-app-sidebar > .page {
 
 @media (prefers-reduced-motion: reduce) {
     .app-side-link,
-    .app-sidebar-logout {
+    .app-sidebar-logout,
+    .app-sidebar-logout-sign,
+    .app-sidebar-logout-text {
         transition: none;
     }
 }

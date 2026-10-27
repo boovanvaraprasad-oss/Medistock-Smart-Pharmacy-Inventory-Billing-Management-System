@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Suppliers</title>
     <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/record-search.css">
     <link rel="stylesheet" href="css/suppliers.css">
     <link rel="stylesheet" href="css/confirm-dialog.css">
     <link rel="stylesheet" href="css/app-shell.css">
@@ -72,6 +73,11 @@
                 </button>
             </div>
 
+            <div class="record-search" role="search">
+                <label for="supplierSearch">Supplier name</label>
+                <input id="supplierSearch" type="search" data-record-search="#supplierRows" placeholder="Search suppliers" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching suppliers.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -93,6 +99,7 @@
     <script src="js/api/client.js"></script>
     <script src="js/components/confirm-dialog.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/suppliers.js"></script>
 </body>
 </html>

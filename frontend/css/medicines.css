@@ -108,6 +108,29 @@ h2 {
     color: #17231f;
 }
 
+.medicine-batch-list {
+    display: inline-block;
+    max-width: 300px;
+    color: #315044;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+.medicine-batch-empty {
+    color: #73817b;
+    font-size: 0.9rem;
+}
+
+.medicine-delete-button {
+    border-color: #e7b9b5 !important;
+    color: #a8322b !important;
+}
+
+.medicine-delete-button:hover:not(:disabled) {
+    border-color: #cf827b !important;
+    background: #fff1f0 !important;
+}
+
 .checkbox-label {
     display: flex !important;
     min-height: 42px;

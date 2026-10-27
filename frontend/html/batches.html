@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Stock Batches</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/record-search.css">
+    <link rel="stylesheet" href="css/batches.css">
+</head>
+<body>
+    <main class="page batches-page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Inventory</p>
+                <h1>Stock batches</h1>
+                <p class="subtitle">Review batch quantities, purchase prices, and expiry dates.</p>
+            </div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+
+        <p id="statusMessage" class="status-message" role="status">Loading stock batches…</p>
+        <p id="errorMessage" class="error-message" role="alert" hidden></p>
+
+        <section id="batchContent" hidden>
+            <div class="batches-summary" aria-live="polite">
+                <strong id="batchCount">0</strong> batches
+                <span aria-hidden="true">·</span>
+                <strong id="unitCount">0</strong> units across active batches
+            </div>
+
+            <form id="searchForm" class="search-form">
+                <label for="searchInput">Medicine or batch</label>
+                <div class="search-controls">
+                    <input id="searchInput" type="search" placeholder="Search medicine or batch" autocomplete="off">
+                    <button class="button button-primary" type="submit">Search</button>
+                    <button id="clearButton" class="button button-secondary" type="button">Clear</button>
+                </div>
+            </form>
+
+            <p id="emptyMessage" class="status-message" role="status" hidden>No stock batches found.</p>
+            <div class="batches-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Batch</th>
+                            <th>Remaining quantity</th>
+                            <th>Purchase price</th>
+                            <th>Manufactured</th>
+                            <th>Expiry</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batchRows"></tbody>
+                </table>
+            </div>
+            <p id="noMatchesMessage" class="status-message" role="status" hidden>No batches match that search.</p>
+        </section>
+    </main>
+
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/batches.js"></script>
+</body>
+</html>

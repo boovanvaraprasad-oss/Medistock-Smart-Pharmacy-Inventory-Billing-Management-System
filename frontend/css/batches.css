@@ -1,0 +1,119 @@
+.batches-page .search-form {
+    margin: 0 0 20px;
+}
+
+.batches-page .search-form > label {
+    display: block;
+    margin-bottom: 8px;
+    color: #33453d;
+    font-weight: 700;
+}
+
+.batches-page .search-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.batches-page .search-controls input {
+    box-sizing: border-box;
+    width: min(550px, 100%);
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid #cbd7d2;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #17231f;
+    font: inherit;
+}
+
+.batches-page .search-controls input:focus-visible {
+    outline: 3px solid rgb(22 125 96 / 22%);
+    border-color: #167d60;
+}
+
+.batches-page .search-controls .button {
+    min-height: 42px;
+    padding: 0 16px;
+}
+
+.batches-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin: 0 0 20px;
+    color: #66736e;
+}
+
+.batches-summary strong {
+    color: #18372b;
+    font-size: 1.1rem;
+}
+
+.batches-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #e0e8e4;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.batches-table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.batches-table-wrap th,
+.batches-table-wrap td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5ece8;
+    white-space: nowrap;
+}
+
+.batches-table-wrap th {
+    background: #edf4f0;
+    color: #52675d;
+    font-size: 0.9rem;
+}
+
+.batches-table-wrap tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.batch-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e7f7ef;
+    color: #08724e;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.batch-status[data-status="expiring"] {
+    background: #fff4d8;
+    color: #8a5b00;
+}
+
+.batch-status[data-status="expired"] {
+    background: #ffebea;
+    color: #b3342d;
+}
+
+.batch-status[data-status="depleted"] {
+    background: #eef1ef;
+    color: #5c6862;
+}
+
+@media (max-width: 600px) {
+    .batches-page .search-controls {
+        flex-wrap: wrap;
+    }
+
+    .batches-page .search-controls input {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+}

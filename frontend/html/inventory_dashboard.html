@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/medicines.css">
     <link rel="stylesheet" href="css/app-shell.css">
     <link rel="stylesheet" href="css/inventory_dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
 </head>
 <body>
     <main class="page inventory-page">
@@ -68,6 +69,11 @@
                         </div>
                         <a href="medicines.html">Open medicine list</a>
                     </div>
+                    <div class="record-search" role="search">
+                        <label for="inventoryMedicineSearch">Search low-stock medicines</label>
+                        <input id="inventoryMedicineSearch" type="search" data-record-search="#lowStockRows" placeholder="Search medicine or SKU" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching low-stock medicines.</p>
+                    </div>
                     <div class="inventory-table-wrap">
                         <table>
                             <thead><tr><th>Medicine</th><th>SKU</th><th>Current stock</th><th>Reorder at</th></tr></thead>
@@ -83,7 +89,12 @@
                             <p class="eyebrow">Expiry monitoring</p>
                             <h2>Batch alerts</h2>
                         </div>
-                        <a href="medicines.html">Review stock</a>
+                        <a href="batches.html">View all batches</a>
+                    </div>
+                    <div class="record-search" role="search">
+                        <label for="inventoryBatchSearch">Search batch alerts</label>
+                        <input id="inventoryBatchSearch" type="search" data-record-search="#batchAlerts" placeholder="Search medicine, batch, or expiry status" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching batch alerts.</p>
                     </div>
                     <div id="batchAlerts" class="batch-alert-list"></div>
                     <p id="batchAlertsEmpty" class="inventory-empty" hidden>No expired or soon-to-expire batches with remaining stock.</p>
@@ -94,6 +105,7 @@
 
     <script src="js/api/client.js"></script>
     <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
     <script src="js/inventory_dashboard.js"></script>
 </body>
 </html>

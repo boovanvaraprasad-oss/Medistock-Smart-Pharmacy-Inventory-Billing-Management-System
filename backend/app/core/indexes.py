@@ -56,6 +56,12 @@ async def create_indexes():
     except Exception as error:
         print(f"[indexes] revoked_tokens.jti FAILED: {error}")
 
+    try:
+        await db.login_attempts.create_index([("timestamp", -1)])
+        print("[indexes] login_attempts.timestamp ready")
+    except Exception as error:
+        print(f"[indexes] login_attempts.timestamp FAILED: {error}")
+
     # 3. Self-cleaning: MongoDB deletes each revoked token
     #    automatically once its expires_at time has passed.
     #    (expireAfterSeconds=0 means "delete right at expires_at")

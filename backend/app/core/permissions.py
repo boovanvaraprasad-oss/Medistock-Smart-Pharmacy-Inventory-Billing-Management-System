@@ -34,9 +34,11 @@ PURCHASE_WRITE = "purchase:write"
 
 BILL_CREATE = "bill:create"
 BILL_READ = "bill:read"
+BILL_COMPLETE = "bill:complete"
 
 REPORT_VIEW = "report:view"
 MASTER_DATA_DELETE = "master_data:delete"
+LOGIN_LOG_READ = "login_log:read"
 
 
 PERMISSIONS = [
@@ -53,8 +55,10 @@ PERMISSIONS = [
     PURCHASE_WRITE,
     BILL_CREATE,
     BILL_READ,
+    BILL_COMPLETE,
     REPORT_VIEW,
     MASTER_DATA_DELETE,
+    LOGIN_LOG_READ,
 ]
 
 
@@ -91,7 +95,9 @@ ROLE_PERMISSIONS = {
         SUPPLIER_READ,
         PURCHASE_READ,
         BILL_READ,
+        BILL_COMPLETE,
         REPORT_VIEW,
+        LOGIN_LOG_READ,
     ],
 
     COMPLIANCE_OFFICER: [

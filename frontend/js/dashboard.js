@@ -2,11 +2,6 @@ const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
 const dashboardContent = document.getElementById("dashboardContent");
 const refreshButton = document.getElementById("refreshButton");
-const logoutButton = document.getElementById("logoutButton");
-const staffUsersLink = document.getElementById("staffUsersLink");
-const billingLink = document.getElementById("billingLink");
-const dashboardUserInitial = document.getElementById("dashboardUserInitial");
-const dashboardUserRole = document.getElementById("dashboardUserRole");
 let salesSummary = null;
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
@@ -174,8 +169,6 @@ async function loadDashboard() {
         const roleLabel = (currentUser.role || "staff")
             .replaceAll("_", " ")
             .replace(/\b\w/g, (letter) => letter.toUpperCase());
-        dashboardUserRole.textContent = roleLabel;
-        dashboardUserInitial.textContent = roleLabel.charAt(0).toUpperCase();
 
         // Avoid showing a raw API 403 for roles whose dashboards have not
         // been built yet. The summary endpoint is intentionally report-only.
@@ -185,12 +178,6 @@ async function loadDashboard() {
             errorMessage.hidden = false;
             return;
         }
-
-        billingLink.hidden = !permissions.includes("bill:read");
-        staffUsersLink.hidden = !(
-            permissions.includes("user:read") ||
-            permissions.includes("user:write")
-        );
 
         const summary = await apiRequest("/api/v1/dashboard/summary");
 
@@ -254,19 +241,6 @@ setTodayDate();
 refreshButton.addEventListener("click", loadDashboard);
 document.querySelectorAll('input[name="sales-range"]').forEach((input) => {
     input.addEventListener("change", renderSelectedSalesRange);
-});
-
-logoutButton.addEventListener("click", async () => {
-    logoutButton.disabled = true;
-
-    try {
-        await logoutUser();
-        window.location.href = "/";
-    } catch (error) {
-        errorMessage.textContent = error.message;
-        errorMessage.hidden = false;
-        logoutButton.disabled = false;
-    }
 });
 
 if (!localStorage.getItem("access_token")) {

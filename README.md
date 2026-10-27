@@ -52,6 +52,9 @@ For local testing only, `python create_test_user.py` creates an owner
 account. Do not use it in a real deployment, because its password is
 written in the file.
 
+Application user accounts must use the `@medistock.com` email domain.
+Supplier contact emails may use other domains.
+
 ## Roles
 
 owner, pharmacist, inventory_executive, purchase_executive,

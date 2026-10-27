@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Compliance Overview</title>
+    <link rel="stylesheet" href="css/medicines.css">
+    <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/compliance_dashboard.css">
+    <link rel="stylesheet" href="css/record-search.css">
+</head>
+<body>
+    <main class="page compliance-page">
+        <header class="page-header">
+            <div><p class="eyebrow">Compliance overview</p><h1>Compliance dashboard</h1><p class="subtitle">Review account access, medicine controls, expiry risks, and billing records.</p></div>
+            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+        </header>
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading compliance overview…</p>
+        <section id="dashboardContent" hidden>
+            <div class="compliance-metrics">
+                <article class="compliance-metric"><span class="compliance-icon">♙</span><div><span>Staff accounts</span><strong id="staffCount">—</strong></div><small id="activeStaffCount">— active</small></article>
+                <article class="compliance-metric"><span class="compliance-icon">✚</span><div><span>Controlled medicines</span><strong id="controlledCount">—</strong></div></article>
+                <article class="compliance-metric compliance-warning"><span class="compliance-icon">◷</span><div><span>Expiring batches</span><strong id="expiringCount">—</strong></div></article>
+                <article class="compliance-metric compliance-danger"><span class="compliance-icon">!</span><div><span>Expired batches with stock</span><strong id="expiredCount">—</strong></div></article>
+                <article class="compliance-metric"><span class="compliance-icon">▤</span><div><span>Completed bills</span><strong id="completedBillCount">—</strong></div></article>
+                <article class="compliance-metric"><span class="compliance-icon">₹</span><div><span>Recorded sales</span><strong id="salesTotal">—</strong></div></article>
+            </div>
+            <div class="compliance-grid">
+                <section class="compliance-panel">
+                    <div class="compliance-heading"><div><p class="eyebrow">Account access</p><h2>Staff role overview</h2></div><a href="users.html">Open users</a></div>
+                    <div class="record-search" role="search"><label for="complianceStaffSearch">Search staff accounts</label><input id="complianceStaffSearch" type="search" data-record-search="#staffRows" placeholder="Search account, role, or access status" autocomplete="off"><p class="record-search-empty" role="status" hidden>No matching staff accounts.</p></div>
+                    <div class="compliance-table-wrap"><table><thead><tr><th>Account</th><th>Role</th><th>Access</th></tr></thead><tbody id="staffRows"></tbody></table></div>
+                    <p id="staffEmpty" class="compliance-empty" hidden>No staff accounts found.</p>
+                </section>
+                <section class="compliance-panel">
+                    <div class="compliance-heading"><div><p class="eyebrow">Medicine controls</p><h2>Controlled medicines</h2></div><a href="medicines.html">Review medicines</a></div>
+                    <div class="record-search" role="search"><label for="controlledMedicineSearch">Search controlled medicines</label><input id="controlledMedicineSearch" type="search" data-record-search="#controlledMedicines" placeholder="Search medicine name or SKU" autocomplete="off"><p class="record-search-empty" role="status" hidden>No matching controlled medicines.</p></div>
+                    <div id="controlledMedicines" class="controlled-list"></div>
+                    <p id="controlledEmpty" class="compliance-empty" hidden>No active controlled medicines are flagged.</p>
+                </section>
+            </div>
+            <div class="compliance-grid compliance-grid-bottom">
+                <section class="compliance-panel">
+                    <div class="compliance-heading"><div><p class="eyebrow">Expiry review</p><h2>Expired and expiring batches</h2></div><a href="batches.html">View all batches</a></div>
+                    <div class="record-search" role="search"><label for="complianceBatchSearch">Search batch records</label><input id="complianceBatchSearch" type="search" data-record-search="#batchRows" placeholder="Search medicine, batch, or condition" autocomplete="off"><p class="record-search-empty" role="status" hidden>No matching batch records.</p></div>
+                    <div class="compliance-table-wrap"><table><thead><tr><th>Medicine</th><th>Batch</th><th>Remaining</th><th>Expiry</th><th>Condition</th></tr></thead><tbody id="batchRows"></tbody></table></div>
+                    <p id="batchEmpty" class="compliance-empty" hidden>No expired or soon-expiring stock batches.</p>
+                </section>
+                <section class="compliance-panel">
+                    <div class="compliance-heading"><div><p class="eyebrow">Billing records</p><h2>Recent invoices</h2></div><a href="billing.html">Open billing</a></div>
+                    <div class="record-search" role="search"><label for="complianceBillSearch">Search invoices</label><input id="complianceBillSearch" type="search" data-record-search="#billRows" placeholder="Search invoice, customer, or status" autocomplete="off"><p class="record-search-empty" role="status" hidden>No matching invoices.</p></div>
+                    <div class="compliance-table-wrap"><table><thead><tr><th>Invoice</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead><tbody id="billRows"></tbody></table></div>
+                    <p id="billsEmpty" class="compliance-empty" hidden>No billing records found.</p>
+                </section>
+            </div>
+            <p class="compliance-footnote">This page summarizes current records and reported expiry risks. It does not provide a historical audit log.</p>
+        </section>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js"></script>
+    <script src="js/components/record-search.js"></script>
+    <script src="js/compliance_dashboard.js"></script>
+</body>
+</html>

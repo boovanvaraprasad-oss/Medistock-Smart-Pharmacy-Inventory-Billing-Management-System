@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Billing</title>
     <link rel="stylesheet" href="css/categories.css">
-    <link rel="stylesheet" href="css/billing.css">
+    <link rel="stylesheet" href="css/billing.css?v=20261027-2">
+    <link rel="stylesheet" href="css/confirm-dialog.css">
     <link rel="stylesheet" href="css/app-shell.css">
+    <link rel="stylesheet" href="css/record-search.css">
 </head>
 <body>
     <main class="page">
@@ -57,6 +59,11 @@
                 </button>
             </div>
 
+            <div class="record-search" role="search">
+                <label for="billSearch">Search bills</label>
+                <input id="billSearch" type="search" data-record-search="#billRows" placeholder="Search invoice, customer, payment, or status" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching bills.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -93,11 +100,15 @@
             <div id="addBillItemSection" hidden>
                 <h3>Add medicine</h3>
                 <form id="addBillItemForm" class="billing-form item-form">
-                    <label for="medicineSelect">Medicine</label>
-                    <select id="medicineSelect" required></select>
+                    <div class="billing-field">
+                        <label for="medicineSelect">Medicine</label>
+                        <select id="medicineSelect" required></select>
+                    </div>
 
-                    <label for="quantity">Quantity</label>
-                    <input id="quantity" type="number" min="1" step="1" required>
+                    <div class="billing-field">
+                        <label for="quantity">Quantity</label>
+                        <input id="quantity" type="number" min="1" step="1" required>
+                    </div>
 
                     <div class="form-actions">
                         <button id="addItemButton" class="button button-primary" type="submit">
@@ -108,6 +119,11 @@
             </div>
 
             <h3>Items</h3>
+            <div class="record-search" role="search">
+                <label for="billItemSearch">Search items on this bill</label>
+                <input id="billItemSearch" type="search" data-record-search="#billItemRows" placeholder="Search medicine name" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching bill items.</p>
+            </div>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -134,9 +150,18 @@
                     Complete sale and deduct stock
                 </button>
             </div>
+            <p id="billCompletionMessage" class="message" role="status" aria-live="polite" hidden></p>
+            <p id="billApprovalMessage" class="helper-text" role="status" hidden>
+                Draft saved. A Store Manager or Owner must review and complete this sale before stock is deducted.
+            </p>
 
             <section id="batchAllocationsSection" hidden>
                 <h3>Stock batches used</h3>
+                <div class="record-search" role="search">
+                    <label for="billBatchSearch">Search stock batches</label>
+                    <input id="billBatchSearch" type="search" data-record-search="#batchAllocationRows" placeholder="Search medicine, batch, or expiry" autocomplete="off">
+                    <p class="record-search-empty" role="status" hidden>No matching stock batches.</p>
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -159,6 +184,8 @@
 
     <script src="js/api/client.js"></script>
     <script src="js/components/app-shell.js"></script>
-    <script src="js/billing.js"></script>
+    <script src="js/components/confirm-dialog.js"></script>
+    <script src="js/components/record-search.js"></script>
+    <script src="js/billing.js?v=20261027-2"></script>
 </body>
 </html>
