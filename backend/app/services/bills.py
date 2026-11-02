@@ -46,6 +46,9 @@ async def create_bill(
         "tax_amount": 0.0,
         "total_amount": 0.0,
         "payment_status": "pending",
+        "payment_method": None,
+        "amount_received": 0.0,
+        "change_due": 0.0,
         "status": "draft",
         "is_active": True,
     }
@@ -63,10 +66,7 @@ async def deduct_stock_fefo(
     quantity: int,
     session=None,
 ):
-    """
-    Deduct stock from earliest-expiring eligible batches.
-    All database operations use the supplied transaction session.
-    """
+    """Deduct stock from earliest-expiring eligible batches."""
     if quantity <= 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -203,13 +203,16 @@ async def calculate_bill_totals(
     }
 
 
-async def complete_bill(bill_id: str):
+async def complete_bill(
+    bill_id: str,
+    payment_method: str,
+    amount_received: float,
+):
     """
     Complete a draft bill atomically.
 
-    Batch deductions, saved batch allocations, medicine stock changes,
-    stock transaction records, bill totals, and final bill status
-    commit together.
+    Payment validation, batch deductions, medicine stock changes,
+    stock transaction records, and bill completion commit together.
     """
     try:
         bill_object_id = ObjectId(bill_id)
@@ -217,6 +220,27 @@ async def complete_bill(bill_id: str):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid bill ID",
+        )
+
+    payment_method = payment_method.lower().strip()
+    if payment_method not in {"cash", "card", "upi"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Payment method must be cash, card, or upi",
+        )
+
+    try:
+        received = round(float(amount_received), 2)
+    except (TypeError, ValueError):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Amount received must be a valid number",
+        )
+
+    if received <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Amount received must be greater than zero",
         )
 
     async def transaction_work(session):
@@ -284,18 +308,39 @@ async def complete_bill(bill_id: str):
 
             quantities[key]["quantity"] += quantity
 
-        # Calculate totals within the same transaction.
         totals = await calculate_bill_totals(
             bill_object_id,
             session=session,
         )
+
+        total_amount = round(totals["total_amount"], 2)
+
+        if received < total_amount:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    f"Amount received (₹{received:.2f}) is less than "
+                    f"the bill total (₹{total_amount:.2f})"
+                ),
+            )
+
+        if payment_method in {"card", "upi"} and received != total_amount:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    f"For {payment_method.upper()} payments, the amount "
+                    f"received must equal the bill total "
+                    f"(₹{total_amount:.2f})"
+                ),
+            )
+
+        change_due = round(received - total_amount, 2)
 
         today_start = datetime.combine(
             datetime.now(INDIA_TIMEZONE).date(),
             time.min,
         )
 
-        # These records connect the bill to the batches used.
         bill_batch_allocations = []
 
         for entry in quantities.values():
@@ -324,7 +369,6 @@ async def complete_bill(bill_id: str):
                     detail=f"Insufficient stock for {medicine['name']}",
                 )
 
-            # Check eligible batch stock before deducting.
             batch_cursor = db.stock_batches.find(
                 {
                     "medicine_id": medicine_id,
@@ -348,7 +392,6 @@ async def complete_bill(bill_id: str):
                     ),
                 )
 
-            # Deduct using FEFO and retain the batch-level quantities.
             batches_used = await deduct_stock_fefo(
                 medicine_id=medicine_id,
                 quantity=quantity,
@@ -408,6 +451,9 @@ async def complete_bill(bill_id: str):
                 "$set": {
                     "status": "completed",
                     "payment_status": "paid",
+                    "payment_method": payment_method,
+                    "amount_received": received,
+                    "change_due": change_due,
                     "completed_at": datetime.now(timezone.utc),
                     "batch_allocations": bill_batch_allocations,
                 }
@@ -436,6 +482,9 @@ async def complete_bill(bill_id: str):
             "tax_amount": totals["tax_amount"],
             "total_amount": totals["total_amount"],
             "payment_status": updated_bill["payment_status"],
+            "payment_method": updated_bill["payment_method"],
+            "amount_received": updated_bill["amount_received"],
+            "change_due": updated_bill["change_due"],
             "status": updated_bill["status"],
             "is_active": updated_bill.get("is_active", True),
         }
@@ -502,6 +551,9 @@ async def get_bill_details(bill_id: str):
         "tax_amount": totals["tax_amount"],
         "total_amount": totals["total_amount"],
         "payment_status": bill.get("payment_status", "pending"),
+        "payment_method": bill.get("payment_method"),
+        "amount_received": bill.get("amount_received", 0.0),
+        "change_due": bill.get("change_due", 0.0),
         "status": bill.get("status", "draft"),
         "is_active": bill.get("is_active", True),
     }
@@ -514,7 +566,6 @@ async def get_all_bills():
 
     async for bill in cursor:
         bill_id = bill["_id"]
-
         totals = await calculate_bill_totals(bill_id)
 
         bills.append(
@@ -528,6 +579,9 @@ async def get_all_bills():
                 "tax_amount": totals["tax_amount"],
                 "total_amount": totals["total_amount"],
                 "payment_status": bill.get("payment_status", "pending"),
+                "payment_method": bill.get("payment_method"),
+                "amount_received": bill.get("amount_received", 0.0),
+                "change_due": bill.get("change_due", 0.0),
                 "status": bill.get("status", "draft"),
                 "is_active": bill.get("is_active", True),
             }

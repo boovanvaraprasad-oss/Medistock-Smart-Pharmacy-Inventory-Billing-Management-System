@@ -19,6 +19,8 @@ const closeDetailsButton = document.getElementById("closeDetailsButton");
 const printInvoiceButton = document.getElementById("printInvoiceButton");
 const addBillItemSection = document.getElementById("addBillItemSection");
 const addBillItemForm = document.getElementById("addBillItemForm");
+const medicineSearchInput = document.getElementById("medicineSearch");
+const medicineSearchStatus = document.getElementById("medicineSearchStatus");
 const medicineSelect = document.getElementById("medicineSelect");
 const quantityInput = document.getElementById("quantity");
 const addItemButton = document.getElementById("addItemButton");
@@ -31,6 +33,8 @@ const billCompletionActions = document.getElementById("billCompletionActions");
 const billApprovalMessage = document.getElementById("billApprovalMessage");
 const billCompletionMessage = document.getElementById("billCompletionMessage");
 const completeBillButton = document.getElementById("completeBillButton");
+const paymentMethodInput = document.getElementById("paymentMethod");
+const amountReceivedInput = document.getElementById("amountReceived");
 const batchAllocationsSection = document.getElementById("batchAllocationsSection");
 const batchAllocationRows = document.getElementById("batchAllocationRows");
 
@@ -38,6 +42,22 @@ let permissions = [];
 let bills = [];
 let medicines = [];
 let selectedBill = null;
+let medicineSearchTimer = null;
+let medicineSearchRequestId = 0;
+
+const paymentSummary = document.createElement("div");
+paymentSummary.className = "bill-totals bill-payment-summary";
+paymentSummary.hidden = true;
+
+const paymentSummaryRows = {};
+for (const label of ["Payment method", "Amount received", "Change due"]) {
+    const row = document.createElement("p");
+    const value = document.createElement("strong");
+    row.append(document.createTextNode(`${label} `), value);
+    paymentSummary.appendChild(row);
+    paymentSummaryRows[label] = { row, value };
+}
+billTotal.closest(".bill-totals").insertAdjacentElement("afterend", paymentSummary);
 
 function showMessage(element, message) {
     element.textContent = message;
@@ -67,6 +87,115 @@ function formatMoney(value) {
     }).format(Number(value) || 0);
 }
 
+function paymentMethodLabel(method) {
+    const labels = {
+        cash: "Cash",
+        card: "Card",
+        upi: "UPI"
+    };
+    return labels[String(method || "").toLowerCase()] || "—";
+}
+
+function renderPaymentSummary() {
+    const isCompleted = selectedBill?.status === "completed";
+    paymentSummary.hidden = !isCompleted;
+
+    if (!isCompleted) {
+        return;
+    }
+
+    paymentSummaryRows["Payment method"].value.textContent =
+        paymentMethodLabel(selectedBill.payment_method);
+    paymentSummaryRows["Amount received"].value.textContent =
+        formatMoney(selectedBill.amount_received);
+    paymentSummaryRows["Change due"].value.textContent =
+        formatMoney(selectedBill.change_due);
+
+    paymentSummaryRows["Change due"].row.hidden =
+        Number(selectedBill.change_due || 0) <= 0;
+}
+
+function renderMedicineOptions(records, total = records.length) {
+    medicineSelect.replaceChildren();
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = records.length
+        ? "Choose a medicine"
+        : "No matching medicines";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    medicineSelect.appendChild(placeholder);
+
+    for (const medicine of records) {
+        const option = document.createElement("option");
+        option.value = medicine.id;
+        option.textContent =
+            `${medicine.name} · ${medicine.stock} in stock · ${formatMoney(medicine.price)}`;
+        medicineSelect.appendChild(option);
+    }
+
+    medicineSelect.disabled = records.length === 0;
+    if (total > records.length) {
+        medicineSearchStatus.textContent =
+            `Showing ${records.length} of ${total} matches. Type more letters to narrow the results.`;
+    } else {
+        medicineSearchStatus.textContent = records.length
+            ? `${total} matching medicine${total === 1 ? "" : "s"}.`
+            : "No active medicines match that name.";
+    }
+}
+
+async function searchMedicines(query, requestId) {
+    const parameters = new URLSearchParams({
+        page: "1",
+        limit: "100",
+        is_active: "true"
+    });
+    if (query) parameters.set("search", query);
+
+    medicineSelect.disabled = true;
+    medicineSelect.replaceChildren();
+    const loadingOption = document.createElement("option");
+    loadingOption.value = "";
+    loadingOption.textContent = "Searching medicines…";
+    loadingOption.selected = true;
+    medicineSelect.appendChild(loadingOption);
+    medicineSearchStatus.textContent = "Searching medicines…";
+
+    try {
+        const response = await apiRequest(`/api/v1/medicines?${parameters.toString()}`);
+        if (requestId !== medicineSearchRequestId) return;
+
+        medicines = response.items.filter((medicine) => medicine.is_active);
+        renderMedicineOptions(medicines, response.total);
+    } catch (error) {
+        if (requestId !== medicineSearchRequestId) return;
+        medicines = [];
+        medicineSelect.replaceChildren();
+        const failedOption = document.createElement("option");
+        failedOption.value = "";
+        failedOption.textContent = "Search unavailable";
+        failedOption.selected = true;
+        medicineSelect.appendChild(failedOption);
+        medicineSelect.disabled = true;
+        medicineSearchStatus.textContent = error.message || "Unable to search medicines.";
+    }
+}
+
+function scheduleMedicineSearch(query) {
+    window.clearTimeout(medicineSearchTimer);
+    const requestId = ++medicineSearchRequestId;
+    medicineSelect.value = "";
+    medicineSelect.disabled = true;
+    quantityInput.removeAttribute("max");
+    medicineSearchStatus.textContent = "Waiting to search…";
+    medicineSearchTimer = window.setTimeout(
+        () => searchMedicines(query.trim(), requestId),
+        250
+    );
+}
+
 function renderBills() {
     billRows.replaceChildren();
 
@@ -85,7 +214,11 @@ function renderBills() {
         addCell(row, bill.invoice_number);
         addCell(row, bill.customer_name);
         addCell(row, formatMoney(bill.total_amount));
-        addCell(row, bill.payment_status);
+
+        const paymentText = bill.payment_method
+            ? `${bill.payment_status} · ${paymentMethodLabel(bill.payment_method)}`
+            : bill.payment_status;
+        addCell(row, paymentText);
 
         const statusCell = document.createElement("td");
         const status = document.createElement("span");
@@ -174,9 +307,18 @@ function renderBillDetails() {
 
     billDetailsTitle.textContent =
         `Invoice ${selectedBill.invoice_number}`;
-    billDetailsDescription.textContent =
-        `${selectedBill.customer_name} · ${selectedBill.customer_phone} · ` +
-        `${selectedBill.status} · ${selectedBill.payment_status}`;
+
+    const descriptionParts = [
+        selectedBill.customer_name,
+        selectedBill.customer_phone,
+        selectedBill.status,
+        selectedBill.payment_status
+    ];
+    if (selectedBill.payment_method) {
+        descriptionParts.push(paymentMethodLabel(selectedBill.payment_method));
+    }
+    billDetailsDescription.textContent = descriptionParts.join(" · ");
+
     printInvoiceButton.hidden = selectedBill.status !== "completed";
 
     const canModify = permissions.includes("bill:create") &&
@@ -191,6 +333,11 @@ function renderBillDetails() {
     billApprovalMessage.hidden = selectedBill.status !== "draft" || canComplete;
     itemActionsHeading.hidden = !canModify;
     batchReturnActionsHeading.hidden = !canReturn;
+
+    if (canComplete && document.activeElement !== amountReceivedInput) {
+        amountReceivedInput.value =
+            Number(selectedBill.total_amount || 0).toFixed(2);
+    }
 
     billItemRows.replaceChildren();
 
@@ -238,6 +385,7 @@ function renderBillDetails() {
         `${formatMoney(selectedBill.tax_amount)} (${selectedBill.tax_percentage}%)`;
     billTotal.textContent = formatMoney(selectedBill.total_amount);
 
+    renderPaymentSummary();
     renderBatchAllocations(selectedBill.batch_allocations || []);
     completeBillButton.disabled = selectedBill.items.length === 0;
 }
@@ -274,14 +422,14 @@ function renderBatchAllocations(allocations) {
                 const form = document.createElement("form");
                 form.className = "batch-return-form";
 
-                const quantityInput = document.createElement("input");
-                quantityInput.type = "number";
-                quantityInput.min = "1";
-                quantityInput.max = String(available);
-                quantityInput.value = "1";
-                quantityInput.required = true;
-                quantityInput.setAttribute("aria-label", "Return quantity");
-                quantityInput.title = `Up to ${available} unit(s) can be returned`;
+                const returnQuantityInput = document.createElement("input");
+                returnQuantityInput.type = "number";
+                returnQuantityInput.min = "1";
+                returnQuantityInput.max = String(available);
+                returnQuantityInput.value = "1";
+                returnQuantityInput.required = true;
+                returnQuantityInput.setAttribute("aria-label", "Return quantity");
+                returnQuantityInput.title = `Up to ${available} unit(s) can be returned`;
 
                 const reasonInput = document.createElement("input");
                 reasonInput.type = "text";
@@ -296,12 +444,12 @@ function renderBatchAllocations(allocations) {
                 submitButton.className = "button button-secondary button-small";
                 submitButton.textContent = "Return units";
 
-                form.append(quantityInput, reasonInput, submitButton);
+                form.append(returnQuantityInput, reasonInput, submitButton);
                 form.addEventListener("submit", async (event) => {
                     event.preventDefault();
                     await returnBatchStock(
                         allocation,
-                        Number(quantityInput.value),
+                        Number(returnQuantityInput.value),
                         reasonInput.value,
                         submitButton
                     );
@@ -494,6 +642,10 @@ medicineSelect.addEventListener("change", () => {
     }
 });
 
+medicineSearchInput.addEventListener("input", () => {
+    scheduleMedicineSearch(medicineSearchInput.value);
+});
+
 addBillItemForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -546,6 +698,7 @@ addBillItemForm.addEventListener("submit", async (event) => {
 
         addBillItemForm.reset();
         quantityInput.removeAttribute("max");
+        scheduleMedicineSearch("");
         showMessage(successMessage, `${medicine.name} added to the draft bill.`);
         await openBill(selectedBill.id, false);
         await loadBills();
@@ -561,10 +714,51 @@ completeBillButton.addEventListener("click", async () => {
         return;
     }
 
+    const paymentMethod = paymentMethodInput.value;
+    const amountReceived = Number(amountReceivedInput.value);
+    const totalAmount = Number(selectedBill.total_amount) || 0;
+    const receivedCents = Math.round(amountReceived * 100);
+    const totalCents = Math.round(totalAmount * 100);
+
+    if (!["cash", "card", "upi"].includes(paymentMethod)) {
+        showMessage(errorMessage, "Choose Cash, Card, or UPI as the payment method.");
+        paymentMethodInput.focus();
+        return;
+    }
+
+    if (!Number.isFinite(amountReceived) || receivedCents <= 0) {
+        showMessage(errorMessage, "Enter a valid amount received.");
+        amountReceivedInput.focus();
+        return;
+    }
+
+    if (receivedCents < totalCents) {
+        showMessage(
+            errorMessage,
+            `Amount received must be at least ${formatMoney(totalAmount)}.`
+        );
+        amountReceivedInput.focus();
+        return;
+    }
+
+    if (paymentMethod !== "cash" && receivedCents !== totalCents) {
+        showMessage(
+            errorMessage,
+            `${paymentMethodLabel(paymentMethod)} payment must equal the bill total of ${formatMoney(totalAmount)}.`
+        );
+        amountReceivedInput.focus();
+        return;
+    }
+
+    const changeDue = Math.max(0, receivedCents - totalCents) / 100;
+    const paymentDescription = paymentMethod === "cash" && changeDue > 0
+        ? `${paymentMethodLabel(paymentMethod)} · received ${formatMoney(amountReceived)} · change due ${formatMoney(changeDue)}`
+        : `${paymentMethodLabel(paymentMethod)} · received ${formatMoney(amountReceived)}`;
+
     completeBillButton.disabled = true;
     const confirmed = await window.showConfirmDialog({
         title: "Complete bill?",
-        message: `Complete invoice ${selectedBill.invoice_number}? Stock will be deducted.`,
+        message: `Complete invoice ${selectedBill.invoice_number}? ${paymentDescription}. Stock will be deducted.`,
         confirmText: "Complete bill",
         variant: "simple"
     });
@@ -578,14 +772,23 @@ completeBillButton.addEventListener("click", async () => {
     showMessage(successMessage, "");
     showMessage(billCompletionMessage, "");
     billCompletionMessage.className = "message";
+
     try {
         await apiRequest(
             `/api/v1/bills/${encodeURIComponent(selectedBill.id)}/complete`,
-            { method: "PATCH" }
+            {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    payment_method: paymentMethod,
+                    amount_received: amountReceived
+                })
+            }
         );
 
         const completionText =
-            "Sale completed. Stock was deducted and the batch allocation was recorded.";
+            `Sale completed using ${paymentMethodLabel(paymentMethod)}. ` +
+            `Stock was deducted and the batch allocation was recorded.`;
         billCompletionMessage.className = "message message-success";
         showMessage(billCompletionMessage, completionText);
         showMessage(successMessage, completionText);
@@ -631,32 +834,8 @@ async function initializePage() {
 
         if (permissions.includes("bill:create")) {
             createBillSection.hidden = false;
-            const medicineResponse = await apiRequest(
-                "/api/v1/medicines?page=1&limit=100&is_active=true"
-            );
-            medicines = medicineResponse.items.filter(
-                (medicine) => medicine.is_active
-            );
-
-            medicineSelect.replaceChildren();
-            const placeholder = document.createElement("option");
-            placeholder.value = "";
-            placeholder.textContent = medicines.length
-                ? "Choose a medicine"
-                : "No active medicines available";
-            placeholder.disabled = true;
-            placeholder.selected = true;
-            medicineSelect.appendChild(placeholder);
-
-            for (const medicine of medicines) {
-                const option = document.createElement("option");
-                option.value = medicine.id;
-                option.textContent =
-                    `${medicine.name} · ${medicine.stock} in stock · ${formatMoney(medicine.price)}`;
-                medicineSelect.appendChild(option);
-            }
-
-            medicineSelect.disabled = medicines.length === 0;
+            const initialSearchId = ++medicineSearchRequestId;
+            await searchMedicines("", initialSearchId);
         }
 
         await loadBills();

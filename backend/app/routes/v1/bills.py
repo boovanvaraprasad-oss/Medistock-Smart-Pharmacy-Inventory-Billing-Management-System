@@ -8,6 +8,7 @@ from app.core.permissions import (
 )
 from app.schemas.bill import (
     CreateBillRequest,
+    CompleteBillRequest,
     BillResponse,
 )
 from app.schemas.bill_details import (
@@ -116,12 +117,15 @@ async def delete_existing_bill_item(
 )
 async def complete_existing_bill(
     bill_id: str,
+    data: CompleteBillRequest,
     current_user=Depends(
         require_permission(BILL_COMPLETE)
     ),
 ):
     return await complete_bill(
         bill_id=bill_id,
+        payment_method=data.payment_method,
+        amount_received=data.amount_received,
     )
 
 

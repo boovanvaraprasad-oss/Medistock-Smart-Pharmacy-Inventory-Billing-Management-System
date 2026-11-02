@@ -100,6 +100,12 @@
             <div id="addBillItemSection" hidden>
                 <h3>Add medicine</h3>
                 <form id="addBillItemForm" class="billing-form item-form">
+                    <div class="billing-field medicine-search-field">
+                        <label for="medicineSearch">Search medicine</label>
+                        <input id="medicineSearch" type="search" maxlength="100" placeholder="Type a medicine name" autocomplete="off">
+                        <span id="medicineSearchStatus" class="medicine-search-status" role="status" aria-live="polite"></span>
+                    </div>
+
                     <div class="billing-field">
                         <label for="medicineSelect">Medicine</label>
                         <select id="medicineSelect" required></select>
@@ -145,11 +151,36 @@
                 <p class="bill-grand-total">Total <strong id="billTotal">₹0.00</strong></p>
             </div>
 
-            <div id="billCompletionActions" class="form-actions" hidden>
-                <button id="completeBillButton" class="button button-primary" type="button">
-                    Complete sale and deduct stock
-                </button>
+            <div id="billCompletionActions" class="billing-form payment-form" hidden>
+                <div class="billing-field">
+                    <label for="paymentMethod">Payment method</label>
+                    <select id="paymentMethod" required>
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="upi">UPI</option>
+                    </select>
+                </div>
+
+                <div class="billing-field">
+                    <label for="amountReceived">Amount received (₹)</label>
+                    <input
+                        id="amountReceived"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Enter amount received"
+                        required
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <button id="completeBillButton" class="button button-primary" type="button">
+                        Complete sale and deduct stock
+                    </button>
+                </div>
             </div>
+
             <p id="billCompletionMessage" class="message" role="status" aria-live="polite" hidden></p>
             <p id="billApprovalMessage" class="helper-text" role="status" hidden>
                 Draft saved. A Store Manager or Owner must review and complete this sale before stock is deducted.

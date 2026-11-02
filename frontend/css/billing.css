@@ -38,6 +38,17 @@
     min-width: 0;
 }
 
+.medicine-search-status {
+    min-height: 1em;
+    color: #66736e;
+    font-size: 0.82rem;
+    font-weight: 400;
+}
+
+.item-form .medicine-search-field {
+    grid-column: 1 / -1;
+}
+
 .item-form .form-actions {
     grid-column: auto;
     align-self: end;

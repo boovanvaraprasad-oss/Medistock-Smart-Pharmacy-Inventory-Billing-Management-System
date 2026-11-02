@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -35,5 +36,8 @@ class BillDetailsResponse(BaseModel):
     tax_amount: float
     total_amount: float
     payment_status: str
+    payment_method: Optional[str] = None
+    amount_received: float = 0.0
+    change_due: float = 0.0
     status: str
     is_active: bool

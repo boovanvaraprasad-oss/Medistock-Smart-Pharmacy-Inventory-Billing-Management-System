@@ -1,13 +1,19 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from bson import ObjectId
 from fastapi import HTTPException, status
+from pymongo import ReturnDocument
 
 from app.core.database import db
 from app.core.security import (
     verify_password,
     hash_password,
 )
+
+
+LOGIN_FAILURE_LIMIT = 5
+LOGIN_FAILURE_WINDOW = timedelta(minutes=15)
+LOGIN_LOCKOUT_DURATION = timedelta(minutes=15)
 
 
 async def log_login_attempt(
@@ -48,10 +54,91 @@ async def authenticate_user(
         )
         return None
 
+    now = datetime.now(timezone.utc)
+    locked_until = user.get("locked_until")
+    if locked_until:
+        # MongoDB may return naive datetimes depending on client settings.
+        if locked_until.tzinfo is None:
+            locked_until = locked_until.replace(tzinfo=timezone.utc)
+        if locked_until > now:
+            await log_login_attempt(
+                email,
+                False,
+                user=user,
+                ip_address=ip_address,
+                user_agent=user_agent,
+            )
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many failed sign-in attempts. Try again later.",
+            )
+
     if not verify_password(
         password,
         user["password_hash"],
     ):
+        window_start = now - LOGIN_FAILURE_WINDOW
+        lock_until = now + LOGIN_LOCKOUT_DURATION
+        window_expired = {
+            "$lt": [
+                {
+                    "$ifNull": [
+                        "$failed_login_window_started_at",
+                        datetime(1970, 1, 1, tzinfo=timezone.utc),
+                    ]
+                },
+                window_start,
+            ]
+        }
+
+        # Use an update pipeline so simultaneous failed requests cannot
+        # lose increments to the attempt counter.
+        updated_user = await db.users.find_one_and_update(
+            {"_id": user["_id"]},
+            [
+                {
+                    "$set": {
+                        "failed_login_attempts": {
+                            "$cond": [
+                                window_expired,
+                                1,
+                                {
+                                    "$add": [
+                                        {"$ifNull": ["$failed_login_attempts", 0]},
+                                        1,
+                                    ]
+                                },
+                            ]
+                        },
+                        "failed_login_window_started_at": {
+                            "$cond": [
+                                window_expired,
+                                now,
+                                "$failed_login_window_started_at",
+                            ]
+                        },
+                        "last_failed_login_at": now,
+                    }
+                },
+                {
+                    "$set": {
+                        "locked_until": {
+                            "$cond": [
+                                {
+                                    "$gte": [
+                                        "$failed_login_attempts",
+                                        LOGIN_FAILURE_LIMIT,
+                                    ]
+                                },
+                                lock_until,
+                                "$$REMOVE",
+                            ]
+                        }
+                    }
+                },
+            ],
+            return_document=ReturnDocument.AFTER,
+        )
         await log_login_attempt(
             email,
             False,
@@ -59,6 +146,14 @@ async def authenticate_user(
             ip_address=ip_address,
             user_agent=user_agent,
         )
+        if (
+            updated_user
+            and updated_user.get("failed_login_attempts", 0) >= LOGIN_FAILURE_LIMIT
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many failed sign-in attempts. Try again in 15 minutes.",
+            )
         return None
 
     if not user.get("is_active", True):
@@ -77,6 +172,18 @@ async def authenticate_user(
         user=user,
         ip_address=ip_address,
         user_agent=user_agent,
+    )
+
+    await db.users.update_one(
+        {"_id": user["_id"]},
+        {
+            "$unset": {
+                "failed_login_attempts": "",
+                "failed_login_window_started_at": "",
+                "last_failed_login_at": "",
+                "locked_until": "",
+            }
+        },
     )
 
     return user

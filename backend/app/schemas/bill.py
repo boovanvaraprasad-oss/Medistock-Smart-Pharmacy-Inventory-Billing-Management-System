@@ -1,3 +1,5 @@
+from typing import Literal, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -19,6 +21,14 @@ class CreateBillRequest(BaseModel):
     )
 
 
+class CompleteBillRequest(BaseModel):
+    payment_method: Literal["cash", "card", "upi"]
+    amount_received: float = Field(
+        gt=0,
+        description="Amount received from the customer when completing the bill.",
+    )
+
+
 class BillResponse(BaseModel):
     id: str
     invoice_number: str
@@ -29,5 +39,8 @@ class BillResponse(BaseModel):
     tax_amount: float
     total_amount: float
     payment_status: str
+    payment_method: Optional[str] = None
+    amount_received: float = 0.0
+    change_due: float = 0.0
     status: str
     is_active: bool
