@@ -23,12 +23,15 @@ async def get_dashboard_summary():
         {
             "stock": 1,
             "reorder_threshold": 1,
+            "name": 1,
+            "sku": 1,
         },
     )
 
     active_medicine_count = 0
     low_stock_count = 0
     out_of_stock_count = 0
+    low_stock_medicines = []
 
     async for medicine in medicines:
         active_medicine_count += 1
@@ -41,6 +44,16 @@ async def get_dashboard_summary():
 
         if stock <= reorder_threshold:
             low_stock_count += 1
+            low_stock_medicines.append(
+                {
+                    "id": str(medicine["_id"]),
+                    "name": medicine.get("name", "Unknown medicine"),
+                    "sku": medicine.get("sku"),
+                    "stock": stock,
+                    "threshold": reorder_threshold,
+                    "status": "out_of_stock" if stock <= 0 else "low_stock",
+                }
+            )
 
     # Calculate current units and estimated purchase-cost value from batches.
     batches = db.stock_batches.find(
@@ -99,6 +112,12 @@ async def get_dashboard_summary():
     sales_by_year = defaultdict(float)
     sales_by_hour_today = defaultdict(float)
     sales_by_day_current_month = defaultdict(float)
+    purchases_by_year = defaultdict(float)
+    purchases_by_hour_today = defaultdict(float)
+    purchases_by_day_current_month = defaultdict(float)
+    completed_bill_count_today = 0
+    yesterday_sales_total = 0.0
+    received_purchase_total_all_time = 0.0
 
     async for bill in completed_bills:
         completed_bill_count += 1
@@ -115,7 +134,10 @@ async def get_dashboard_summary():
         sales_by_year[local_sale_date.year] += amount
 
         if local_sale_date.date() == now.date():
+            completed_bill_count_today += 1
             sales_by_hour_today[local_sale_date.hour] += amount
+        elif local_sale_date.date() == now.date() - timedelta(days=1):
+            yesterday_sales_total += amount
 
         if (
             local_sale_date.year == now.year
@@ -123,12 +145,235 @@ async def get_dashboard_summary():
         ):
             sales_by_day_current_month[local_sale_date.day] += amount
 
+    # Measure purchases when stock is received. Older orders use their ObjectId
+    # creation time because they predate the received_at timestamp.
+    received_orders = await db.purchase_orders.find(
+        {
+            "status": "received",
+            "is_active": {"$ne": False},
+        },
+        {"received_at": 1},
+    ).to_list(length=None)
+    if received_orders:
+        order_ids = [order["_id"] for order in received_orders]
+        order_totals = defaultdict(float)
+        async for item in db.purchase_items.find(
+            {"purchase_order_id": {"$in": order_ids}},
+            {"purchase_order_id": 1, "total_price": 1, "quantity": 1, "unit_price": 1},
+        ):
+            order_totals[item["purchase_order_id"]] += float(
+                item.get("total_price", item.get("quantity", 0) * item.get("unit_price", 0))
+            )
+
+        for order in received_orders:
+            amount = order_totals[order["_id"]]
+            received_purchase_total_all_time += amount
+            received_at = order.get("received_at")
+            if not isinstance(received_at, datetime):
+                received_at = order["_id"].generation_time
+            elif received_at.tzinfo is None:
+                received_at = received_at.replace(tzinfo=timezone.utc)
+            local_received_date = received_at.astimezone(INDIA_TIMEZONE)
+            purchases_by_year[local_received_date.year] += amount
+            if local_received_date.date() == now.date():
+                purchases_by_hour_today[local_received_date.hour] += amount
+            if (
+                local_received_date.year == now.year
+                and local_received_date.month == now.month
+            ):
+                purchases_by_day_current_month[local_received_date.day] += amount
+
     open_purchase_order_count = await db.purchase_orders.count_documents(
         {
             "is_active": {"$ne": False},
             "status": {"$in": ["draft", "ordered"]},
         }
     )
+
+    top_selling_medicines = await db.bill_items.aggregate(
+        [
+            {
+                "$lookup": {
+                    "from": "bills",
+                    "localField": "bill_id",
+                    "foreignField": "_id",
+                    "as": "bill",
+                }
+            },
+            {"$unwind": "$bill"},
+            {
+                "$match": {
+                    "bill.status": "completed",
+                    "bill.is_active": {"$ne": False},
+                }
+            },
+            {
+                "$addFields": {
+                    "returned_quantity": {
+                        "$sum": {
+                            "$map": {
+                                "input": {
+                                    "$filter": {
+                                        "input": {
+                                            "$ifNull": [
+                                                "$bill.batch_allocations",
+                                                [],
+                                            ]
+                                        },
+                                        "as": "allocation",
+                                        "cond": {
+                                            "$eq": [
+                                                "$$allocation.medicine_id",
+                                                {"$toString": "$medicine_id"},
+                                            ]
+                                        },
+                                    }
+                                },
+                                "as": "allocation",
+                                "in": {
+                                    "$ifNull": [
+                                        "$$allocation.quantity_returned",
+                                        0,
+                                    ]
+                                },
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "net_quantity_sold": {
+                        "$cond": [
+                            {
+                                "$gt": [
+                                    {
+                                        "$subtract": [
+                                            "$quantity",
+                                            "$returned_quantity",
+                                        ]
+                                    },
+                                    0,
+                                ]
+                            },
+                            {
+                                "$subtract": [
+                                    "$quantity",
+                                    "$returned_quantity",
+                                ]
+                            },
+                            0,
+                        ]
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$medicine_id",
+                    "units_sold": {"$sum": "$net_quantity_sold"},
+                    "revenue": {"$sum": "$total_price"},
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "medicines",
+                    "localField": "_id",
+                    "foreignField": "_id",
+                    "as": "medicine",
+                }
+            },
+            {"$unwind": {"path": "$medicine", "preserveNullAndEmptyArrays": True}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "medicine_id": {"$toString": "$_id"},
+                    "medicine_name": {
+                        "$ifNull": ["$medicine.name", "Unknown medicine"]
+                    },
+                    "units_sold": 1,
+                    "revenue": {"$round": ["$revenue", 2]},
+                }
+            },
+            {"$sort": {"units_sold": -1, "revenue": -1}},
+            {"$limit": 5},
+        ]
+    ).to_list(length=5)
+
+    category_values = await db.stock_batches.aggregate(
+        [
+            {
+                "$match": {
+                    "is_active": True,
+                    "quantity": {"$gt": 0},
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "medicines",
+                    "localField": "medicine_id",
+                    "foreignField": "_id",
+                    "as": "medicine",
+                }
+            },
+            {"$unwind": {"path": "$medicine", "preserveNullAndEmptyArrays": True}},
+            {
+                "$group": {
+                    "_id": "$medicine.category_id",
+                    "stock_value": {
+                        "$sum": {
+                            "$multiply": ["$quantity", "$purchase_price"]
+                        }
+                    },
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "categories",
+                    "localField": "_id",
+                    "foreignField": "_id",
+                    "as": "category",
+                }
+            },
+            {"$unwind": {"path": "$category", "preserveNullAndEmptyArrays": True}},
+            {
+                "$project": {
+                    "_id": 0,
+                    "category_name": {
+                        "$ifNull": ["$category.name", "Uncategorized"]
+                    },
+                    "stock_value": {"$round": ["$stock_value", 2]},
+                }
+            },
+            {"$sort": {"stock_value": -1}},
+        ]
+    ).to_list(length=None)
+
+    total_category_stock_value = sum(
+        float(category.get("stock_value", 0)) for category in category_values
+    )
+    if len(category_values) > 5:
+        top_categories = category_values[:4]
+        other_value = sum(
+            float(category.get("stock_value", 0)) for category in category_values[4:]
+        )
+        top_categories.append(
+            {"category_name": "Others", "stock_value": round(other_value, 2)}
+        )
+    else:
+        top_categories = category_values
+
+    category_distribution = [
+        {
+            **category,
+            "percentage": round(
+                float(category.get("stock_value", 0))
+                / total_category_stock_value
+                * 100,
+                1,
+            ) if total_category_stock_value else 0,
+        }
+        for category in top_categories
+    ]
 
     return {
         "generated_at": now.isoformat(),
@@ -152,18 +397,23 @@ async def get_dashboard_summary():
                 completed_sales_total,
                 2,
             ),
-            "yearly_totals": [
-                {
-                    "year": year,
-                    "total_amount": round(amount, 2),
-                }
-                for year, amount in sorted(sales_by_year.items())
-            ],
             "current_date": now.date().isoformat(),
             "daily_sales_total": round(
                 sum(sales_by_hour_today.values()),
                 2,
             ),
+            "daily_completed_bill_count": completed_bill_count_today,
+            "daily_sales_change_percentage": (
+                round(
+                    (sum(sales_by_hour_today.values()) - yesterday_sales_total)
+                    / yesterday_sales_total
+                    * 100,
+                    1,
+                )
+                if yesterday_sales_total > 0
+                else None
+            ),
+            "yesterday_sales_total": round(yesterday_sales_total, 2),
             "daily_hourly_totals": [
                 {
                     "hour": hour,
@@ -171,6 +421,7 @@ async def get_dashboard_summary():
                         sales_by_hour_today[hour],
                         2,
                     ),
+                    "purchase_amount": round(purchases_by_hour_today[hour], 2),
                 }
                 for hour in range(now.hour + 1)
             ],
@@ -186,11 +437,31 @@ async def get_dashboard_summary():
                         sales_by_day_current_month[day],
                         2,
                     ),
+                    "purchase_amount": round(purchases_by_day_current_month[day], 2),
                 }
                 for day in range(1, now.day + 1)
             ],
+            "yearly_totals": [
+                {
+                    "year": year,
+                    "total_amount": round(sales_by_year[year], 2),
+                    "purchase_amount": round(purchases_by_year[year], 2),
+                }
+                for year in sorted(set(sales_by_year) | set(purchases_by_year))
+            ],
+            "daily_purchase_total": round(sum(purchases_by_hour_today.values()), 2),
+            "monthly_purchase_total": round(sum(purchases_by_day_current_month.values()), 2),
         },
         "purchasing": {
             "open_purchase_order_count": open_purchase_order_count,
+            "received_purchase_total_all_time": round(received_purchase_total_all_time, 2),
+        },
+        "top_selling_medicines": top_selling_medicines,
+        "category_distribution": category_distribution,
+        "alerts": {
+            "low_stock_medicines": sorted(
+                low_stock_medicines,
+                key=lambda medicine: (medicine["stock"], medicine["name"].lower()),
+            )
         },
     }

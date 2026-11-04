@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Notifications</title>
+    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <script src="js/components/theme-bootstrap.js"></script>
+    
+</head>
+<body>
+    <main class="page main-area">
+        <header class="page-header notifications-header">
+            <div><p class="eyebrow">Updates</p><h1>Notification center</h1><p>Current stock and purchasing items that need attention.</p></div>
+            <button id="markAllReadButton" class="button button-secondary" type="button" disabled>Mark all as read</button>
+        </header>
+        <section class="notifications-content">
+            <div class="notifications-toolbar">
+                <p id="notificationCount" role="status">Loading notifications…</p>
+                <label for="notificationFilter">Show
+                    <select id="notificationFilter"><option value="all">All notifications</option><option value="unread">Unread only</option></select>
+                </label>
+            </div>
+            <p id="notificationError" class="notification-error" role="alert" hidden></p>
+            <div id="notificationList" class="notification-list"></div>
+            <p id="notificationEmpty" class="notification-empty" hidden>You’re all caught up. There are no active notifications.</p>
+        </section>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
+    <script src="js/notifications.js"></script>
+</body>
+</html>

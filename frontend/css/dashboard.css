@@ -244,6 +244,44 @@ a.metric-card:hover {
     font-size: clamp(1.15rem, 1.7vw, 1.55rem);
 }
 
+.metric-note {
+    color: #71827b;
+    font-size: 0.72rem;
+    line-height: 1.3;
+}
+
+.metric-note > span {
+    color: #c53c37;
+    font-weight: 800;
+}
+
+.dashboard-summary-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px 22px;
+    margin: 13px 2px 0;
+    color: #65786f;
+    font-size: 0.77rem;
+}
+
+.dashboard-summary-strip > span,
+.dashboard-summary-strip > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 24px;
+}
+
+.dashboard-summary-strip strong {
+    color: #174d39;
+    font-size: 0.84rem;
+}
+
+.dashboard-summary-strip > a:hover strong {
+    color: #078154;
+}
+
 .metric-arrow {
     margin-left: auto;
     color: #16825f;
@@ -283,6 +321,30 @@ a.metric-card:hover {
     justify-content: flex-end;
     gap: 18px;
 }
+
+.sales-chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #65786f;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.sales-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.legend-dot-revenue { background: #0c9b70; }
+.legend-dot-purchases { background: #94a3b8; }
 
 .sales-all-time {
     display: grid;
@@ -572,6 +634,437 @@ a.metric-card:hover {
     display: contents;
 }
 
+/* Owner dashboard refresh. The shared dark green sidebar stays untouched. */
+.page-content {
+    width: 100%;
+    max-width: none;
+}
+
+.dashboard-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 2px 0 25px;
+}
+
+.dashboard-heading .eyebrow {
+    margin-bottom: 6px;
+}
+
+.dashboard-heading h1 {
+    margin: 0;
+    color: #102e24;
+    font-size: clamp(1.65rem, 2.5vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    text-transform: capitalize;
+}
+
+.dashboard-heading > div:first-child > p:last-child {
+    margin: 6px 0 0;
+    color: #71827b;
+    font-size: 0.92rem;
+}
+
+.dashboard-heading-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dashboard-action {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border: 1px solid #d9e6df;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 88%);
+    color: #174d39;
+    font-size: 0.88rem;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgb(24 72 51 / 5%);
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.dashboard-action:hover {
+    transform: translateY(-2px);
+    background: #f1faf5;
+    box-shadow: 0 10px 22px rgb(24 72 51 / 10%);
+}
+
+.dashboard-action-primary {
+    border-color: #087451;
+    background: #087451;
+    color: #fff;
+}
+
+.dashboard-action-primary:hover {
+    background: #066346;
+    color: #fff;
+}
+
+.metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(290px, 0.85fr);
+    align-items: stretch;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.metric-card,
+.content-panel {
+    border-color: rgb(213 231 222 / 82%);
+    background-color: rgb(255 255 255 / 78%);
+    box-shadow: 0 12px 30px rgb(24 72 51 / 6%), inset 0 1px 0 rgb(255 255 255 / 92%);
+    backdrop-filter: blur(14px);
+}
+
+.metric-card {
+    min-height: 132px;
+    border-radius: 17px;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+a.metric-card:hover {
+    transform: translateY(-3px);
+    border-color: #a7ddc2;
+    box-shadow: 0 18px 36px rgb(24 93 63 / 12%), inset 0 1px 0 #fff;
+}
+
+.metric-card-green {
+    background: linear-gradient(135deg, rgb(226 250 240 / 88%), rgb(255 255 255 / 88%));
+}
+
+.metric-card-warning {
+    background: linear-gradient(135deg, rgb(255 248 226 / 90%), rgb(255 255 255 / 88%));
+}
+
+.metric-card-danger {
+    background: linear-gradient(135deg, rgb(255 237 235 / 90%), rgb(255 255 255 / 88%));
+}
+
+.content-panel {
+    border-radius: 18px;
+}
+
+.inventory-panel {
+    background:
+        radial-gradient(circle at 90% 0%, rgb(225 249 238 / 70%), transparent 28%),
+        rgb(255 255 255 / 82%);
+}
+
+.sales-panel {
+    margin-top: 0;
+    background: rgb(255 255 255 / 84%);
+}
+
+.inventory-panel {
+    background: rgb(255 255 255 / 84%);
+}
+
+.analytics-grid .inventory-health {
+    min-height: 320px;
+    flex-direction: row;
+    gap: 18px;
+}
+
+.analytics-grid .stock-donut {
+    width: clamp(132px, 11vw, 174px);
+    height: clamp(132px, 11vw, 174px);
+}
+
+.analytics-grid .donut-center {
+    width: 68%;
+    height: 68%;
+}
+
+.analytics-grid .stock-legend {
+    width: auto;
+    flex: 1;
+}
+
+.stock-status-list {
+    display: grid;
+    gap: 22px;
+    padding: 20px 0 10px;
+}
+
+.stock-status-row {
+    display: grid;
+    gap: 9px;
+}
+
+.stock-status-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #526b60;
+    font-size: 0.84rem;
+}
+
+.stock-status-label strong {
+    color: #16815c;
+    font-size: 0.88rem;
+}
+
+.stock-status-track {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #edf2f0;
+}
+
+.stock-status-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    transition: width 420ms ease;
+}
+
+.fill-healthy { background: linear-gradient(90deg, #25b585, #078357); }
+.fill-low { background: linear-gradient(90deg, #f8cc5a, #e6a819); }
+.fill-empty { background: linear-gradient(90deg, #f28179, #df4943); }
+
+.category-distribution {
+    display: grid;
+    gap: 20px;
+    padding-top: 18px;
+}
+
+.category-distribution-row {
+    display: grid;
+    gap: 8px;
+}
+
+.category-distribution-labels {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    color: #526b60;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.category-distribution-labels > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.category-distribution-labels strong {
+    flex: 0 0 auto;
+    color: #16815c;
+    font-size: 0.72rem;
+}
+
+.category-distribution-track {
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #edf2f0;
+}
+
+.category-distribution-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #18a879, #11b49a);
+    transition: width 420ms ease;
+}
+
+.bottom-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin-top: 18px;
+}
+
+.top-medicine-list {
+    display: grid;
+}
+
+.top-medicine-row {
+    display: grid;
+    min-height: 61px;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #edf2ef;
+}
+
+.top-medicine-rank {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 9px;
+    background: #e8f7f0;
+    color: #087451;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.top-medicine-copy {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.top-medicine-copy strong {
+    overflow: hidden;
+    color: #244238;
+    font-size: 0.83rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.top-medicine-copy small {
+    color: #7b8983;
+    font-size: 0.73rem;
+}
+
+.top-medicine-revenue {
+    color: #18805b;
+    font-size: 0.82rem;
+}
+
+.stock-donut {
+    box-shadow: 0 12px 28px rgb(11 110 75 / 12%);
+}
+
+.sales-chart {
+    display: block;
+    width: 100%;
+    height: 280px;
+    min-height: 0;
+    padding: 8px 0 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+}
+
+.sales-area-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.sales-grid-line {
+    stroke: #e7efeb;
+    stroke-dasharray: 4 5;
+    stroke-width: 1;
+}
+
+.sales-axis-label {
+    fill: #94a3a0;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.sales-chart-point {
+    fill: #ffffff;
+    stroke: #0c9b70;
+    stroke-width: 2.5;
+}
+
+.purchase-chart-point {
+    fill: #94a3b8;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+}
+
+.metric-comparison {
+    margin-top: 3px;
+    color: #71827b;
+    font-size: 0.69rem;
+    font-weight: 600;
+}
+
+.metric-comparison.is-positive { color: #13805e; }
+.metric-comparison.is-negative { color: #c5403c; }
+
+.owner-low-stock-alerts {
+    display: grid;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.low-stock-list-title {
+    margin: 4px 0 2px;
+    color: #4d6258;
+    font-size: 0.8rem;
+}
+
+.low-stock-alert-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 10px;
+    border: 1px solid #edf1ef;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.low-stock-alert-row > span:first-child {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+}
+
+.low-stock-alert-row strong {
+    overflow: hidden;
+    color: #294338;
+    font-size: 0.76rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.low-stock-alert-row small {
+    color: #7a8b83;
+    font-size: 0.68rem;
+}
+
+.low-stock-alert-row .low-stock-alert-value {
+    flex: 0 0 auto;
+    color: #a66a00;
+}
+
+.low-stock-alert-row.is-empty .low-stock-alert-value { color: #c43b3b; }
+.low-stock-alert-row:hover { border-color: #addac7; background: #f7fcf9; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .owner-welcome,
+    .metric-card,
+    .content-panel {
+        animation: owner-dashboard-enter 420ms ease both;
+    }
+
+    .metric-card:nth-child(2) { animation-delay: 35ms; }
+    .metric-card:nth-child(3) { animation-delay: 70ms; }
+    .metric-card:nth-child(4) { animation-delay: 105ms; }
+    .metric-card:nth-child(5) { animation-delay: 140ms; }
+    .metric-card:nth-child(6) { animation-delay: 175ms; }
+    .metric-card:nth-child(7) { animation-delay: 210ms; }
+    .metric-card:nth-child(8) { animation-delay: 245ms; }
+}
+
+@keyframes owner-dashboard-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .alert-row {
     display: grid;
     grid-template-columns: 37px 1fr auto;
@@ -678,17 +1171,51 @@ a.metric-card:hover {
         padding: 25px 16px 35px;
     }
 
+    .dashboard-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 19px;
+    }
+
+    .dashboard-heading-actions {
+        width: 100%;
+    }
+
+    .dashboard-action {
+        flex: 1;
+    }
+
     .updated-at {
         text-align: left;
     }
 
     .metric-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 11px;
     }
 
     .metric-card {
-        min-height: 93px;
+        min-height: 100px;
+        gap: 10px;
+        padding: 13px;
+    }
+
+    .metric-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .metric-value {
+        font-size: 1.45rem;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
     }
 
     .content-panel {
@@ -704,6 +1231,10 @@ a.metric-card:hover {
     .sales-panel-controls {
         width: 100%;
         gap: 12px;
+    }
+
+    .sales-chart {
+        height: 235px;
     }
 
     .sales-all-time {
@@ -727,5 +1258,31 @@ a.metric-card:hover {
 
     .stock-legend {
         width: 100%;
+    }
+}
+
+@media (max-width: 430px) {
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+        min-height: 92px;
+    }
+}
+
+@media (max-width: 1050px) and (min-width: 701px) {
+    .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .analytics-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.9fr);
+    }
+
+    .analytics-grid .inventory-health {
+        flex-direction: column;
+        gap: 17px;
+        padding: 8px 0;
     }
 }

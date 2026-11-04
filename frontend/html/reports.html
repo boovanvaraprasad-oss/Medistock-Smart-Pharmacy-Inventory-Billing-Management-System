@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Reports &amp; Analytics</title>
+    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <script src="js/components/theme-bootstrap.js"></script>
+    
+</head>
+<body>
+    <main class="page main-area">
+        <header class="page-header reports-header">
+            <div><p class="eyebrow">Business intelligence</p><h1>Reports &amp; Analytics</h1><p>Sales, purchasing, and inventory performance from your MediStock records.</p></div>
+            <button id="reportsRefresh" class="button button-secondary" type="button">↻ Refresh</button>
+        </header>
+        <section class="reports-content">
+            <p id="reportsLoading" class="reports-message" role="status">Loading report data…</p>
+            <p id="reportsError" class="reports-error" role="alert" hidden></p>
+            <div id="reportsBody" hidden>
+                <section class="report-metrics" aria-label="Business summary">
+                    <article><span>Today's revenue</span><strong id="reportTodayRevenue">—</strong><small id="reportTodayBills">—</small></article>
+                    <article><span>This month's revenue</span><strong id="reportMonthRevenue">—</strong><small id="reportMonthPurchases">—</small></article>
+                    <article><span>All-time sales</span><strong id="reportAllSales">—</strong><small id="reportAllPurchases">—</small></article>
+                    <article><span>Current stock value</span><strong id="reportStockValue">—</strong><small id="reportStockUnits">—</small></article>
+                </section>
+                <section class="report-panel report-trend-panel">
+                    <div class="report-panel-heading"><div><p class="eyebrow">Performance</p><h2>Revenue and received purchases</h2><p id="reportRangeCaption">Day by hour</p></div>
+                        <label class="report-range-label" for="reportRange">Period<select id="reportRange"><option value="day">Today</option><option value="month">This month</option><option value="year">By year</option></select></label>
+                    </div>
+                    <div class="report-legend"><span><i class="report-dot revenue"></i>Revenue</span><span><i class="report-dot purchases"></i>Received purchases</span></div>
+                    <div id="reportTrendChart" class="report-trend-chart" role="img" aria-label="Revenue and received purchases chart"></div>
+                    <p id="reportTrendEmpty" class="reports-message" hidden>No sales or received purchases in this period.</p>
+                </section>
+                <div class="report-detail-grid">
+                    <section class="report-panel"><div class="report-panel-heading"><div><p class="eyebrow">Sales</p><h2>Fast-moving medicines</h2></div></div><div id="reportTopMedicines" class="report-record-list"></div><p id="reportTopEmpty" class="reports-message" hidden>No completed medicine sales yet.</p></section>
+                    <section class="report-panel"><div class="report-panel-heading"><div><p class="eyebrow">Inventory</p><h2>Stock by category</h2></div></div><div id="reportCategories" class="report-category-list"></div><p id="reportCategoriesEmpty" class="reports-message" hidden>No stock value to report yet.</p></section>
+                </div>
+                <p id="reportUpdatedAt" class="report-updated"></p>
+            </div>
+        </section>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
+    <script src="js/reports.js"></script>
+</body>
+</html>

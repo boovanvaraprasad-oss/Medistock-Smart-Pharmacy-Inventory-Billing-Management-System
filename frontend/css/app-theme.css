@@ -1,0 +1,167 @@
+/* Shared visual language inspired by the modern MediStock reference UI.
+   The dark green navigation rail remains defined by app-shell.css. */
+:root {
+    font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
+    color: #172a24;
+    background: #f3f8f6;
+    font-synthesis: none;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+}
+
+body, button, input, select, textarea { font-family: inherit; }
+button, a { font: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+
+body.has-app-sidebar {
+    background:
+        radial-gradient(ellipse at 80% 0%, rgb(209 250 229 / 48%), transparent 34%),
+        linear-gradient(135deg, #f4faf7 0%, #edf8f3 46%, #f6faf8 100%);
+    background-attachment: fixed;
+    color: #172a24;
+}
+
+body.has-app-sidebar > .page {
+    background: transparent;
+}
+
+body.has-app-sidebar :is(
+    .panel,
+    .content-panel,
+    .metric-card,
+    .records-panel,
+    .table-panel,
+    .form-panel,
+    .section-panel,
+    .bill-panel,
+    .order-panel,
+    .dashboard-card
+) {
+    border-color: rgb(215 232 223 / 82%);
+    border-radius: 16px;
+    background-color: rgb(255 255 255 / 78%);
+    box-shadow: 0 8px 30px rgb(6 78 59 / 7%), inset 0 1px 0 rgb(255 255 255 / 78%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+body.has-app-sidebar :is(.page-header, .page-header h1, .page-header h2) {
+    color: #102f25;
+}
+
+body.has-app-sidebar > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+    border-color: #d5e4dc;
+    border-radius: 11px;
+    background-color: rgb(255 255 255 / 90%);
+    transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+body.has-app-sidebar > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):focus {
+    border-color: #40ad83;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 13%);
+}
+
+body.has-app-sidebar > .page :is(button, .button, .btn) {
+    border-radius: 11px;
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+body.has-app-sidebar > .page :is(button, .button, .btn):not(:disabled):hover {
+    box-shadow: 0 7px 18px rgb(6 78 59 / 10%);
+}
+
+body.has-app-sidebar table {
+    border-color: #e0ebe5;
+    border-radius: 13px;
+}
+
+body.has-app-sidebar :is(th, thead td) {
+    background: #edf5f1;
+    color: #526b60;
+}
+
+body.has-app-sidebar :is(td, th) {
+    border-color: #e7efeb;
+}
+
+body.has-app-sidebar :is(.search-form, .record-search, .search-panel) {
+    border-radius: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.has-app-sidebar *,
+    body.has-app-sidebar *::before,
+    body.has-app-sidebar *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* The Settings page controls this preference for the signed-in application. */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    background: #101c18;
+    color: #e7f0eb;
+}
+
+:root[data-theme="dark"] body.has-app-sidebar {
+    background: radial-gradient(ellipse at 80% 0%, #19372b 0%, transparent 38%), #101c18;
+    color: #e7f0eb;
+}
+
+:root[data-theme="dark"] body.has-app-sidebar > .page { color: #e7f0eb; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.topbar, .page-header) {
+    border-color: #2b4037;
+    background: rgb(21 37 31 / 96%);
+    color: #edf6f1;
+}
+:root[data-theme="dark"] body.has-app-sidebar :is(.topbar-title, .page-header h1, .page-header h2, h1, h2, h3) { color: #edf6f1; }
+:root[data-theme="dark"] body.has-app-sidebar :is(p, .today-date, .updated-at, .metric-label, .metric-note, .sales-chart-caption, .dashboard-summary-strip) { color: #a9bdb3; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel, .section-panel, .bill-panel, .order-panel, .dashboard-card, .settings-card, .notification-card, .report-panel, .report-metrics article) {
+    border-color: #2c4339;
+    background-color: rgb(24 42 34 / 94%);
+    color: #e7f0eb;
+    box-shadow: 0 8px 30px rgb(0 0 0 / 20%), inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-warning, .notification-card.priority-warning) { background: linear-gradient(135deg, #352c17, #22261e); }
+:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-danger, .notification-card.priority-critical) { background: linear-gradient(135deg, #38211f, #25201f); }
+:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-green, .notification-card.priority-info) { background: linear-gradient(135deg, #183a2d, #1b2d26); }
+:root[data-theme="dark"] body.has-app-sidebar :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+    border-color: #40584d;
+    background-color: #172820;
+    color: #e7f0eb;
+}
+:root[data-theme="dark"] body.has-app-sidebar table { border-color: #344b40; }
+:root[data-theme="dark"] body.has-app-sidebar :is(th, thead td) { background: #22372d; color: #b8c9c0; }
+:root[data-theme="dark"] body.has-app-sidebar :is(td, th) { border-color: #2b4037; color: #e0eae4; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.sales-panel-top h2, .sales-all-time strong, .dashboard-summary-strip strong, .low-stock-alert-row strong, .notification-copy h2) { color: #e7f0eb; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.low-stock-alert-row, .notification-actions a, .notification-actions button, .refresh-button) {
+    border-color: #395246;
+    background: #1c3027;
+    color: #d8e8df;
+}
+:root[data-theme="dark"] body.has-app-sidebar :is(.report-metrics strong, .report-record-row strong, .report-category-labels strong, .settings-card h2, .theme-setting strong) { color: #e7f0eb; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.report-metrics span, .report-metrics small, .report-record-row span, .report-category-labels, .theme-setting small, .notification-copy p, .notification-copy small) { color: #a9bdb3; }
+:root[data-theme="dark"] body.has-app-sidebar :is(.report-range-label select, .notifications-toolbar select) { border-color: #40584d; background: #172820; color: #e7f0eb; }
+:root[data-theme="dark"] body.has-app-sidebar .report-category-track { background: #263c32; }
+:root[data-theme="dark"] body.has-app-sidebar .low-stock-alert-row:hover { background: #223b30; }
+:root[data-theme="dark"] body.has-app-sidebar .cir-tabs { border-color: #385146; background: #172820; }
+:root[data-theme="dark"] body.has-app-sidebar .cir-tabs__t { color: #b3c5bc; }
+:root[data-theme="dark"] body.has-app-sidebar .cir-tabs__t:hover { color: #ffffff; }
+:root[data-theme="dark"] body.has-app-sidebar .sales-grid-line { stroke: #33473e; }
+:root[data-theme="dark"] body.has-app-sidebar .sales-axis-label { fill: #a9bdb3; }
+:root[data-theme="dark"] body.has-app-sidebar .sales-chart { border-color: #344b40; }
+
+:root[data-theme="dark"] .settings-card,
+:root[data-theme="dark"] .notification-card { color: #e7f0eb; }

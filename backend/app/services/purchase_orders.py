@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from bson import ObjectId
 from fastapi import HTTPException, status
 
@@ -45,6 +47,7 @@ async def create_purchase_order(
         "status": "draft",
         "notes": notes,
         "is_active": True,
+        "created_at": datetime.now(timezone.utc),
     }
 
     result = await db.purchase_orders.insert_one(
@@ -310,7 +313,12 @@ async def receive_purchase_order(
                 "is_active": True,
                 "status": {"$in": ["draft", "ordered"]},
             },
-            {"$set": {"status": "received"}},
+            {
+                "$set": {
+                    "status": "received",
+                    "received_at": datetime.now(timezone.utc),
+                }
+            },
             session=session,
         )
 

@@ -1,0 +1,69 @@
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-header h1 {
+    margin: 0 0 7px;
+    color: #102f25;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.settings-header p:last-child { margin: 0; color: #71827b; }
+
+.settings-content {
+    width: min(980px, 100%);
+    margin: 30px auto;
+    padding: 0 26px 44px;
+}
+
+.settings-card {
+    padding: 25px;
+    border: 1px solid #dbe9e2;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgb(6 78 59 / 7%);
+}
+
+.settings-card-copy {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.settings-icon {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 14px;
+    background: #e1f7ed;
+    color: #087c5c;
+    font-size: 1.5rem;
+}
+
+.settings-card h2 { margin: 0 0 5px; color: #17372b; font-size: 1.1rem; }
+.settings-card p { margin: 0; color: #71827b; font-size: 0.9rem; }
+
+.theme-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 0 8px;
+    border-top: 1px solid #e7efeb;
+    cursor: pointer;
+}
+
+.theme-setting > span { display: grid; gap: 5px; }
+.theme-setting strong { color: #243c32; font-size: 0.92rem; }
+.theme-setting small { color: #71827b; font-size: 0.82rem; }
+.theme-setting input { width: 48px; height: 26px; accent-color: #0a805e; cursor: pointer; }
+.settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #087c5c; font-size: 0.8rem; }
+
+@media (max-width: 760px) {
+    .settings-content { margin: 18px auto; padding-inline: 16px; }
+    .settings-card { padding: 18px; }
+}

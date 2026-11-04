@@ -11,10 +11,10 @@
     }
 
     function attachSearch(input) {
-        const target = document.querySelector(input.dataset.recordSearch);
+        const targets = [...document.querySelectorAll(input.dataset.recordSearch)];
         const wrapper = input.closest(".record-search");
         const emptyMessage = wrapper?.querySelector(".record-search-empty");
-        if (!target || !emptyMessage) return;
+        if (!targets.length || !emptyMessage) return;
 
         const controls = document.createElement("div");
         controls.className = "search-controls";
@@ -35,14 +35,15 @@
 
         function filterRecords() {
             const query = normalize(input.value.trim());
-            const entries = [...target.children];
             let visibleCount = 0;
 
-            for (const entry of entries) {
-                const isEmptyRow = entry.matches("tr") && entry.querySelector("td[colspan]");
-                const matches = !query || (!isEmptyRow && getSearchableText(entry).includes(query));
-                entry.classList.toggle("record-search-filtered", !matches);
-                if (matches && !isEmptyRow) visibleCount += 1;
+            for (const target of targets) {
+                for (const entry of target.children) {
+                    const isEmptyRow = entry.matches("tr") && entry.querySelector("td[colspan]");
+                    const matches = !query || (!isEmptyRow && getSearchableText(entry).includes(query));
+                    entry.classList.toggle("record-search-filtered", !matches);
+                    if (matches && !isEmptyRow) visibleCount += 1;
+                }
             }
 
             emptyMessage.hidden = !query || visibleCount > 0;
@@ -55,7 +56,8 @@
             filterRecords();
             input.focus();
         });
-        new MutationObserver(filterRecords).observe(target, { childList: true, subtree: false });
+        const observer = new MutationObserver(filterRecords);
+        targets.forEach((target) => observer.observe(target, { childList: true, subtree: false }));
         filterRecords();
     }
 

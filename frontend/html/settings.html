@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Settings</title>
+    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <script src="js/components/theme-bootstrap.js"></script>
+    
+</head>
+<body>
+    <main class="page main-area">
+        <header class="page-header settings-header">
+            <div><p class="eyebrow">Preferences</p><h1>Settings</h1><p>Adjust how MediStock looks on this device.</p></div>
+        </header>
+        <section class="settings-content">
+            <section class="settings-card" aria-labelledby="appearanceTitle">
+                <div class="settings-card-copy">
+                    <span class="settings-icon" aria-hidden="true">◐</span>
+                    <div>
+                        <h2 id="appearanceTitle">Appearance</h2>
+                        <p>Choose the display theme for your MediStock pages.</p>
+                    </div>
+                </div>
+                <label class="theme-setting" for="themeToggle">
+                    <span><strong>Dark theme</strong><small id="themeDescription">Use a darker background across the app.</small></span>
+                    <input id="themeToggle" type="checkbox" role="switch" aria-describedby="themeDescription">
+                </label>
+                <p id="settingsStatus" class="settings-status" role="status" aria-live="polite"></p>
+            </section>
+        </section>
+    </main>
+    <script src="js/api/client.js"></script>
+    <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>
