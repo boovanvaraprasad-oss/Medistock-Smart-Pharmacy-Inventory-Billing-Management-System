@@ -22,6 +22,8 @@ from app.routes.v1.bills import router as bills_router
 from app.routes.v1.dashboard import router as dashboard_router
 from app.routes.v1.notifications import router as notifications_router
 from app.routes.v1.settings import router as settings_router
+from app.routes.v1.reports import router as reports_router
+from app.routes.v1.audit_logs import router as audit_logs_router
 
 
 api_router = APIRouter()
@@ -43,3 +45,5 @@ api_router.include_router(bills_router)
 api_router.include_router(dashboard_router)
 api_router.include_router(notifications_router)
 api_router.include_router(settings_router)
+api_router.include_router(reports_router)
+api_router.include_router(audit_logs_router)

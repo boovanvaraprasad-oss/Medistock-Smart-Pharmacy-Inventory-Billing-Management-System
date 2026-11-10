@@ -2,6 +2,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_transactions import (
     create_stock_transaction,
 )
@@ -12,6 +13,8 @@ async def adjust_batch_stock(
     batch_id: str,
     quantity_change: int,
     reason: str,
+    actor_user_id: str,
+    actor_role: str,
 ):
     """
     Adjust the quantity of one existing batch.
@@ -196,6 +199,23 @@ async def adjust_batch_stock(
             previous_stock=previous_stock,
             new_stock=new_stock,
             reason=cleaned_reason,
+            session=session,
+        )
+
+        await create_audit_log(
+            action="STOCK_ADJUSTMENT",
+            entity_type="stock_batches",
+            entity_id=str(batch_object_id),
+            entity_label=batch.get("batch_number", str(batch_object_id)),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "medicine_name": medicine.get("name", "Unknown medicine"),
+                "quantity_change": quantity_change,
+                "previous_batch_quantity": previous_batch_quantity,
+                "new_batch_quantity": new_batch_quantity,
+                "reason": cleaned_reason,
+            },
             session=session,
         )
 

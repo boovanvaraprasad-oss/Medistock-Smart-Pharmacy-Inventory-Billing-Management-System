@@ -3,7 +3,8 @@ from datetime import date, datetime, time
 from bson import ObjectId
 from fastapi import HTTPException, status
 
-from app.core.database import db
+from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 
 
 EDITABLE_ORDER_STATUSES = {"draft", "ordered"}
@@ -71,6 +72,8 @@ async def create_purchase_item(
     batch_number: str,
     manufacturing_date,
     expiry_date,
+    actor_user_id: str,
+    actor_role: str,
 ):
     purchase_order = await get_editable_purchase_order(
         purchase_order_id
@@ -121,9 +124,31 @@ async def create_purchase_item(
         "expiry_date": date_to_datetime(expiry_date),
     }
 
-    result = await db.purchase_items.insert_one(
-        purchase_item
-    )
+    async def transaction_work(session):
+        result = await db.purchase_items.insert_one(
+            purchase_item,
+            session=session,
+        )
+        await create_audit_log(
+            action="PURCHASE_ORDER_ITEM_ADD",
+            entity_type="purchase_orders",
+            entity_id=str(purchase_order["_id"]),
+            entity_label=str(purchase_order.get("order_number", purchase_order["_id"])),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "purchase_item_id": str(result.inserted_id),
+                "medicine_name": medicine.get("name", "Unknown medicine"),
+                "quantity": quantity,
+                "unit_price": unit_price,
+                "total_price": total_price,
+            },
+            session=session,
+        )
+        return result
+
+    async with await client.start_session() as session:
+        result = await session.with_transaction(transaction_work)
 
     return {
         "id": str(result.inserted_id),
@@ -173,6 +198,8 @@ async def get_all_purchase_items():
 
 async def update_purchase_item(
     purchase_item_id: str,
+    actor_user_id: str,
+    actor_role: str,
     quantity: int | None = None,
     unit_price: float | None = None,
     batch_number: str | None = None,
@@ -273,15 +300,56 @@ async def update_purchase_item(
         ),
         "expiry_date": date_to_datetime(new_expiry_date),
     }
+    changed_fields = [
+        field
+        for field, value in update_data.items()
+        if purchase_item.get(field) != value
+    ]
 
-    await db.purchase_items.update_one(
-        {"_id": object_id},
-        {"$set": update_data},
-    )
+    medicine = await db.medicines.find_one({"_id": purchase_item["medicine_id"]})
 
-    updated_item = await db.purchase_items.find_one(
-        {"_id": object_id}
-    )
+    async def transaction_work(session):
+        result = await db.purchase_items.update_one(
+            {
+                "_id": object_id,
+                "quantity": purchase_item["quantity"],
+                "unit_price": purchase_item["unit_price"],
+            },
+            {"$set": update_data},
+            session=session,
+        )
+        if result.matched_count != 1:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Purchase item changed while the update was in progress; retry",
+            )
+        if changed_fields:
+            await create_audit_log(
+                action="PURCHASE_ORDER_ITEM_UPDATE",
+                entity_type="purchase_orders",
+                entity_id=str(purchase_item["purchase_order_id"]),
+                entity_label=str(purchase_item["purchase_order_id"]),
+                actor_user_id=actor_user_id,
+                actor_role=actor_role,
+                details={
+                    "purchase_item_id": str(object_id),
+                    "medicine_name": (medicine or {}).get("name", "Unknown medicine"),
+                    "changed_fields": changed_fields,
+                    "previous_quantity": purchase_item.get("quantity"),
+                    "quantity": new_quantity,
+                    "previous_unit_price": purchase_item.get("unit_price"),
+                    "unit_price": new_unit_price,
+                    "total_price": total_price,
+                },
+                session=session,
+            )
+        return await db.purchase_items.find_one(
+            {"_id": object_id},
+            session=session,
+        )
+
+    async with await client.start_session() as session:
+        updated_item = await session.with_transaction(transaction_work)
 
     return {
         "id": str(updated_item["_id"]),

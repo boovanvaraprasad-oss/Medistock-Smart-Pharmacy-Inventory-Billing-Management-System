@@ -2,6 +2,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_batches import create_stock_batch
 from app.services.stock_transactions import create_stock_transaction
 
@@ -13,6 +14,8 @@ async def create_stock_batch_and_update_total(
     purchase_price: float,
     manufacturing_date,
     expiry_date,
+    actor_user_id: str,
+    actor_role: str,
 ):
     """Create a batch and update medicine stock as one transaction."""
 
@@ -93,6 +96,23 @@ async def create_stock_batch_and_update_total(
             previous_stock=previous_stock,
             new_stock=new_stock,
             reason=f"Stock batch created: {batch_number}",
+            session=session,
+        )
+
+        await create_audit_log(
+            action="STOCK_BATCH_CREATE",
+            entity_type="stock_batches",
+            entity_id=batch["id"],
+            entity_label=batch_number,
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "medicine_name": medicine.get("name", "Unknown medicine"),
+                "quantity": quantity,
+                "purchase_price": purchase_price,
+                "previous_stock": previous_stock,
+                "new_stock": new_stock,
+            },
             session=session,
         )
 

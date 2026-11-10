@@ -36,11 +36,25 @@ signupForm.addEventListener("submit", async (event) => {
         }
 
         message.textContent =
-            "Account created successfully. Redirecting to login...";
+            "Account created successfully. Opening your MediStock workspace…";
 
-        setTimeout(() => {
-            window.location.href = "index.html";
-        }, 1500);
+        try {
+            const tokens = await loginUser(email, password);
+            sessionStorage.removeItem("medistock_current_user");
+            localStorage.setItem("access_token", tokens.access_token);
+            localStorage.setItem("refresh_token", tokens.refresh_token);
+            await getCurrentUser();
+            window.location.replace("/home.html");
+        } catch {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            sessionStorage.removeItem("medistock_current_user");
+            message.textContent =
+                "Your account was created. Please sign in to continue.";
+            window.setTimeout(() => {
+                window.location.href = "/login.html";
+            }, 1800);
+        }
 
     } catch (error) {
         console.error(error);
@@ -50,5 +64,5 @@ signupForm.addEventListener("submit", async (event) => {
 });
 
 backToLogin.addEventListener("click", () => {
-    window.location.href = "index.html";
+    window.location.href = "/login.html";
 });

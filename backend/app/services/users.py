@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 from app.core.database import client, db
 from app.core.permissions import OWNER, ROLES
 from app.core.security import hash_password
+from app.services.audit_log import create_audit_log
 
 
 def to_object_id(user_id: str) -> ObjectId:
@@ -33,6 +34,8 @@ async def create_staff_user(
     email: str,
     password: str,
     role: str,
+    acting_user_id: str,
+    acting_user_role: str,
 ):
     if role not in ROLES:
         raise HTTPException(
@@ -57,7 +60,22 @@ async def create_staff_user(
         "is_active": True,
     }
 
-    result = await db.users.insert_one(user)
+    async def transaction_work(session):
+        result = await db.users.insert_one(user, session=session)
+        await create_audit_log(
+            action="USER_CREATE",
+            entity_type="users",
+            entity_id=str(result.inserted_id),
+            entity_label=email,
+            actor_user_id=acting_user_id,
+            actor_role=acting_user_role,
+            details={"role": role},
+            session=session,
+        )
+        return result
+
+    async with await client.start_session() as session:
+        result = await session.with_transaction(transaction_work)
 
     return {
         "id": str(result.inserted_id),
@@ -103,6 +121,7 @@ async def get_staff_user(user_id: str):
 async def update_staff_user(
     user_id: str,
     acting_user_id: str,
+    acting_user_role: str,
     role: str | None = None,
     is_active: bool | None = None,
 ):
@@ -180,15 +199,52 @@ async def update_staff_user(
                 detail="At least one active owner is required",
             )
 
-    await db.users.update_one(
-        {"_id": object_id},
-        {"$set": update_data},
-    )
+    actual_changes = {
+        field: value
+        for field, value in update_data.items()
+        if user.get(field, True if field == "is_active" else None) != value
+    }
 
-    updated_user = await db.users.find_one(
-        {"_id": object_id},
-        {"password_hash": 0},
-    )
+    async def transaction_work(session):
+        if actual_changes:
+            user_filter = {"_id": object_id}
+            for field in ("role", "is_active"):
+                if field in user:
+                    user_filter[field] = user[field]
+                elif field == "is_active":
+                    user_filter[field] = {"$exists": False}
+            result = await db.users.update_one(
+                user_filter,
+                {"$set": actual_changes},
+                session=session,
+            )
+            if result.modified_count != 1:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Staff account changed while the update was in progress; retry",
+                )
+            await create_audit_log(
+                action="USER_UPDATE",
+                entity_type="users",
+                entity_id=str(object_id),
+                entity_label=user.get("email", str(object_id)),
+                actor_user_id=acting_user_id,
+                actor_role=acting_user_role,
+                details={
+                    "previous": {field: user.get(field, True if field == "is_active" else None) for field in actual_changes},
+                    "changes": actual_changes,
+                },
+                session=session,
+            )
+
+        return await db.users.find_one(
+            {"_id": object_id},
+            {"password_hash": 0},
+            session=session,
+        )
+
+    async with await client.start_session() as session:
+        updated_user = await session.with_transaction(transaction_work)
 
     return to_staff_response(updated_user)
 
@@ -238,6 +294,7 @@ async def delete_staff_user(
                 "$or": [
                     {"actor_user_id": object_id},
                     {"target_user_id": object_id},
+                    {"entity_type": "users", "entity_id": str(object_id)},
                 ]
             },
             {"_id": 1},

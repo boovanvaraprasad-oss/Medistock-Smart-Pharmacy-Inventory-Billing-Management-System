@@ -1,0 +1,223 @@
+body.home-page {
+    min-height: 100vh;
+    color: #fff;
+    background: linear-gradient(115deg, rgb(4 48 54 / 88%), rgb(4 64 67 / 64%) 57%, rgb(4 57 62 / 50%)), url("/assets/pharmacy-shelves-bg.jpg") center 52% / cover fixed no-repeat;
+}
+
+.home-shell {
+    display: flex;
+    width: min(1240px, 100%);
+    min-height: 100vh;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 26px 34px 18px;
+}
+
+.home-header,
+.home-account,
+.home-brand {
+    display: flex;
+    align-items: center;
+}
+
+.home-header {
+    justify-content: space-between;
+    gap: 22px;
+}
+
+.home-brand {
+    gap: 10px;
+    color: #fff;
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: -.045em;
+    text-decoration: none;
+}
+
+.home-brand img { width: 34px; height: 34px; object-fit: contain; }
+
+.home-account { gap: 16px; }
+
+.home-user {
+    color: rgb(255 255 255 / 94%);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.home-notifications {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 28%);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 16%);
+    color: #fff;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.home-notifications svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+
+.home-logout {
+    min-height: 40px;
+    padding: 0 18px;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 10px;
+    background: rgb(255 255 255 / 93%);
+    color: var(--ms-teal-900);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.home-logout:hover { transform: translateY(-1px); background: #fff; }
+
+.home-welcome { margin: 52px 0 34px; }
+
+.home-eyebrow {
+    margin: 0 0 12px;
+    color: #9ce8cf;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.home-welcome h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(32px, 5vw, 46px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -.045em;
+}
+
+.home-welcome h1 span { color: #a5edd4; }
+
+.home-description {
+    max-width: 620px;
+    margin: 11px 0 0;
+    color: rgb(255 255 255 / 90%);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.home-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.home-tile {
+    position: relative;
+    display: flex;
+    min-height: 164px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 76%);
+    border-radius: 17px;
+    background: linear-gradient(145deg, rgb(255 255 255 / 95%), rgb(239 250 247 / 82%));
+    color: var(--ms-ink);
+    text-decoration: none;
+    box-shadow: 0 15px 38px rgb(5 39 42 / 20%), inset 0 1px 0 rgb(255 255 255 / 96%);
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    transition: transform 170ms ease, box-shadow 170ms ease, border-color 170ms ease;
+}
+
+.home-tile::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 44%;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgb(255 255 255 / 40%), transparent);
+    content: "";
+    pointer-events: none;
+}
+
+.home-tile:hover,
+.home-tile:focus-visible {
+    transform: translateY(-3px);
+    border-color: #a4ecd4;
+    box-shadow: 0 20px 48px rgb(5 39 42 / 27%), inset 0 1px 0 #fff;
+}
+
+.home-tile:focus-visible,
+.home-notifications:focus-visible,
+.home-logout:focus-visible { outline: 3px solid #a5edd4; outline-offset: 3px; }
+
+.home-tile-icon {
+    position: relative;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    border: 1px solid rgb(8 119 123 / 8%);
+    border-radius: 12px;
+    background: linear-gradient(145deg, #effaf5, #dcefe7);
+    color: var(--ms-teal-800);
+}
+
+.home-tile-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.home-tile-title { position: relative; margin-top: 14px; color: var(--ms-ink); font-size: 15px; font-weight: 700; }
+.home-tile-description { position: relative; margin-top: 6px; color: #496267; font-size: 12px; line-height: 1.45; }
+.home-tile-arrow { position: absolute; right: 17px; bottom: 17px; color: var(--ms-teal-800); font-size: 18px; line-height: 1; }
+.home-tile-count { margin: 17px 0 0; color: rgb(255 255 255 / 82%); font-size: 12px; }
+.home-error { margin: 20px 0 0; padding: 12px 14px; border-radius: 10px; background: #fff0ef; color: #9d2727; font-size: 13px; }
+.home-footer { margin-top: auto; padding-top: 30px; color: rgb(255 255 255 / 75%); font-size: 11px; text-align: center; }
+
+:root[data-theme="dark"] body.home-page {
+    background: linear-gradient(115deg, rgb(5 24 27 / 91%), rgb(8 42 45 / 83%) 58%, rgb(5 35 39 / 76%)), url("/assets/pharmacy-shelves-bg.jpg") center 52% / cover fixed no-repeat;
+}
+
+:root[data-theme="dark"] .home-tile {
+    border-color: rgb(123 224 188 / 26%);
+    background: linear-gradient(145deg, rgb(27 43 46 / 92%), rgb(20 35 38 / 84%));
+    color: var(--ms-ink);
+    box-shadow: 0 15px 38px rgb(0 0 0 / 25%), inset 0 1px 0 rgb(255 255 255 / 15%);
+}
+
+:root[data-theme="dark"] .home-tile::before { background: linear-gradient(180deg, rgb(255 255 255 / 8%), transparent); }
+:root[data-theme="dark"] .home-tile-title { color: var(--ms-ink); }
+:root[data-theme="dark"] .home-tile-description { color: var(--ms-muted); }
+:root[data-theme="dark"] .home-tile-icon { border-color: rgb(123 224 188 / 20%); background: rgb(123 224 188 / 13%); color: var(--ms-mint-400); }
+:root[data-theme="dark"] .home-tile-arrow { color: var(--ms-mint-400); }
+
+:root[data-theme="dark"] body.home-page .home-welcome h1 { color: #fff; }
+:root[data-theme="dark"] body.home-page .home-welcome .home-eyebrow { color: #9ce8cf; }
+:root[data-theme="dark"] body.home-page .home-welcome .home-description { color: rgb(255 255 255 / 90%); }
+:root[data-theme="dark"] body.home-page .home-header .home-user { color: rgb(255 255 255 / 94%); }
+:root[data-theme="dark"] body.home-page .home-tile-count,
+:root[data-theme="dark"] body.home-page .home-footer { color: rgb(255 255 255 / 78%); }
+
+@media (max-width: 1000px) { .home-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+    .home-shell { padding: 20px 22px 16px; }
+    .home-welcome { margin: 44px 0 26px; }
+    .home-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .home-tile { min-height: 150px; padding: 17px; }
+}
+@media (max-width: 480px) {
+    .home-shell { padding: 17px 16px 14px; }
+    .home-brand { font-size: 20px; }
+    .home-brand img { width: 30px; height: 30px; }
+    .home-account { gap: 9px; }
+    .home-user { max-width: 100px; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .home-notifications { width: 36px; height: 36px; }
+    .home-logout { min-height: 36px; padding: 0 12px; font-size: 11px; }
+    .home-welcome { margin-top: 42px; }
+    .home-tiles { grid-template-columns: 1fr; }
+    .home-tile { min-height: 132px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-tile, .home-logout { transition: none; }
+    .home-tile:hover, .home-logout:hover { transform: none; }
+}

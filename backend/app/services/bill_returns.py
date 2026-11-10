@@ -4,6 +4,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_transactions import create_stock_transaction
 
 
@@ -12,6 +13,8 @@ async def return_bill_batch_stock(
     batch_id: str,
     quantity: int,
     reason: str,
+    actor_user_id: str,
+    actor_role: str,
 ):
     """Return sold stock to its original batch and record the return."""
 
@@ -217,6 +220,22 @@ async def return_bill_batch_stock(
             previous_stock=previous_medicine_stock,
             new_stock=new_medicine_stock,
             reason=reason,
+            session=session,
+        )
+
+        await create_audit_log(
+            action="BILL_RETURN",
+            entity_type="bills",
+            entity_id=str(bill_object_id),
+            entity_label=bill.get("invoice_number", str(bill_object_id)),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "medicine_name": medicine.get("name", "Unknown medicine"),
+                "batch_number": batch.get("batch_number", ""),
+                "quantity": quantity,
+                "reason": reason,
+            },
             session=session,
         )
 

@@ -35,6 +35,8 @@ async def add_purchase_order(
         supplier_id=data.supplier_id,
         status_value=data.status,
         notes=data.notes,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 
@@ -66,6 +68,8 @@ async def edit_purchase_order(
         status_value=data.status,
         notes=data.notes,
         is_active=data.is_active,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 @router.patch(
@@ -80,4 +84,6 @@ async def receive_order(
 ):
     return await receive_purchase_order(
         purchase_order_id=purchase_order_id,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )

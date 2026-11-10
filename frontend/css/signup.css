@@ -95,21 +95,6 @@
     line-height: 1.45;
 }
 
-:root[data-theme="dark"] .signup-page {
-    background: #10272b;
-    color: #e8f4f3;
-}
-
-:root[data-theme="dark"] .signup-card {
-    border-color: #315257;
-    background: #123b40;
-    box-shadow: 0 18px 48px rgb(0 0 0 / 24%);
-}
-
-:root[data-theme="dark"] .signup-card :is(h2, label) { color: #e8f4f3; }
-:root[data-theme="dark"] #signupForm input { border-color: #315257; background: #10272b; color: #e8f4f3; }
-:root[data-theme="dark"] #backToLogin { border-color: #315257; color: #67d2ae; }
-
 @media (prefers-reduced-motion: reduce) {
     #signupForm button,
     #backToLogin { transition: none; }

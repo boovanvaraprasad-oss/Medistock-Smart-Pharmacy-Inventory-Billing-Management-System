@@ -45,9 +45,8 @@ loginForm.addEventListener("submit", async (event) => {
         localStorage.setItem("refresh_token", data.refresh_token);
         tokensWereSaved = true;
 
-        const currentUser = await getCurrentUser();
-        const destination = getDashboardForRole(currentUser.role);
-        window.location.href = destination;
+        await getCurrentUser();
+        window.location.href = "/home.html";
     } catch (error) {
         if (tokensWereSaved) {
             localStorage.removeItem("access_token");

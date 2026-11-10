@@ -153,6 +153,45 @@ function getDashboardSummaryForPeriod(selectedDate, selectedMonth) {
     return apiRequest(`/api/v1/dashboard/summary${suffix ? `?${suffix}` : ""}`);
 }
 
+async function downloadApiFile(path) {
+    const sendRequest = (accessToken) => fetch(`${API_BASE_URL}${path}`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    let accessToken = localStorage.getItem("access_token");
+    if (!accessToken) throw new Error("Please log in to continue.");
+
+    let response = await sendRequest(accessToken);
+    if (response.status === 401) {
+        try {
+            accessToken = await refreshAccessToken();
+        } catch (error) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            clearCachedCurrentUser();
+            throw error;
+        }
+        response = await sendRequest(accessToken);
+    }
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.detail || "Unable to download the report.");
+    }
+
+    const blob = await response.blob();
+    const disposition = response.headers.get("Content-Disposition") || "";
+    const filename = disposition.match(/filename="?([^";]+)"?/i)?.[1] || "MediStock-report";
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+window.downloadApiFile = downloadApiFile;
+
 async function logoutUser() {
     let accessToken = localStorage.getItem("access_token");
     const refreshToken = localStorage.getItem("refresh_token");

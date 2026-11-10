@@ -4,6 +4,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_batches import create_stock_batch
 from app.services.stock_transactions import (
     create_stock_transaction,
@@ -12,6 +13,8 @@ from app.services.stock_transactions import (
 
 async def create_purchase_order(
     supplier_id: str,
+    actor_user_id: str,
+    actor_role: str,
     status_value: str = "draft",
     notes: str | None = None,
 ):
@@ -50,9 +53,25 @@ async def create_purchase_order(
         "created_at": datetime.now(timezone.utc),
     }
 
-    result = await db.purchase_orders.insert_one(
-        purchase_order
-    )
+    async def transaction_work(session):
+        result = await db.purchase_orders.insert_one(
+            purchase_order,
+            session=session,
+        )
+        await create_audit_log(
+            action="PURCHASE_ORDER_CREATE",
+            entity_type="purchase_orders",
+            entity_id=str(result.inserted_id),
+            entity_label=str(result.inserted_id),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={"supplier_name": supplier.get("name", "Unknown supplier")},
+            session=session,
+        )
+        return result
+
+    async with await client.start_session() as session:
+        result = await session.with_transaction(transaction_work)
 
     return {
         "id": str(result.inserted_id),
@@ -88,6 +107,8 @@ async def get_all_purchase_orders():
 
 async def update_purchase_order(
     purchase_order_id: str,
+    actor_user_id: str,
+    actor_role: str,
     status_value: str | None = None,
     notes: str | None = None,
     is_active: bool | None = None,
@@ -144,14 +165,54 @@ async def update_purchase_order(
             detail="No fields to update",
         )
 
-    await db.purchase_orders.update_one(
-        {"_id": object_id},
-        {"$set": update_data},
-    )
+    changed_fields = [
+        field
+        for field, value in update_data.items()
+        if purchase_order.get(field, True if field == "is_active" else None) != value
+    ]
+    audit_details = {"changed_fields": changed_fields}
+    if "status" in changed_fields:
+        audit_details["previous_status"] = purchase_order.get("status")
+        audit_details["status"] = update_data["status"]
+    if "is_active" in changed_fields:
+        audit_details["previous_is_active"] = purchase_order.get("is_active", True)
+        audit_details["is_active"] = update_data["is_active"]
 
-    updated = await db.purchase_orders.find_one(
-        {"_id": object_id}
-    )
+    async def transaction_work(session):
+        if changed_fields:
+            order_filter = {"_id": object_id}
+            for field in ("status", "is_active"):
+                if field in purchase_order:
+                    order_filter[field] = purchase_order[field]
+                elif field == "is_active":
+                    order_filter[field] = {"$exists": False}
+            result = await db.purchase_orders.update_one(
+                order_filter,
+                {"$set": {field: update_data[field] for field in changed_fields}},
+                session=session,
+            )
+            if result.modified_count != 1:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Purchase order changed while the update was in progress; retry",
+                )
+            await create_audit_log(
+                action="PURCHASE_ORDER_UPDATE",
+                entity_type="purchase_orders",
+                entity_id=str(object_id),
+                entity_label=str(purchase_order.get("order_number", object_id)),
+                actor_user_id=actor_user_id,
+                actor_role=actor_role,
+                details=audit_details,
+                session=session,
+            )
+        return await db.purchase_orders.find_one(
+            {"_id": object_id},
+            session=session,
+        )
+
+    async with await client.start_session() as session:
+        updated = await session.with_transaction(transaction_work)
 
     return {
         "id": str(updated["_id"]),
@@ -164,6 +225,8 @@ async def update_purchase_order(
 
 async def receive_purchase_order(
     purchase_order_id: str,
+    actor_user_id: str,
+    actor_role: str,
 ):
     try:
         object_id = ObjectId(purchase_order_id)
@@ -327,6 +390,20 @@ async def receive_purchase_order(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Purchase order status changed. Please retry.",
             )
+
+        await create_audit_log(
+            action="PURCHASE_ORDER_RECEIVE",
+            entity_type="purchase_orders",
+            entity_id=str(object_id),
+            entity_label=str(purchase_order.get("order_number", object_id)),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "item_count": len(purchase_items),
+                "total_units_received": sum(item["quantity"] for item in purchase_items),
+            },
+            session=session,
+        )
 
         updated = await db.purchase_orders.find_one(
             {"_id": object_id},

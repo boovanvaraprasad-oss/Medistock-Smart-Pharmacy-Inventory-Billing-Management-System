@@ -128,6 +128,33 @@ function renderReportDetails() {
     });
 }
 
+async function exportReport(reportType, fileFormat, button) {
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Preparing…";
+    document.getElementById("reportsError").hidden = true;
+    try {
+        const query = new URLSearchParams({ format: fileFormat });
+        if (reportType === "sales") {
+            query.set("period", reportRange.value);
+            if (reportRange.value === "day") query.set("date", document.getElementById("reportDateInput").value);
+            if (reportRange.value === "month") query.set("month", document.getElementById("reportMonthInput").value);
+            if (reportRange.value === "year") {
+                const currentYear = reportData?.sales?.current_date?.slice(0, 4) || String(new Date().getFullYear());
+                query.set("year", currentYear);
+            }
+        }
+        await downloadApiFile(`/api/v1/reports/${reportType}/export?${query}`);
+    } catch (error) {
+        const reportError = document.getElementById("reportsError");
+        reportError.textContent = error.message || "Unable to export this report.";
+        reportError.hidden = false;
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
+
 async function loadReports() {
     const loading = document.getElementById("reportsLoading"), error = document.getElementById("reportsError"), body = document.getElementById("reportsBody"), refresh = document.getElementById("reportsRefresh");
     loading.hidden = false; error.hidden = true; body.hidden = true; refresh.disabled = true;
@@ -162,4 +189,8 @@ document.getElementById("reportDateInput").addEventListener("change", refreshRep
 document.getElementById("reportMonthInput").addEventListener("change", refreshReportTrendForPeriod);
 updateReportPeriodPickers();
 document.getElementById("reportsRefresh").addEventListener("click", loadReports);
+document.getElementById("salesExcelExport").addEventListener("click", (event) => exportReport("sales", "xlsx", event.currentTarget));
+document.getElementById("salesPdfExport").addEventListener("click", (event) => exportReport("sales", "pdf", event.currentTarget));
+document.getElementById("inventoryExcelExport").addEventListener("click", (event) => exportReport("inventory", "xlsx", event.currentTarget));
+document.getElementById("inventoryPdfExport").addEventListener("click", (event) => exportReport("inventory", "pdf", event.currentTarget));
 loadReports();

@@ -155,6 +155,9 @@ body:is(.has-app-sidebar, .app-theme-ready) :is(.search-form, .record-search, .s
 /* The Settings page controls this preference for the signed-in application. */
 :root[data-theme="dark"] {
     color-scheme: dark;
+    background: var(--ms-mist);
+    color: var(--ms-ink);
+    color-scheme: dark;
     background: #10272b;
     color: #e8f4f3;
 }
@@ -827,3 +830,89 @@ body:is(.has-app-sidebar, .app-theme-ready) > .page .report-chart-point:focus-vi
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-active, .state-active, .status-success, .result-success) { color: var(--ms-success); }
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track { background: #25484d; }
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track span { background: linear-gradient(90deg, var(--ms-teal-700), var(--ms-aqua-500)); }
+
+/* Unified MediStock dark palette. */
+:root[data-theme="dark"] {
+    --ms-teal-900: #0b4145;
+    --ms-teal-800: #15969a;
+    --ms-teal-700: #25b8b6;
+    --ms-aqua-500: #39c8c1;
+    --ms-mint-400: #7be0bc;
+    --ms-ink: #e7f2f1;
+    --ms-muted: #a3b9b9;
+    --ms-mist: #10191b;
+    --ms-white: #1b2b2e;
+    --ms-edge: #31484b;
+    --ms-success-bg: #153a35;
+    --ms-success-edge: #4ebe9c;
+    --ms-success-ink: #9de8c8;
+    --ms-success: #7be0bc;
+    --ms-info: #52aee0;
+    --ms-warning: #f0b454;
+    --ms-danger: #f07175;
+    --ms-surface: #1b2b2e;
+    --ms-surface-raised: #142326;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) {
+    background: radial-gradient(ellipse at 80% 0%, var(--ms-surface-raised), transparent 38%), var(--ms-mist);
+    color: var(--ms-ink);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page { color: var(--ms-ink); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar {
+    border-color: var(--ms-edge);
+    background: var(--ms-teal-900);
+    color: var(--ms-ink);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand,
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.topbar, .page-header) {
+    border-color: var(--ms-edge);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.topbar, .page-header) {
+    background: rgb(20 35 38 / 96%);
+    color: var(--ms-ink);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(h1, h2, h3, .topbar-title, .page-header h1, .page-header h2, .metric-value) { color: var(--ms-ink); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(p, .today-date, .updated-at, .metric-label, .metric-note, .sales-chart-caption, .dashboard-summary-strip, .settings-hint, .history-note, .history-empty) { color: var(--ms-muted); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel, .section-panel, .bill-panel, .order-panel, .dashboard-card, .history-panel, .batches-table-wrap, [class$="-table-wrap"], .table-wrap, .settings-card, .notification-card, .report-panel, .report-metrics article, .inventory-panel, .purchase-panel, .manager-panel, .compliance-panel) {
+    border-color: var(--ms-edge);
+    background-color: rgb(27 43 46 / 94%);
+    color: var(--ms-ink);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+    border-color: var(--ms-edge);
+    background-color: var(--ms-surface-raised);
+    color: var(--ms-ink);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(table, td, th) { border-color: var(--ms-edge); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(th, thead td) { background: var(--ms-surface-raised); color: var(--ms-muted); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(td, tbody) { color: var(--ms-ink); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) tbody tr:hover { background: rgb(37 184 182 / 9%); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link[aria-current="page"],
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .login-button, .dashboard-action-primary),
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range button[aria-pressed="true"] {
+    border-color: var(--ms-teal-700);
+    background: var(--ms-teal-700);
+    color: var(--ms-mist);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .login-button, .dashboard-action-primary):hover:not(:disabled) {
+    border-color: var(--ms-aqua-500);
+    background: var(--ms-aqua-500);
+    color: var(--ms-mist);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.status-active, .state-active, .status-success, .result-success, .compliance-state.state-active) { color: var(--ms-success) !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-warning, .state-warning, .compliance-state.state-warning, .purchase-status[data-status="draft"], .batch-status[data-status="expiring"], .alert-warning .alert-symbol) {
+    background-color: #3a3020;
+    color: var(--ms-warning) !important;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-danger, .state-danger, .compliance-state.state-inactive, .result-failed, .batch-status[data-status="expired"], .alert-danger .alert-symbol) {
+    background-color: #3b2528;
+    color: var(--ms-danger) !important;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-info, .purchase-status[data-status="ordered"]) {
+    background-color: #1e3440;
+    color: var(--ms-info) !important;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-icon, .purchase-icon, .manager-metric-icon, .compliance-icon, .metric-icon, .supplier-avatar, .batch-alert-icon, .settings-icon) {
+    background-color: var(--ms-success-bg);
+    color: var(--ms-mint-400);
+}

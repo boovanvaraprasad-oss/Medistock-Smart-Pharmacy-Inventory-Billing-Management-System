@@ -136,6 +136,8 @@ async def complete_existing_bill(
         bill_id=bill_id,
         payment_method=data.payment_method,
         amount_received=data.amount_received,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 
@@ -155,6 +157,8 @@ async def create_bill_return(
         batch_id=data.batch_id,
         quantity=data.quantity,
         reason=data.reason,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 

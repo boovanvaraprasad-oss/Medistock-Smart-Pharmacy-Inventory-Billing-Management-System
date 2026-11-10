@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from pymongo import ReturnDocument
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_transactions import create_stock_transaction
 
 
@@ -208,6 +209,8 @@ async def complete_bill(
     bill_id: str,
     payment_method: str,
     amount_received: float,
+    actor_user_id: str,
+    actor_role: str,
 ):
     """
     Complete a draft bill atomically.
@@ -467,6 +470,20 @@ async def complete_bill(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Bill status changed. Please try again.",
             )
+
+        await create_audit_log(
+            action="BILL_COMPLETE",
+            entity_type="bills",
+            entity_id=str(bill_object_id),
+            entity_label=bill.get("invoice_number", str(bill_object_id)),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "total_amount": total_amount,
+                "payment_method": payment_method,
+            },
+            session=session,
+        )
 
         updated_bill = await db.bills.find_one(
             {"_id": bill_object_id},

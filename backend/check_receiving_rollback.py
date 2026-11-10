@@ -95,13 +95,21 @@ async def main():
         print("Starting controlled failure test...")
 
         try:
+            actor = await db.users.find_one(
+                {"role": "owner"},
+                {"_id": 1, "role": 1},
+            )
+            if not actor:
+                raise RuntimeError("Rollback check requires an owner account")
             with patch.object(
                 purchase_orders,
                 "create_stock_transaction",
                 fail_before_transaction_record,
             ):
                 await purchase_orders.receive_purchase_order(
-                    PURCHASE_ORDER_ID
+                    PURCHASE_ORDER_ID,
+                    actor_user_id=str(actor["_id"]),
+                    actor_role=actor["role"],
                 )
         except RuntimeError as error:
             if str(error) != "Intentional rollback test":

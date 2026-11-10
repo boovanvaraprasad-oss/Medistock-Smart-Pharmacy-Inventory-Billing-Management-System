@@ -10,7 +10,7 @@
     }
 
     const navigationItems = [
-        { label: "Overview", href: "dashboard.html", icon: "layout-dashboard", permissions: [] },
+        { label: "Home", href: "home.html", icon: "layout-dashboard", permissions: [] },
         { label: "Staff & Users", href: "users.html", icon: "users", permissions: ["user:read", "user:write"] },
         { label: "Medicines", href: "medicines.html", icon: "pill", permissions: ["medicine:read", "medicine:write"] },
         { label: "Stock Batches", href: "batches.html", icon: "boxes", permissions: ["stock:read"] },
@@ -23,7 +23,8 @@
         { label: "Notifications", href: "notifications.html", icon: "bell", permissions: ["stock:read"] },
         { label: "Reports & Analytics", href: "reports.html", icon: "chart-column", permissions: ["report:view"] },
         { label: "Settings", href: "settings.html", icon: "settings", permissions: [] },
-        { label: "Login History", href: "login_history.html", icon: "history", permissions: [], roles: ["owner", "store_manager"] }
+        { label: "Login History", href: "login_history.html", icon: "history", permissions: [], roles: ["owner", "store_manager"] },
+        { label: "Audit Trail", href: "audit_trail.html", icon: "history", permissions: ["audit_log:read"] }
     ];
 
     function addSidebar(currentUser) {
@@ -36,14 +37,13 @@
         // The cached user can be refreshed after the shell has already rendered.
         // Clear its previous elements before rebuilding to avoid duplicate profiles.
         document.querySelectorAll(".app-sidebar, .app-header-profile, .app-account-bar, .app-header-notifications").forEach((element) => element.remove());
-        const overviewPage = getDashboardForRole(currentUser.role);
         const sidebar = document.createElement("aside");
         sidebar.className = "app-sidebar";
 
         const brand = document.createElement("a");
         brand.className = "app-sidebar-brand";
-        brand.href = overviewPage;
-        brand.setAttribute("aria-label", "MediStock overview");
+        brand.href = "home.html";
+        brand.setAttribute("aria-label", "MediStock home");
 
         const mark = document.createElement("img");
         mark.className = "app-sidebar-mark";
@@ -83,7 +83,7 @@
 
             const link = document.createElement("a");
             link.className = "app-side-link";
-            const pageHref = item.label === "Overview" ? overviewPage : item.href;
+            const pageHref = item.href;
             link.href = pageHref;
             if (currentFile === pageHref) link.setAttribute("aria-current", "page");
 

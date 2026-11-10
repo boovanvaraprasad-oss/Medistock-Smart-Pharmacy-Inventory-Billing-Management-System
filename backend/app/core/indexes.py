@@ -63,6 +63,12 @@ async def create_indexes():
         print(f"[indexes] login_attempts.timestamp FAILED: {error}")
 
     try:
+        await db.audit_logs.create_index([("created_at", -1), ("_id", -1)])
+        print("[indexes] audit_logs.created_at+_id ready")
+    except Exception as error:
+        print(f"[indexes] audit_logs.created_at+_id FAILED: {error}")
+
+    try:
         await db.notification_reads.create_index(
             [("user_id", 1), ("notification_id", 1)],
             unique=True,

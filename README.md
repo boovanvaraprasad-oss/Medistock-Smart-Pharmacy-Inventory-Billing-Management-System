@@ -39,7 +39,9 @@ From the `backend` folder:
 uvicorn main:app --reload
 ```
 
-- App and login page: http://127.0.0.1:8000
+- Landing page: http://127.0.0.1:8000
+- Sign-in page: http://127.0.0.1:8000/login.html
+- Role-based home after signup or sign-in: http://127.0.0.1:8000/home.html
 - API documentation: http://127.0.0.1:8000/docs
 
 ## Creating the first account

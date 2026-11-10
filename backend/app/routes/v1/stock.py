@@ -36,6 +36,8 @@ async def reduce_medicine_stock(
     return await reduce_stock(
         medicine_id=data.medicine_id,
         quantity=data.quantity,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 
@@ -51,6 +53,8 @@ async def adjust_batch_quantity(
         batch_id=data.batch_id,
         quantity_change=data.quantity_change,
         reason=data.reason,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 

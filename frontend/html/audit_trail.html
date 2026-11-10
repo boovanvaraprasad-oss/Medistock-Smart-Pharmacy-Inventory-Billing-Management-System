@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock Audit Trail</title>
+    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/audit_trail.css?v=20261110-audit-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
+    <script src="js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page audit-page">
+        <header class="page-header">
+            <div><p class="eyebrow">Security &amp; accountability</p><h1>Audit Trail</h1><p>Review important billing, stock, purchasing, and staff changes.</p></div>
+            <button id="auditRefresh" class="button button-secondary" type="button">Refresh</button>
+        </header>
+        <p id="auditStatus" class="audit-message" role="status" hidden></p>
+        <p id="auditError" class="audit-message audit-error" role="alert" hidden></p>
+        <section class="audit-panel">
+            <form id="auditFilters" class="audit-filters" role="search">
+                <label>Search<input id="auditSearch" type="search" maxlength="100" placeholder="Actor, supplier, medicine, invoice, or record"></label>
+                <label>Action<select id="auditAction"><option value="">All actions</option>
+                    <option value="BILL_COMPLETE">Bill completed</option><option value="BILL_RETURN">Bill returned</option>
+                    <option value="STOCK_ADJUSTMENT">Stock adjusted</option><option value="STOCK_REDUCE">Stock reduced</option>
+                    <option value="STOCK_BATCH_CREATE">Stock batch created</option>
+                    <option value="PURCHASE_ORDER_CREATE">Purchase order created</option><option value="PURCHASE_ORDER_UPDATE">Purchase order changed</option><option value="PURCHASE_ORDER_ITEM_ADD">Purchase item added</option><option value="PURCHASE_ORDER_ITEM_UPDATE">Purchase item changed</option><option value="PURCHASE_ORDER_RECEIVE">Purchase order received</option>
+                    <option value="USER_CREATE">Staff account created</option><option value="USER_UPDATE">Staff account changed</option><option value="USER_DELETE">Staff account deleted</option><option value="MASTER_DATA_DELETE">Master data deleted</option>
+                </select></label>
+                <label>Record type<select id="auditEntity"><option value="">All record types</option><option value="bills">Bills</option><option value="medicines">Medicines</option><option value="stock_batches">Stock batches</option><option value="purchase_orders">Purchase orders</option><option value="users">Staff</option><option value="categories">Categories</option><option value="manufacturers">Manufacturers</option><option value="units">Units</option><option value="suppliers">Suppliers</option></select></label>
+                <button class="button button-primary" type="submit">Search</button>
+            </form>
+            <div class="audit-summary"><strong id="auditCount">—</strong><span> events</span></div>
+            <div class="audit-table-wrap"><table>
+                <thead><tr><th>Date and time</th><th>Action</th><th>Record</th><th>Performed by</th><th>Details</th></tr></thead>
+                <tbody id="auditRows"></tbody>
+            </table></div>
+            <p id="auditEmpty" class="audit-empty" hidden>No audit events match these filters.</p>
+            <nav class="audit-pagination" aria-label="Audit trail pages">
+                <button id="auditPrevious" class="button button-secondary" type="button" disabled>Previous</button>
+                <span id="auditPageLabel">Page 1</span>
+                <button id="auditNext" class="button button-secondary" type="button" disabled>Next</button>
+            </nav>
+        </section>
+    </main>
+    <script src="js/api/client.js?v=20261110-audit-v1"></script>
+    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
+    <script src="js/audit_trail.js?v=20261110-audit-v2"></script>
+</body>
+</html>

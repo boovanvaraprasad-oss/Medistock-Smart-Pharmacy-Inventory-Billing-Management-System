@@ -5,17 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Settings</title>
     <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/settings.css?v=20261109-palette-v1">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/settings.css?v=20261110-store-details-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
     <script src="js/components/theme-bootstrap.js"></script>
     
 </head>
 <body class="app-theme-ready">
     <main class="page main-area">
         <header class="page-header settings-header">
-            <div><p class="eyebrow">Preferences</p><h1>Settings</h1><p>Manage billing defaults and how MediStock looks on this device.</p></div>
+            <div><p class="eyebrow">Preferences</p><h1>Settings</h1><p>Manage pharmacy details, billing defaults, and how MediStock looks on this device.</p></div>
         </header>
         <section class="settings-content">
+            <section id="storeSettingsCard" class="settings-card" aria-labelledby="storeSettingsTitle" hidden>
+                <div class="settings-card-copy">
+                    <span class="settings-icon" aria-hidden="true">⌂</span>
+                    <div>
+                        <h2 id="storeSettingsTitle">Store details</h2>
+                        <p>These details can be used on invoices and exported reports.</p>
+                    </div>
+                </div>
+                <form id="storeSettingsForm" class="settings-form settings-store-form">
+                    <label for="storeName">Pharmacy name</label>
+                    <input id="storeName" name="store_name" type="text" maxlength="120" autocomplete="organization" placeholder="Your pharmacy name">
+                    <label for="storeAddress">Address</label>
+                    <textarea id="storeAddress" name="address" maxlength="500" rows="3" autocomplete="street-address" placeholder="Street, city, state, postal code"></textarea>
+                    <label for="storePhone">Phone</label>
+                    <input id="storePhone" name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="Pharmacy contact number">
+                    <label for="storeEmail">Email</label>
+                    <input id="storeEmail" name="email" type="email" maxlength="254" autocomplete="email" placeholder="pharmacy@example.com">
+                    <label for="storeLicenseNumber">Pharmacy license number</label>
+                    <input id="storeLicenseNumber" name="license_number" type="text" maxlength="100" autocomplete="off" placeholder="License or registration number">
+                    <button id="storeSettingsSaveButton" class="settings-save-button" type="submit">Save store details</button>
+                </form>
+                <p id="storeSettingsStatus" class="settings-status" role="status" aria-live="polite"></p>
+            </section>
             <section id="billingSettingsCard" class="settings-card" aria-labelledby="billingSettingsTitle" hidden>
                 <div class="settings-card-copy">
                     <span class="settings-icon" aria-hidden="true">₹</span>
@@ -51,7 +74,7 @@
         </section>
     </main>
     <script src="js/api/client.js"></script>
-    <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
-    <script src="js/settings.js"></script>
+    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
+    <script src="js/settings.js?v=20261110-store-details-v1"></script>
 </body>
 </html>

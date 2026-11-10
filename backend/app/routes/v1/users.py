@@ -35,6 +35,8 @@ async def create_staff(
         email=data.email,
         password=data.password,
         role=data.role,
+        acting_user_id=str(current_user["_id"]),
+        acting_user_role=current_user["role"],
     )
 
 
@@ -73,6 +75,7 @@ async def update_staff(
     return await update_staff_user(
         user_id=user_id,
         acting_user_id=str(current_user["_id"]),
+        acting_user_role=current_user["role"],
         role=data.role,
         is_active=data.is_active,
     )

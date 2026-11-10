@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Reports &amp; Analytics</title>
     <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/reports.css?v=20261105-sales-periods2">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/reports.css?v=20261110-report-exports-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
     <script src="js/components/theme-bootstrap.js"></script>
     
 </head>
@@ -33,6 +33,10 @@
                             <label class="report-range-label" id="reportDatePicker" for="reportDateInput">Date<input id="reportDateInput" type="date" aria-label="Choose report date"></label>
                             <label class="report-range-label" id="reportMonthPicker" for="reportMonthInput" hidden>Month<input id="reportMonthInput" type="month" aria-label="Choose report month"></label>
                         </div>
+                        <div class="report-export-actions" aria-label="Export sales report">
+                            <button id="salesExcelExport" class="button button-primary" type="button">Export Excel</button>
+                            <button id="salesPdfExport" class="button button-primary" type="button">Export PDF</button>
+                        </div>
                     </div>
                     <div class="report-legend"><span><i class="report-dot revenue"></i>Revenue</span><span><i class="report-dot purchases"></i>Received purchases</span></div>
                     <div id="reportTrendChart" class="report-trend-chart" role="img" aria-label="Revenue and received purchases chart"></div>
@@ -41,14 +45,14 @@
                 </section>
                 <div class="report-detail-grid">
                     <section class="report-panel"><div class="report-panel-heading"><div><p class="eyebrow">Sales</p><h2>Fast-moving medicines</h2></div></div><div id="reportTopMedicines" class="report-record-list"></div><p id="reportTopEmpty" class="reports-message" hidden>No completed medicine sales yet.</p></section>
-                    <section class="report-panel"><div class="report-panel-heading"><div><p class="eyebrow">Inventory</p><h2>Stock by category</h2></div></div><div id="reportCategories" class="report-category-list"></div><p id="reportCategoriesEmpty" class="reports-message" hidden>No stock value to report yet.</p></section>
+                    <section class="report-panel"><div class="report-panel-heading"><div><p class="eyebrow">Inventory</p><h2>Stock by category</h2></div><div class="report-export-actions" aria-label="Export inventory report"><button id="inventoryExcelExport" class="button button-primary" type="button">Export Excel</button><button id="inventoryPdfExport" class="button button-primary" type="button">Export PDF</button></div></div><div id="reportCategories" class="report-category-list"></div><p id="reportCategoriesEmpty" class="reports-message" hidden>No stock value to report yet.</p></section>
                 </div>
                 <p id="reportUpdatedAt" class="report-updated"></p>
             </div>
         </section>
     </main>
-    <script src="js/api/client.js?v=20261105-sales-periods"></script>
-    <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
-    <script src="js/reports.js?v=20261105-sales-periods"></script>
+    <script src="js/api/client.js?v=20261110-report-downloads-v2"></script>
+    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
+    <script src="js/reports.js?v=20261110-report-exports-v2"></script>
 </body>
 </html>

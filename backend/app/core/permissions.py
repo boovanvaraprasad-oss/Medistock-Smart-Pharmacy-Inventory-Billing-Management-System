@@ -39,6 +39,7 @@ BILL_COMPLETE = "bill:complete"
 REPORT_VIEW = "report:view"
 MASTER_DATA_DELETE = "master_data:delete"
 LOGIN_LOG_READ = "login_log:read"
+AUDIT_LOG_READ = "audit_log:read"
 
 
 PERMISSIONS = [
@@ -59,6 +60,7 @@ PERMISSIONS = [
     REPORT_VIEW,
     MASTER_DATA_DELETE,
     LOGIN_LOG_READ,
+    AUDIT_LOG_READ,
 ]
 
 
@@ -106,5 +108,6 @@ ROLE_PERMISSIONS = {
         STOCK_READ,
         BILL_READ,
         REPORT_VIEW,
+        AUDIT_LOG_READ,
     ],
 }
