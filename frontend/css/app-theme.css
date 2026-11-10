@@ -1,9 +1,25 @@
-/* Shared visual language inspired by the modern MediStock reference UI.
-   The dark green navigation rail remains defined by app-shell.css. */
+/* MediStock pharmacy palette: teal, aqua and mint with clear status colors. */
 :root {
+    --ms-teal-900: #075d63;
+    --ms-teal-800: #08777b;
+    --ms-teal-700: #0b9c9d;
+    --ms-aqua-500: #22b9b5;
+    --ms-mint-400: #67d2ae;
+    --ms-ink: #17383d;
+    --ms-muted: #60777b;
+    --ms-mist: #f1f7f8;
+    --ms-white: #ffffff;
+    --ms-edge: #d6e5e8;
+    --ms-success-bg: #e4f7f4;
+    --ms-success-edge: #67d2ae;
+    --ms-success-ink: #075d63;
+    --ms-success: #67d2ae;
+    --ms-info: #1688c7;
+    --ms-warning: #d98b23;
+    --ms-danger: #d65354;
     font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
-    color: #172a24;
-    background: #f3f8f6;
+    color: var(--ms-ink);
+    background: var(--ms-mist);
     font-synthesis: none;
 }
 
@@ -22,19 +38,19 @@ button, a { font: inherit; }
 button { cursor: pointer; }
 [hidden] { display: none !important; }
 
-body.has-app-sidebar {
+body:is(.has-app-sidebar, .app-theme-ready) {
     background:
-        radial-gradient(ellipse at 80% 0%, rgb(209 250 229 / 48%), transparent 34%),
-        linear-gradient(135deg, #f4faf7 0%, #edf8f3 46%, #f6faf8 100%);
+        radial-gradient(ellipse at 80% 0%, rgb(103 210 174 / 20%), transparent 34%),
+        linear-gradient(135deg, #f1f7f8 0%, #e8f3f2 46%, #f6fafb 100%);
     background-attachment: fixed;
-    color: #172a24;
+    color: var(--ms-ink);
 }
 
-body.has-app-sidebar > .page {
+body:is(.has-app-sidebar, .app-theme-ready) > .page {
     background: transparent;
 }
 
-body.has-app-sidebar :is(
+body:is(.has-app-sidebar, .app-theme-ready) :is(
     .panel,
     .content-panel,
     .metric-card,
@@ -44,64 +60,92 @@ body.has-app-sidebar :is(
     .section-panel,
     .bill-panel,
     .order-panel,
-    .dashboard-card
+    .dashboard-card,
+    .history-panel,
+    .batches-table-wrap
 ) {
-    border-color: rgb(215 232 223 / 82%);
+    border-color: rgb(214 229 232 / 82%);
     border-radius: 16px;
-    background-color: rgb(255 255 255 / 78%);
-    box-shadow: 0 8px 30px rgb(6 78 59 / 7%), inset 0 1px 0 rgb(255 255 255 / 78%);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background-color: rgb(255 255 255 / 75%);
+    box-shadow: 0 8px 32px rgb(23 56 61 / 8%), inset 0 1px 0 rgb(255 255 255 / 72%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 150ms ease;
 }
 
-body.has-app-sidebar :is(.page-header, .page-header h1, .page-header h2) {
-    color: #102f25;
+body:is(.has-app-sidebar, .app-theme-ready) :is(
+    .panel,
+    .content-panel,
+    .metric-card,
+    .records-panel,
+    .table-panel,
+    .form-panel,
+    .section-panel,
+    .bill-panel,
+    .order-panel,
+    .dashboard-card,
+    .table-wrapper,
+    .settings-card,
+    .notification-card,
+    .report-panel,
+    .history-panel,
+    .batches-table-wrap,
+    .inventory-metric, .inventory-panel, .purchase-metric, .purchase-panel,
+    .pharmacist-metric, .manager-metric, .manager-panel,
+    .compliance-metric, .compliance-panel
+):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 48px rgb(8 119 123 / 14%), inset 0 1px 0 rgb(255 255 255 / 82%);
 }
 
-body.has-app-sidebar > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
-    border-color: #d5e4dc;
+body:is(.has-app-sidebar, .app-theme-ready) :is(.page-header, .page-header h1, .page-header h2) {
+    color: var(--ms-ink);
+}
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+    border-color: var(--ms-edge);
     border-radius: 11px;
-    background-color: rgb(255 255 255 / 90%);
+    background: rgb(255 255 255 / 90%);
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
-body.has-app-sidebar > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):focus {
-    border-color: #40ad83;
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):focus {
+    border-color: var(--ms-teal-700);
     outline: none;
-    box-shadow: 0 0 0 3px rgb(16 185 129 / 13%);
+    box-shadow: 0 0 0 3px rgb(34 185 181 / 18%);
 }
 
-body.has-app-sidebar > .page :is(button, .button, .btn) {
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(button, .button, .btn) {
     border-radius: 11px;
     transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
-body.has-app-sidebar > .page :is(button, .button, .btn):not(:disabled):hover {
-    box-shadow: 0 7px 18px rgb(6 78 59 / 10%);
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(button, .button, .btn):not(:disabled):hover {
+    box-shadow: 0 7px 18px rgb(8 119 123 / 12%);
 }
 
-body.has-app-sidebar table {
-    border-color: #e0ebe5;
+body:is(.has-app-sidebar, .app-theme-ready) table {
+    border-color: var(--ms-edge);
     border-radius: 13px;
 }
 
-body.has-app-sidebar :is(th, thead td) {
-    background: #edf5f1;
-    color: #526b60;
+body:is(.has-app-sidebar, .app-theme-ready) :is(th, thead td) {
+    background: #e8f3f2;
+    color: var(--ms-muted);
 }
 
-body.has-app-sidebar :is(td, th) {
-    border-color: #e7efeb;
+body:is(.has-app-sidebar, .app-theme-ready) :is(td, th) {
+    border-color: #e2ecee;
 }
 
-body.has-app-sidebar :is(.search-form, .record-search, .search-panel) {
+body:is(.has-app-sidebar, .app-theme-ready) :is(.search-form, .record-search, .search-panel) {
     border-radius: 14px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    body.has-app-sidebar *,
-    body.has-app-sidebar *::before,
-    body.has-app-sidebar *::after {
+    body:is(.has-app-sidebar, .app-theme-ready) *,
+    body:is(.has-app-sidebar, .app-theme-ready) *::before,
+    body:is(.has-app-sidebar, .app-theme-ready) *::after {
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
@@ -111,57 +155,675 @@ body.has-app-sidebar :is(.search-form, .record-search, .search-panel) {
 /* The Settings page controls this preference for the signed-in application. */
 :root[data-theme="dark"] {
     color-scheme: dark;
-    background: #101c18;
-    color: #e7f0eb;
+    background: #10272b;
+    color: #e8f4f3;
 }
 
-:root[data-theme="dark"] body.has-app-sidebar {
-    background: radial-gradient(ellipse at 80% 0%, #19372b 0%, transparent 38%), #101c18;
-    color: #e7f0eb;
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) {
+    background: radial-gradient(ellipse at 80% 0%, #123b40 0%, transparent 38%), #10272b;
+    color: #e8f4f3;
 }
 
-:root[data-theme="dark"] body.has-app-sidebar > .page { color: #e7f0eb; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.topbar, .page-header) {
-    border-color: #2b4037;
+/* Keep the navigation rail green, but darken it with the selected theme. */
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar {
+    border-color: #123b40;
+    background: #075d63;
+    color: #e8f4f3;
+    box-shadow: 4px 0 24px rgb(0 0 0 / 18%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand {
+    border-color: #123b40;
+    color: #e8f4f3;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong,
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-user strong { color: #f1f7f8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.app-sidebar-brand-copy small, .app-sidebar-user small) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link:hover {
+    background: #123b40;
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link[aria-current="page"] {
+    background: linear-gradient(110deg, #0b9c9d, #08777b);
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-icon { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link[aria-current="page"] .app-side-icon { color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav { scrollbar-color: #16464a transparent; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav::-webkit-scrollbar-thumb {
+    border-color: #075d63;
+    background: #16464a;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos {
+    border-color: #16464a;
+    background: linear-gradient(135deg, #123b40, #17383d);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos-title { color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos-caption { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-logout { background: #10272b; color: #d6e5e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-logout:hover { background: #482726; color: #ffb4ad; }
+
+/* Keep typography consistent across pages and form controls. */
+body:is(.has-app-sidebar, .app-theme-ready),
+body:is(.has-app-sidebar, .app-theme-ready) :where(*) { font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif; }
+
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.topbar, .page-header) {
+    border-color: #17383d;
     background: rgb(21 37 31 / 96%);
-    color: #edf6f1;
+    color: #f1f7f8;
 }
-:root[data-theme="dark"] body.has-app-sidebar :is(.topbar-title, .page-header h1, .page-header h2, h1, h2, h3) { color: #edf6f1; }
-:root[data-theme="dark"] body.has-app-sidebar :is(p, .today-date, .updated-at, .metric-label, .metric-note, .sales-chart-caption, .dashboard-summary-strip) { color: #a9bdb3; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel, .section-panel, .bill-panel, .order-panel, .dashboard-card, .settings-card, .notification-card, .report-panel, .report-metrics article) {
-    border-color: #2c4339;
-    background-color: rgb(24 42 34 / 94%);
-    color: #e7f0eb;
-    box-shadow: 0 8px 30px rgb(0 0 0 / 20%), inset 0 1px 0 rgb(255 255 255 / 3%);
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.topbar-title, .page-header h1, .page-header h2, h1, h2, h3) { color: #f1f7f8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(p, .today-date, .updated-at, .metric-label, .metric-note, .sales-chart-caption, .dashboard-summary-strip) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .metric-value { color: #f1f7f8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel, .section-panel, .bill-panel, .order-panel, .dashboard-card, .history-panel, .batches-table-wrap, [class$="-table-wrap"], .settings-card, .notification-card, .report-panel, .report-metrics article) {
+    border-color: #315257;
+    background-color: rgb(4 44 34 / 65%);
+    color: #e8f4f3;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 50%), inset 0 1px 0 rgb(255 255 255 / 8%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
-:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-warning, .notification-card.priority-warning) { background: linear-gradient(135deg, #352c17, #22261e); }
-:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-danger, .notification-card.priority-critical) { background: linear-gradient(135deg, #38211f, #25201f); }
-:root[data-theme="dark"] body.has-app-sidebar :is(.metric-card-green, .notification-card.priority-info) { background: linear-gradient(135deg, #183a2d, #1b2d26); }
-:root[data-theme="dark"] body.has-app-sidebar :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
-    border-color: #40584d;
-    background-color: #172820;
-    color: #e7f0eb;
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(
+    .panel,
+    .content-panel,
+    .metric-card,
+    .records-panel,
+    .table-panel,
+    .form-panel,
+    .section-panel,
+    .bill-panel,
+    .order-panel,
+    .dashboard-card,
+    .history-panel,
+    .batches-table-wrap,
+    .table-wrapper,
+    .settings-card,
+    .notification-card,
+    .report-panel
+):hover {
+    box-shadow: 0 16px 48px rgb(0 0 0 / 60%), inset 0 1px 0 rgb(255 255 255 / 12%);
 }
-:root[data-theme="dark"] body.has-app-sidebar table { border-color: #344b40; }
-:root[data-theme="dark"] body.has-app-sidebar :is(th, thead td) { background: #22372d; color: #b8c9c0; }
-:root[data-theme="dark"] body.has-app-sidebar :is(td, th) { border-color: #2b4037; color: #e0eae4; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.sales-panel-top h2, .sales-all-time strong, .dashboard-summary-strip strong, .low-stock-alert-row strong, .notification-copy h2) { color: #e7f0eb; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.low-stock-alert-row, .notification-actions a, .notification-actions button, .refresh-button) {
-    border-color: #395246;
-    background: #1c3027;
-    color: #d8e8df;
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.table-wrapper, .history-panel, .batches-table-wrap, [class$="-table-wrap"], .search-form, .medicine-form, .category-form, .pagination) {
+    border-color: #315257;
+    background-color: rgb(4 44 34 / 65%);
+    color: #e8f4f3;
 }
-:root[data-theme="dark"] body.has-app-sidebar :is(.report-metrics strong, .report-record-row strong, .report-category-labels strong, .settings-card h2, .theme-setting strong) { color: #e7f0eb; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.report-metrics span, .report-metrics small, .report-record-row span, .report-category-labels, .theme-setting small, .notification-copy p, .notification-copy small) { color: #a9bdb3; }
-:root[data-theme="dark"] body.has-app-sidebar :is(.report-range-label select, .notifications-toolbar select) { border-color: #40584d; background: #172820; color: #e7f0eb; }
-:root[data-theme="dark"] body.has-app-sidebar .report-category-track { background: #263c32; }
-:root[data-theme="dark"] body.has-app-sidebar .low-stock-alert-row:hover { background: #223b30; }
-:root[data-theme="dark"] body.has-app-sidebar .cir-tabs { border-color: #385146; background: #172820; }
-:root[data-theme="dark"] body.has-app-sidebar .cir-tabs__t { color: #b3c5bc; }
-:root[data-theme="dark"] body.has-app-sidebar .cir-tabs__t:hover { color: #ffffff; }
-:root[data-theme="dark"] body.has-app-sidebar .sales-grid-line { stroke: #33473e; }
-:root[data-theme="dark"] body.has-app-sidebar .sales-axis-label { fill: #a9bdb3; }
-:root[data-theme="dark"] body.has-app-sidebar .sales-chart { border-color: #344b40; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) table { background-color: transparent; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) thead { background: rgb(30 41 59 / 80%); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(th, thead td) { background: transparent; color: #94a3b8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) tbody { color: #cbd5e1; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) tbody tr:hover { background-color: rgb(30 41 59 / 40%); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) tbody tr { background-color: transparent; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(td, th) { border-color: rgb(51 65 85 / 70%); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(label, .medicine-batch-list, .medicine-batch-empty) { color: #d6e5e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .button-secondary {
+    border-color: #315257;
+    background-color: #10272b;
+    color: #d6e5e8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .button-secondary:hover:not(:disabled) { background-color: #17383d; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .medicine-delete-button {
+    border-color: #784440 !important;
+    background-color: #38211f !important;
+    color: #ffb4ad !important;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .medicine-delete-button:hover:not(:disabled) {
+    border-color: #a95b53 !important;
+    background-color: #482726 !important;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.status-active, .status-inactive) { background: #16464a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .status-inactive { background: #17383d; color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.metric-card-warning, .notification-card.priority-warning) { background: linear-gradient(135deg, #352c17, #22261e); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.metric-card-danger, .notification-card.priority-critical) { background: linear-gradient(135deg, #38211f, #25201f); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.metric-card-green, .notification-card.priority-info) { background: linear-gradient(135deg, #123b40, #10272b); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+    border-color: #315257;
+    background-color: #10272b;
+    color: #e8f4f3;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) table { border-color: #344b40; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(th, thead td) { background: #17383d; color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(td, th) { border-color: #17383d; color: #d6e5e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.sales-panel-top h2, .sales-all-time strong, .dashboard-summary-strip strong, .low-stock-alert-row strong, .notification-copy h2) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.low-stock-alert-row, .notification-actions a, .notification-actions button, .refresh-button) {
+    border-color: #315257;
+    background: #10272b;
+    color: #d6e5e8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.report-metrics strong, .report-record-row strong, .report-category-labels strong, .settings-card h2, .theme-setting strong) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.report-metrics span, .report-metrics small, .report-record-row span, .report-category-labels, .theme-setting small, .notification-copy p, .notification-copy small) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.report-range-label select, .notifications-toolbar select) { border-color: #315257; background: #10272b; color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.app-header-profile, .app-header-notifications) {
+    border-color: #344b40;
+    background: #10272b;
+    color: #d6e5e8;
+    box-shadow: none;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-header-profile :is(strong, small) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-header-notifications:hover { background: #17383d; color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.settings-form label, .settings-form input) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-form label { font-weight: 600; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-hint,
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-status { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-status.is-error { color: #ffaaa3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-icon { background: #16464a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-save-button { color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .report-category-track { background: #17383d; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .category-distribution-labels { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .category-distribution-labels strong { color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .low-stock-alert-row:hover { background: #17383d; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .cir-tabs { border-color: #315257; background: #10272b; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .cir-tabs__t { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .cir-tabs__t:hover { color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sales-grid-line { stroke: #315257; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sales-axis-label { fill: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sales-chart { border-color: #344b40; }
 
 :root[data-theme="dark"] .settings-card,
-:root[data-theme="dark"] .notification-card { color: #e7f0eb; }
+:root[data-theme="dark"] .notification-card { color: #e8f4f3; }
+
+/* Deep teal surfaces and mint focus states keep the palette coherent in dark mode. */
+:root[data-theme="dark"] {
+    --ms-ink: #e8f4f3;
+    --ms-muted: #a9c2c4;
+    --ms-mist: #10272b;
+    --ms-edge: #315257;
+    --ms-success-bg: #123b40;
+    --ms-success-edge: #22b9b5;
+    --ms-success-ink: #67d2ae;
+    --ms-success: #67d2ae;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) {
+    background: radial-gradient(ellipse at 80% 0%, #16484a 0%, transparent 38%), #10272b;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar {
+    border-color: #164d50;
+    background: #075d63;
+    color: #effafa;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand { border-color: #24777b; color: #effafa; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong,
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-user strong { color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.app-sidebar-brand-copy small, .app-sidebar-user small) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link:hover { background: #0b7377; color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-link[aria-current="page"] { background: #22b9b5; color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-icon { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav { scrollbar-color: #22b9b5 transparent; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav::-webkit-scrollbar-thumb { border-color: #075d63; background: #22b9b5; }
+
+/* Light mode sidebar and primary controls use the palette's teal anchor. */
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar {
+    border-color: #075d63;
+    background: #075d63;
+    color: #f1f7f8;
+    box-shadow: 4px 0 24px rgb(23 56 61 / 12%);
+}
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand { border-color: rgb(214 229 232 / 20%); color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong,
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-user strong { color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) :is(.app-sidebar-brand-copy small, .app-sidebar-user small) { color: #a9c2c4; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-mark,
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-avatar { background: linear-gradient(145deg, #67d2ae, #22b9b5); color: #075d63; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-link { color: #a9c2c4; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-link:hover { background: #0b7377; color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-link[aria-current="page"] {
+    background: linear-gradient(110deg, #0b9c9d, #22b9b5);
+    color: #ffffff;
+    box-shadow: 0 6px 15px rgb(0 0 0 / 16%);
+}
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-icon { color: #67d2ae; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav { scrollbar-color: #22b9b5 transparent; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-side-nav::-webkit-scrollbar-thumb { border-color: #075d63; background: #22b9b5; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos {
+    border-color: rgb(103 210 174 / 36%);
+    background: linear-gradient(135deg, rgb(34 185 181 / 24%), rgb(103 210 174 / 16%));
+}
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos-title { color: #67d2ae; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-pos-caption { color: #a9c2c4; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-logout { background: rgb(255 255 255 / 12%); color: #e8f4f3; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-logout:hover { background: #d65354; color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .login-button) {
+    border-color: #08777b;
+    background: #08777b;
+    color: #ffffff;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary):hover:not(:disabled) {
+    border-color: #075d63;
+    background: #075d63;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page a { text-decoration-color: #22b9b5; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-success, .status-completed, .status-received) { --status-accent: #0b9c9d; }
+
+/* Landing page carries the same teal and mint identity. */
+:root { --ms-login-bg: #08777b; }
+
+/* Recolor shared dashboard accents, selected controls and interactive states. */
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .login-button) {
+    border-color: var(--ms-teal-800);
+    background: var(--ms-teal-800);
+    color: #ffffff;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .dashboard-action-primary):hover:not(:disabled) {
+    border-color: var(--ms-teal-900);
+    background: var(--ms-teal-900);
+    color: #ffffff;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page .dashboard-action-primary {
+    border-color: var(--ms-teal-800);
+    background: var(--ms-teal-800);
+    color: #ffffff;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.topbar-title, .sales-panel-top h2, .dashboard-card h2, .page-header h1, .page-header h2) { color: var(--ms-teal-900); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.topbar-kicker, .sales-panel-top .eyebrow, .dashboard-eyebrow, .panel-eyebrow) { color: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.app-header-notifications:hover, .low-stock-alert-row:hover) { border-color: var(--ms-mint-400); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-chart-point.revenue, .sales-chart-active-dot.revenue) { fill: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-active-dot.revenue { stroke: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-point.purchases { fill: #8ba6bd; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-active-dot.purchases { fill: #8ba6bd; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-revenue-line { stroke: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-purchases-line { stroke: #8ba6bd; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .legend-dot-revenue { background: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-grid-line { stroke: #d6e5e8; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-axis-label { fill: #60777b; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome, .purchase-welcome, .welcome-row) {
+    border-color: #67d2ae;
+    background: linear-gradient(120deg, #e4f7f4, #f5fbfa 72%, #e4f7f4);
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome h1, .inventory-welcome h2, .purchase-welcome h1, .purchase-welcome h2, .welcome-row h1, .welcome-row h2) { color: var(--ms-teal-900); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome p, .purchase-welcome p, .welcome-row p, .welcome-row .subtitle) { color: var(--ms-muted); }
+
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .login-button) {
+    border-color: var(--ms-teal-700);
+    background: var(--ms-teal-700);
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.button-primary, .primary-button, .btn-primary, .search-button, .settings-save-button, .dashboard-action-primary):hover:not(:disabled) {
+    border-color: var(--ms-aqua-500);
+    background: var(--ms-teal-800);
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .dashboard-action-primary {
+    border-color: var(--ms-teal-700);
+    background: var(--ms-teal-700);
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.topbar-title, .sales-panel-top h2, .dashboard-card h2, .page-header h1, .page-header h2) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.topbar-kicker, .sales-panel-top .eyebrow, .dashboard-eyebrow, .panel-eyebrow) { color: var(--ms-mint-400); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-grid-line { stroke: #315257; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-axis-label { fill: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-revenue-line { stroke: var(--ms-aqua-500); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-purchases-line { stroke: #b8cedd; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome, .purchase-welcome, .welcome-row) {
+    border-color: #286b70;
+    background: linear-gradient(120deg, #16484a, #17383d 72%, #155458);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome h1, .inventory-welcome h2, .purchase-welcome h1, .purchase-welcome h2, .welcome-row h1, .welcome-row h2) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-welcome p, .purchase-welcome p, .welcome-row p, .welcome-row .subtitle) { color: #b3ccce; }
+
+/* The sidebar uses the standalone mark and a high-contrast wordmark lockup. */
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong {
+    display: flex;
+    gap: 0;
+    color: #ffffff;
+    font-size: 1.08rem;
+}
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong span:first-child { color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) .app-sidebar-brand-copy strong span:last-child { color: #67d2ae; }
+
+/* Dark glass surfaces for role pages whose card names differ from the shared components. */
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-welcome, .inventory-metric, .inventory-panel,
+    .purchase-welcome, .purchase-metric, .purchase-panel,
+    .pharmacist-metric, .manager-metric, .manager-panel,
+    .compliance-metric, .compliance-panel,
+    .purchase-table-wrap, .inventory-table-wrap, .compliance-table-wrap,
+    .manager-table-wrap, .table-wrap, .manager-order-stats > div, .manager-note
+) {
+    border-color: #315257;
+    background-color: rgb(4 44 34 / 72%);
+    color: #e8f4f3;
+    box-shadow: 0 8px 32px rgb(0 0 0 / 42%), inset 0 1px 0 rgb(255 255 255 / 7%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric, .inventory-panel, .purchase-metric, .purchase-panel,
+    .pharmacist-metric, .manager-metric, .manager-panel,
+    .compliance-metric, .compliance-panel, .history-panel, .batches-table-wrap
+):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 44px rgb(0 0 0 / 56%), inset 0 1px 0 rgb(255 255 255 / 10%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric-warning, .purchase-metric-warning, .manager-warning, .compliance-warning
+) { background: linear-gradient(135deg, #352c17, #22261e); border-color: #5b4a25; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric-danger, .manager-danger, .compliance-danger
+) { background: linear-gradient(135deg, #38211f, #25201f); border-color: #613733; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric-green, .purchase-metric-green, .purchase-welcome, .inventory-welcome
+) { background: linear-gradient(135deg, rgb(24 58 45 / 94%), rgb(27 45 38 / 92%)); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .compliance-metric:not(.compliance-warning):not(.compliance-danger) {
+    background: linear-gradient(135deg, #123b40, #10272b);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric, .purchase-metric, .pharmacist-metric, .manager-metric, .compliance-metric
+) :is(strong, b, .metric-label, span:not(.inventory-icon):not(.purchase-icon):not(.manager-metric-icon):not(.compliance-icon):not(.metric-icon)) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-panel-heading h2, .purchase-panel-heading h2, .manager-panel-heading h2,
+    .compliance-heading h2, .pharmacist-panels .section-heading h2,
+    .purchase-value, .manager-alert strong, .manager-alert > b,
+    .manager-order-stats strong, .manager-bill-total, .supplier-copy strong,
+    .batch-alert-copy strong, .batch-alert-quantity, .controlled-entry strong,
+    .report-metrics strong, .report-record-row strong, .report-category-labels strong
+) { color: #e8f4f3 !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-panel-heading a, .purchase-panel-heading a, .manager-panel-heading a,
+    .compliance-heading a, .pharmacist-panels .section-heading a
+) { color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-panel-heading .eyebrow, .purchase-panel-heading .eyebrow,
+    .manager-panel-heading .eyebrow, .compliance-heading .eyebrow
+) { color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-panel, .purchase-panel, .manager-panel, .compliance-panel, .pharmacist-panels .panel
+) :is(p, small, .manager-muted, .manager-empty, .purchase-note, .inventory-empty,
+    .compliance-empty, .compliance-footnote, .batch-alert-copy small, .supplier-copy small,
+    .manager-alert small, .empty-state, .recent-bill small) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-icon, .purchase-icon, .manager-metric-icon, .compliance-icon, .metric-icon
+) { background: #16464a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range {
+    border-color: #315257; background: #10272b;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range button { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range button[aria-pressed="true"] { background: #08777b; color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-period-picker, .manager-period-pickers label, .report-range-label) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-period-picker input, .manager-period-pickers input, .report-range-label input) {
+    border-color: #315257; background: #10272b; color: #e8f4f3; color-scheme: dark;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-range-label select { color-scheme: dark; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.report-grid-line) { stroke: #315257; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.report-axis-label) { fill: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-trend-chart { border-color: #344b40; background: repeating-linear-gradient(to top, transparent 0, transparent 59px, rgb(69 91 79 / 45%) 60px); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-legend { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-dot.revenue { background: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-dot.purchases { background: #c4d2e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-status { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-legend { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .legend-dot-revenue { background: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .legend-dot-purchases { background: #c4d2e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-point { stroke: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .purchase-chart-point { fill: #c4d2e8; stroke: #10272b; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-active-dot.revenue { fill: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .sales-chart-active-dot.purchases { fill: #c4d2e8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-chart-point { stroke: #10272b; stroke-width: 1.5; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-period-controls [hidden] { display: none !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-sales-chart {
+    border-color: #344b40;
+    background: repeating-linear-gradient(to bottom, transparent 0, transparent 48px, #17383d 49px, #17383d 50px);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .purchase-status[data-status="draft"],
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .batch-status[data-status="expiring"] { background: #4a3b1c; color: #f5d88a; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .purchase-status[data-status="ordered"] { background: #263b55; color: #a9c9f4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.purchase-status[data-status="received"], .batch-status[data-status="available"], .manager-bill-status[data-status="completed"]) { background: #16464a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.batch-status[data-status="expired"], .alert-danger .alert-symbol) { background: #4b2926; color: #ffaaa3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.batch-status[data-status="depleted"], .manager-bill-status) { background: #17383d; color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .alert-warning .alert-symbol { background: #4a3b1c; color: #f5d88a; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.supplier-avatar, .batch-alert-icon, .compliance-icon) { background: #16464a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .history-toolbar :is(strong, label) { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.batches-summary, .history-pagination, .history-note, .history-empty) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .batches-summary strong { color: #e8f4f3; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .history-result.result-success { color: #67d2ae !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .history-result.result-failed { color: #ffaaa3 !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .compliance-state.state-active { color: #67d2ae !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .compliance-state.state-inactive { color: #ffaaa3 !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .compliance-state.state-warning { color: #f5d88a !important; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.history-toolbar select, .report-range-label select, .notifications-toolbar select) {
+    border-color: #315257; background: #10272b; color: #e8f4f3;
+}
+
+/* Status and feedback colors shared by billing and purchasing pages. */
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.order-status, .bill-status, .bill-status-pill) {
+    border: 1px solid #315257;
+    background: #17383d;
+    color: #d6e5e8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.order-status, .bill-status, .bill-status-pill)[data-status="draft"] {
+    border-color: #5b4a25;
+    background: #4a3b1c;
+    color: #f5d88a;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.order-status, .bill-status, .bill-status-pill)[data-status="ordered"] {
+    border-color: #3b5270;
+    background: #263b55;
+    color: #a9c9f4;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.order-status, .bill-status, .bill-status-pill)[data-status="received"],
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.bill-status, .bill-status-pill)[data-status="completed"] {
+    border-color: #16464a;
+    background: #16464a;
+    color: #67d2ae;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .order-status[data-status="cancelled"] {
+    border-color: #613733;
+    background: #4b2926;
+    color: #ffaaa3;
+}
+
+/* Keep pharmacist summary and recent-bill text readable on dark cards. */
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .welcome-row {
+    border: 1px solid #16464a;
+    background: linear-gradient(135deg, #123b40, #10272b);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .welcome-row h2 { color: #f1f7f8; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .welcome-row .subtitle { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .bill-amount { color: #e8f4f3; }
+
+/* Dark placeholders and alerts should use the same contrast as other controls. */
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(input, textarea)::placeholder { color: #a9c2c4; opacity: 1; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.message-error, .notification-error, .reports-error) {
+    border-color: #784440;
+    background: #38211f;
+    color: #ffb4ad;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .message-success {
+    border-color: #16464a;
+    background: #123b40;
+    color: #67d2ae;
+}
+
+/* Final palette pass: normalize legacy emerald/green components across role pages. */
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel,
+    .section-panel, .bill-panel, .order-panel, .dashboard-card, .history-panel,
+    .batches-table-wrap, .table-wrapper, .table-wrap, .settings-card, .notification-card,
+    .report-panel, .report-metrics article, .inventory-metric, .inventory-panel,
+    .purchase-metric, .purchase-panel, .pharmacist-metric, .manager-metric,
+    .manager-panel, .compliance-metric, .compliance-panel, .history-toolbar,
+    .notification-item, .notification-row, .medicine-card, .record-card
+) {
+    border-color: var(--ms-edge);
+    color: var(--ms-ink);
+    background-color: rgb(255 255 255 / 90%);
+    box-shadow: 0 8px 28px rgb(23 56 61 / 7%), inset 0 1px 0 rgb(255 255 255 / 78%);
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.metric-card-green, .notification-card.priority-info) {
+    border-color: #a9c2c4;
+    background: linear-gradient(135deg, #e4f7f4, #ffffff);
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .metric-card-warning, .inventory-metric-warning, .purchase-metric-warning,
+    .manager-warning, .compliance-warning, .priority-warning
+) { border-color: #f0dcae; background: linear-gradient(135deg, #fff8e8, #ffffff); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .metric-card-danger, .inventory-metric-danger, .manager-danger,
+    .compliance-danger, .priority-critical
+) { border-color: #efc9c8; background: linear-gradient(135deg, #fff0ef, #ffffff); }
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric:not(.inventory-metric-warning):not(.inventory-metric-danger),
+    .purchase-metric:not(.purchase-metric-warning),
+    .pharmacist-metric:not(.is-warning):not(.is-danger),
+    .manager-metric:not(.manager-warning):not(.manager-danger),
+    .compliance-metric:not(.compliance-warning):not(.compliance-danger)
+) {
+    border-color: #a9c2c4;
+    background: linear-gradient(135deg, #e4f7f4 0%, #ffffff 100%);
+}
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-welcome, .purchase-welcome, .welcome-row
+) {
+    border-color: #a9c2c4;
+    background: linear-gradient(120deg, #e4f7f4 0%, #f6fbfa 72%, #e4f7f4 100%);
+}
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric-icon, .purchase-icon, .manager-metric-icon,
+    .compliance-icon, .metric-icon, .supplier-avatar, .batch-alert-icon
+) {
+    background-color: #e4f7f4;
+    color: var(--ms-teal-800);
+}
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric strong, .purchase-metric strong, .pharmacist-metric strong,
+    .manager-metric strong, .compliance-metric strong, .report-metrics strong,
+    .report-record-row strong, .report-category-labels strong,
+    .inventory-panel-heading h2, .purchase-panel-heading h2, .manager-panel-heading h2,
+    .compliance-heading h2, .report-panel-heading h2, .history-toolbar strong
+) { color: var(--ms-ink); }
+
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric span, .purchase-metric span, .pharmacist-metric span,
+    .manager-metric span, .compliance-metric span, .report-metrics span,
+    .report-metrics small, .report-panel-heading p, .report-record-row span,
+    .report-category-labels, .batches-summary, .history-note, .history-empty
+) { color: var(--ms-muted); }
+
+/* Keep all records grids visually consistent in light and dark modes. */
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) {
+    overflow-x: auto;
+    border: 1px solid var(--ms-edge);
+    border-radius: 13px;
+    background: rgb(255 255 255 / 86%);
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) table {
+    color: var(--ms-ink);
+    background: transparent;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) th {
+    border-color: var(--ms-edge);
+    background: #e8f3f2;
+    color: #355b5e;
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) td {
+    border-color: #e1ebed;
+    color: var(--ms-ink);
+}
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) tbody tr:hover {
+    background-color: #e8f3f2;
+}
+
+/* Recolor chart accents and report bars; retain a neutral second-series color. */
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.report-dot.revenue, .legend-dot-revenue) { background: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-revenue-line, .report-sales-line) { stroke: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-chart-point.revenue, .sales-chart-active-dot.revenue) { fill: var(--ms-teal-700); stroke: var(--ms-teal-700); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range button[aria-pressed="true"] { background: var(--ms-teal-800); color: #ffffff; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-active, .state-active, .status-success, .result-success) { color: var(--ms-success-ink); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track { background: #e8f1f2; }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track span { background: linear-gradient(90deg, var(--ms-teal-800), var(--ms-aqua-500)); }
+body:is(.has-app-sidebar, .app-theme-ready) > .page .report-chart-point:hover,
+body:is(.has-app-sidebar, .app-theme-ready) > .page .report-chart-point:focus-visible { filter: drop-shadow(0 0 4px rgb(11 156 157 / 45%)); }
+
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .panel, .content-panel, .metric-card, .records-panel, .table-panel, .form-panel,
+    .section-panel, .bill-panel, .order-panel, .dashboard-card, .history-panel,
+    .batches-table-wrap, .table-wrapper, .table-wrap, .settings-card, .notification-card,
+    .report-panel, .report-metrics article, .inventory-metric, .inventory-panel,
+    .purchase-metric, .purchase-panel, .pharmacist-metric, .manager-metric,
+    .manager-panel, .compliance-metric, .compliance-panel, .history-toolbar,
+    .notification-item, .notification-row, .medicine-card, .record-card
+) {
+    border-color: #315257;
+    color: #e8f4f3;
+    background: rgb(18 48 53 / 94%);
+    box-shadow: 0 10px 30px rgb(0 0 0 / 24%), inset 0 1px 0 rgb(255 255 255 / 4%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .metric-card-warning, .inventory-metric-warning, .purchase-metric-warning,
+    .manager-warning, .compliance-warning, .priority-warning
+) { border-color: #655331; background: linear-gradient(135deg, #382f1e, #1d3034); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .metric-card-danger, .inventory-metric-danger, .manager-danger,
+    .compliance-danger, .priority-critical
+) { border-color: #69413f; background: linear-gradient(135deg, #3b292b, #1d3034); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.metric-card-green, .notification-card.priority-info) {
+    border-color: #286b70;
+    background: linear-gradient(135deg, #123b40, #17383d 76%, #16464a);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric:not(.inventory-metric-warning):not(.inventory-metric-danger),
+    .purchase-metric:not(.purchase-metric-warning),
+    .pharmacist-metric:not(.is-warning):not(.is-danger),
+    .manager-metric:not(.manager-warning):not(.manager-danger),
+    .compliance-metric:not(.compliance-warning):not(.compliance-danger),
+    .inventory-welcome, .purchase-welcome, .welcome-row
+) {
+    border-color: #286b70;
+    background: linear-gradient(135deg, #123b40, #17383d 76%, #16464a);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric-icon, .purchase-icon, .manager-metric-icon,
+    .compliance-icon, .metric-icon, .supplier-avatar, .batch-alert-icon
+) { background-color: #20575a; color: #67d2ae; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric, .purchase-metric, .pharmacist-metric, .manager-metric,
+    .compliance-metric, .report-metrics article, .report-record-row,
+    .report-category-labels, .report-panel-heading, .history-toolbar
+) :is(h1, h2, h3, strong, b, span:not(.inventory-icon):not(.purchase-icon):not(.manager-metric-icon):not(.compliance-icon):not(.metric-icon), small, p, label) { color: #dcebec; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(
+    .inventory-metric span, .purchase-metric span, .pharmacist-metric span,
+    .manager-metric span, .compliance-metric span, .report-metrics span,
+    .report-metrics small, .report-panel-heading p, .report-record-row span,
+    .batches-summary, .history-note, .history-empty
+) { color: #a9c2c4; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) {
+    border-color: #315257;
+    background: rgb(13 39 44 / 94%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) table { color: #e8f4f3; background: transparent; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) th {
+    border-color: #315257;
+    background: #1b4449;
+    color: #a9c2c4;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) td {
+    border-color: #29494e;
+    color: #dcebec;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.table-wrapper, .table-wrap, .batches-table-wrap, [class$="-table-wrap"]) tbody tr:hover { background: #173b40; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-revenue-line, .report-sales-line) { stroke: var(--ms-aqua-500); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.report-dot.revenue, .legend-dot-revenue) { background-color: var(--ms-aqua-500); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.sales-chart-point.revenue, .sales-chart-active-dot.revenue) { fill: var(--ms-aqua-500); stroke: var(--ms-aqua-500); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .cir-tabs::before {
+    background: var(--ms-teal-700);
+    box-shadow: 0 2px 8px rgb(11 156 157 / 38%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .cir-tabs__r:focus-visible + .cir-tabs__t {
+    outline-color: rgb(34 185 181 / 55%);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .manager-range button[aria-pressed="true"] { background: var(--ms-teal-700); color: #ffffff; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.status-active, .state-active, .status-success, .result-success) { color: var(--ms-success); }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track { background: #25484d; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page .report-category-track span { background: linear-gradient(90deg, var(--ms-teal-700), var(--ms-aqua-500)); }

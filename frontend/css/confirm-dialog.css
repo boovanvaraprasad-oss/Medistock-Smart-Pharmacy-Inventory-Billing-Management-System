@@ -6,7 +6,7 @@
     border: 0;
     border-radius: 16px;
     background: transparent;
-    color: #172a24;
+    color: #17383d;
     box-shadow: 0 24px 70px rgb(0 0 0 / 24%);
 }
 
@@ -17,7 +17,7 @@
 
 .confirm-card {
     padding: 25px 24px 20px;
-    border: 1px solid #e2ece7;
+    border: 1px solid #d6e5e8;
     border-radius: 16px;
     background: #ffffff;
     text-align: center;
@@ -45,7 +45,7 @@
 
 .confirm-dialog-title {
     margin: 0;
-    color: #18372b;
+    color: #17383d;
     font-size: 1.08rem;
     font-weight: 700;
     line-height: 1.45;
@@ -93,13 +93,13 @@
 }
 
 .confirm-dialog-cancel {
-    border-color: #d5e2dc !important;
+    border-color: #d6e5e8 !important;
     background: #ffffff;
-    color: #315044;
+    color: #315257;
 }
 
 .confirm-dialog-cancel:hover {
-    background: #f3f8f6;
+    background: #f1f7f8;
 }
 
 .confirm-dialog-simple .confirm-dialog-icon {
@@ -111,16 +111,24 @@
 }
 
 .confirm-dialog-simple .confirm-dialog-submit {
-    background: #137d64;
+    background: #08777b;
     color: #ffffff;
 }
 
 .confirm-dialog-simple .confirm-dialog-submit:hover {
-    background: #0d654f;
+    background: #075d63;
+}
+
+:root[data-theme="dark"] .confirm-dialog-simple .confirm-dialog-submit {
+    background: #0b9c9d;
+}
+
+:root[data-theme="dark"] .confirm-dialog-simple .confirm-dialog-submit:hover {
+    background: #08777b;
 }
 
 .confirm-dialog-actions button:focus-visible {
-    outline: 3px solid rgb(34 173 122 / 35%);
+    outline: 3px solid rgb(34 185 181 / 35%);
     outline-offset: 2px;
 }
 

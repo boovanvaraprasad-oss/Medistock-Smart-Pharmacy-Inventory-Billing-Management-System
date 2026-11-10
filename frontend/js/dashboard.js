@@ -3,6 +3,7 @@ const errorMessage = document.getElementById("errorMessage");
 const dashboardContent = document.getElementById("dashboardContent");
 const refreshButton = document.getElementById("refreshButton");
 let salesSummary = null;
+let salesChartRequest = 0;
 
 const numberFormatter = new Intl.NumberFormat("en-IN");
 
@@ -117,7 +118,7 @@ function renderLowStockAlerts(records = []) {
     });
 }
 
-function renderSalesChart(chartId, emptyId, series, labelForEntry) {
+function renderSalesChart(chartId, emptyId, series, labelForEntry, tooltipLabelForEntry = labelForEntry) {
     const chart = document.getElementById(chartId);
     const emptyMessage = document.getElementById(emptyId);
     chart.replaceChildren();
@@ -147,15 +148,20 @@ function renderSalesChart(chartId, emptyId, series, labelForEntry) {
         x: left + (series.length === 1 ? plotWidth / 2 : (index / (series.length - 1)) * plotWidth),
         y: top + plotHeight - (Math.max(entry[valueKey] || 0, 0) / axisMaximum) * plotHeight,
         amount: entry[valueKey] || 0,
-        label: labelForEntry(entry)
+        label: labelForEntry(entry),
+        tooltipLabel: tooltipLabelForEntry(entry)
     }));
     const salesPoints = makePoints("total_amount");
     const purchasePoints = makePoints("purchase_amount");
+    const isDark = document.documentElement.dataset.theme === "dark";
+    const revenueColor = isDark ? "#22b9b5" : "#0b9c9d";
+    const purchaseColor = isDark ? "#b8cedd" : "#8ba6bd";
 
     svg.setAttribute("class", "sales-area-svg");
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("role", "group");
+    svg.setAttribute("aria-label", "Revenue and received purchases by selected time interval");
 
     const defs = document.createElementNS(svgNamespace, "defs");
     const gradient = document.createElementNS(svgNamespace, "linearGradient");
@@ -166,11 +172,11 @@ function renderSalesChart(chartId, emptyId, series, labelForEntry) {
     gradient.setAttribute("y2", "1");
     const stopTop = document.createElementNS(svgNamespace, "stop");
     stopTop.setAttribute("offset", "0%");
-    stopTop.setAttribute("stop-color", "#10a879");
+    stopTop.setAttribute("stop-color", revenueColor);
     stopTop.setAttribute("stop-opacity", "0.28");
     const stopBottom = document.createElementNS(svgNamespace, "stop");
     stopBottom.setAttribute("offset", "100%");
-    stopBottom.setAttribute("stop-color", "#10a879");
+    stopBottom.setAttribute("stop-color", revenueColor);
     stopBottom.setAttribute("stop-opacity", "0.015");
     gradient.append(stopTop, stopBottom);
     defs.append(gradient);
@@ -215,26 +221,40 @@ function renderSalesChart(chartId, emptyId, series, labelForEntry) {
     const area = document.createElementNS(svgNamespace, "path");
     area.setAttribute("d", areaPath);
     area.setAttribute("fill", "url(#salesAreaGradient)");
+    area.setAttribute("class", "sales-area-fill");
     svg.append(area);
 
     const line = document.createElementNS(svgNamespace, "path");
     line.setAttribute("d", linePath);
     line.setAttribute("fill", "none");
-    line.setAttribute("stroke", "#0c9b70");
+    line.setAttribute("stroke", revenueColor);
     line.setAttribute("stroke-width", "3");
     line.setAttribute("stroke-linecap", "round");
     line.setAttribute("stroke-linejoin", "round");
+    line.setAttribute("class", "sales-revenue-line");
     svg.append(line);
 
     const purchaseLine = document.createElementNS(svgNamespace, "path");
     purchaseLine.setAttribute("d", purchasePath);
     purchaseLine.setAttribute("fill", "none");
-    purchaseLine.setAttribute("stroke", "#94a3b8");
+    purchaseLine.setAttribute("stroke", purchaseColor);
     purchaseLine.setAttribute("stroke-width", "2.5");
-    purchaseLine.setAttribute("stroke-dasharray", "6 5");
     purchaseLine.setAttribute("stroke-linecap", "round");
     purchaseLine.setAttribute("stroke-linejoin", "round");
+    purchaseLine.setAttribute("class", "sales-purchases-line");
     svg.append(purchaseLine);
+    chart.append(svg);
+
+    [line, purchaseLine].forEach((chartLine) => {
+        try {
+            const pathLength = chartLine.getTotalLength();
+            chartLine.style.setProperty("--sales-line-length", `${pathLength}px`);
+            chartLine.style.strokeDasharray = `${pathLength}`;
+            chartLine.style.strokeDashoffset = `${pathLength}`;
+        } catch {
+            // Keep the chart visible if an SVG implementation cannot measure paths.
+        }
+    });
 
     const labelStride = Math.max(1, Math.ceil(salesPoints.length / 8));
     salesPoints.forEach((point, index) => {
@@ -243,9 +263,9 @@ function renderSalesChart(chartId, emptyId, series, labelForEntry) {
         salesCircle.setAttribute("cy", String(point.y));
         salesCircle.setAttribute("r", salesPoints.length > 16 ? "2.5" : "4");
         salesCircle.setAttribute("class", "sales-chart-point");
-        const salesTitle = document.createElementNS(svgNamespace, "title");
-        salesTitle.textContent = `Revenue · ${point.label}: ${currencyFormatter.format(point.amount)}`;
-        salesCircle.append(salesTitle);
+        salesCircle.setAttribute("tabindex", "0");
+        salesCircle.setAttribute("aria-label", `Revenue · ${point.label}: ${currencyFormatter.format(point.amount)}`);
+        salesCircle.dataset.pointIndex = String(index);
         svg.append(salesCircle);
 
         if (index % labelStride === 0 || index === salesPoints.length - 1) {
@@ -263,13 +283,108 @@ function renderSalesChart(chartId, emptyId, series, labelForEntry) {
         purchaseCircle.setAttribute("cy", String(purchasePoints[index].y));
         purchaseCircle.setAttribute("r", salesPoints.length > 16 ? "2" : "3");
         purchaseCircle.setAttribute("class", "purchase-chart-point");
-        const purchaseTitle = document.createElementNS(svgNamespace, "title");
-        purchaseTitle.textContent = `Purchases · ${point.label}: ${currencyFormatter.format(purchasePoints[index].amount)}`;
-        purchaseCircle.append(purchaseTitle);
+        purchaseCircle.setAttribute("tabindex", "0");
+        purchaseCircle.setAttribute("aria-label", `Purchases · ${point.label}: ${currencyFormatter.format(purchasePoints[index].amount)}`);
+        purchaseCircle.dataset.pointIndex = String(index);
         svg.append(purchaseCircle);
     });
 
-    chart.append(svg);
+    const hoverLine = document.createElementNS(svgNamespace, "line");
+    hoverLine.setAttribute("class", "sales-chart-crosshair");
+    hoverLine.setAttribute("y1", String(top));
+    hoverLine.setAttribute("y2", String(top + plotHeight));
+    hoverLine.style.display = "none";
+    svg.append(hoverLine);
+
+    const revenueHoverDot = document.createElementNS(svgNamespace, "circle");
+    revenueHoverDot.setAttribute("class", "sales-chart-active-dot revenue");
+    revenueHoverDot.setAttribute("r", "5");
+    revenueHoverDot.style.display = "none";
+    const purchasesHoverDot = document.createElementNS(svgNamespace, "circle");
+    purchasesHoverDot.setAttribute("class", "sales-chart-active-dot purchases");
+    purchasesHoverDot.setAttribute("r", "5");
+    purchasesHoverDot.style.display = "none";
+    svg.append(revenueHoverDot, purchasesHoverDot);
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "sales-chart-tooltip";
+    tooltip.id = `${chartId}Tooltip`;
+    tooltip.setAttribute("role", "tooltip");
+    tooltip.hidden = true;
+    chart.append(svg, tooltip);
+
+    const showTooltip = (index, clientX, clientY) => {
+        const revenuePoint = salesPoints[index];
+        const purchasesPoint = purchasePoints[index];
+        if (!revenuePoint || !purchasesPoint) return;
+        hoverLine.setAttribute("x1", String(revenuePoint.x));
+        hoverLine.setAttribute("x2", String(revenuePoint.x));
+        hoverLine.style.display = "";
+        revenueHoverDot.setAttribute("cx", String(revenuePoint.x));
+        revenueHoverDot.setAttribute("cy", String(revenuePoint.y));
+        revenueHoverDot.style.display = "";
+        purchasesHoverDot.setAttribute("cx", String(purchasesPoint.x));
+        purchasesHoverDot.setAttribute("cy", String(purchasesPoint.y));
+        purchasesHoverDot.style.display = "";
+        tooltip.replaceChildren();
+
+        const heading = document.createElement("strong");
+        heading.className = "sales-tooltip-date";
+        heading.textContent = revenuePoint.tooltipLabel;
+        tooltip.append(heading);
+
+        [
+            { label: "Revenue", amount: revenuePoint.amount, className: "revenue" },
+            { label: "Purchases", amount: purchasesPoint.amount, className: "purchases" }
+        ].forEach((item) => {
+            const row = document.createElement("div");
+            row.className = "sales-tooltip-row";
+            const name = document.createElement("span");
+            const swatch = document.createElement("i");
+            swatch.className = `sales-tooltip-swatch ${item.className}`;
+            name.append(swatch, document.createTextNode(item.label));
+            const value = document.createElement("strong");
+            value.textContent = currencyFormatter.format(item.amount);
+            row.append(name, value);
+            tooltip.append(row);
+        });
+
+        tooltip.hidden = false;
+        const chartRect = chart.getBoundingClientRect();
+        const desiredLeft = clientX - chartRect.left + 12;
+        const desiredTop = clientY - chartRect.top + 12;
+        const leftPosition = Math.max(8, Math.min(desiredLeft, chart.clientWidth - tooltip.offsetWidth - 8));
+        const topPosition = Math.max(8, Math.min(desiredTop, chart.clientHeight - tooltip.offsetHeight - 8));
+        tooltip.style.left = `${leftPosition}px`;
+        tooltip.style.top = `${topPosition}px`;
+    };
+    const hideTooltip = () => {
+        tooltip.hidden = true;
+        hoverLine.style.display = "none";
+        revenueHoverDot.style.display = "none";
+        purchasesHoverDot.style.display = "none";
+    };
+
+    svg.addEventListener("pointermove", (event) => {
+        const bounds = svg.getBoundingClientRect();
+        const viewX = ((event.clientX - bounds.left) / bounds.width) * width;
+        const nearestIndex = salesPoints.reduce((bestIndex, point, index) =>
+            Math.abs(point.x - viewX) < Math.abs(salesPoints[bestIndex].x - viewX) ? index : bestIndex, 0);
+        showTooltip(nearestIndex, event.clientX, event.clientY);
+    });
+    svg.addEventListener("pointerleave", hideTooltip);
+    svg.querySelectorAll(".sales-chart-point, .purchase-chart-point").forEach((point) => {
+        point.setAttribute("aria-describedby", tooltip.id);
+        point.addEventListener("focus", () => {
+            const pointIndex = Number(point.dataset.pointIndex);
+            const bounds = svg.getBoundingClientRect();
+            const activePoint = salesPoints[pointIndex];
+            showTooltip(pointIndex,
+                bounds.left + (activePoint.x / width) * bounds.width,
+                bounds.top + (activePoint.y / height) * bounds.height);
+        });
+        point.addEventListener("blur", hideTooltip);
+    });
 }
 
 function renderSelectedSalesRange() {
@@ -280,35 +395,83 @@ function renderSelectedSalesRange() {
     let series;
     let caption;
     let labelForEntry;
+    let tooltipLabelForEntry;
     let chartLabel;
 
     if (selectedRange === "month") {
-        series = salesSummary.monthly_daily_totals || [];
-        caption = `${salesSummary.current_month} · daily sales through today`;
+        series = salesSummary.selected_month_daily_totals || salesSummary.monthly_daily_totals || [];
+        caption = `${salesSummary.selected_month || salesSummary.current_month} · daily sales`;
         labelForEntry = (entry) => entry.day;
+        tooltipLabelForEntry = (entry) => {
+            const monthValue = document.getElementById("salesMonthInput").value;
+            const dayValue = String(entry.day).padStart(2, "0");
+            return new Date(`${monthValue}-${dayValue}T00:00:00`).toLocaleDateString("en-IN", {
+                day: "numeric", month: "short", year: "numeric"
+            });
+        };
         chartLabel = `Sales by day for ${salesSummary.current_month}`;
     } else if (selectedRange === "year") {
         series = salesSummary.yearly_totals || [];
         caption = "All-time sales grouped by year";
         labelForEntry = (entry) => entry.year;
+        tooltipLabelForEntry = (entry) => String(entry.year);
         chartLabel = "All-time sales by year";
     } else {
-        series = salesSummary.daily_hourly_totals || [];
-        const today = new Date(`${salesSummary.current_date}T00:00:00`);
-        caption = `Today, ${today.toLocaleDateString("en-IN", {
+        series = salesSummary.selected_date_hourly_totals || salesSummary.daily_hourly_totals || [];
+        const selectedDate = salesSummary.selected_date || salesSummary.current_date;
+        const date = new Date(`${selectedDate}T00:00:00`);
+        caption = `${date.toLocaleDateString("en-IN", {
             day: "numeric",
             month: "short",
             year: "numeric"
         })} · sales by hour`;
         labelForEntry = (entry) => String(entry.hour).padStart(2, "0");
-        chartLabel = "Today's sales by hour";
+        tooltipLabelForEntry = (entry) => `${date.toLocaleDateString("en-IN", {
+            day: "numeric", month: "short", year: "numeric"
+        })} · ${String(entry.hour).padStart(2, "0")}:00`;
+        chartLabel = `Sales by hour for ${selectedDate}`;
     }
 
     setText("salesRangeCaption", caption);
     setText("salesGraphTotal", currencyFormatter.format(salesSummary.completed_sales_total_all_time || 0));
     const chart = document.getElementById("salesChart");
     chart.setAttribute("aria-label", chartLabel);
-    renderSalesChart("salesChart", "salesChartEmpty", series, labelForEntry);
+    renderSalesChart("salesChart", "salesChartEmpty", series, labelForEntry, tooltipLabelForEntry);
+}
+
+function getLocalDateValue() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit"
+    }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+}
+
+function updateSalesPeriodPickers() {
+    const range = document.querySelector('input[name="sales-range"]:checked')?.value || "day";
+    document.getElementById("salesDatePicker").hidden = range !== "day";
+    document.getElementById("salesMonthPicker").hidden = range !== "month";
+}
+
+async function refreshSalesChartForPeriod() {
+    const status = document.getElementById("salesChartStatus");
+    const requestId = ++salesChartRequest;
+    const range = document.querySelector('input[name="sales-range"]:checked')?.value || "day";
+    status.hidden = false;
+    status.textContent = "Updating chart…";
+    try {
+        const summary = await getDashboardSummaryForPeriod(
+            range === "day" ? document.getElementById("salesDateInput").value : undefined,
+            range === "month" ? document.getElementById("salesMonthInput").value : undefined
+        );
+        if (requestId !== salesChartRequest) return;
+        salesSummary = summary.sales;
+        renderSelectedSalesRange();
+        status.hidden = true;
+    } catch (error) {
+        if (requestId !== salesChartRequest) return;
+        status.textContent = error.message || "Unable to load sales for this period.";
+    }
 }
 
 function setTodayDate() {
@@ -354,7 +517,11 @@ async function loadDashboard() {
             return;
         }
 
-        const summary = await apiRequest("/api/v1/dashboard/summary");
+        const selectedRange = document.querySelector('input[name="sales-range"]:checked')?.value || "day";
+        const summary = await getDashboardSummaryForPeriod(
+            selectedRange === "day" ? document.getElementById("salesDateInput").value : undefined,
+            selectedRange === "month" ? document.getElementById("salesMonthInput").value : undefined
+        );
 
         const activeCount = summary.medicines.active_count;
         const lowStockCount = summary.medicines.low_stock_count;
@@ -433,8 +600,21 @@ async function loadDashboard() {
 setTodayDate();
 refreshButton.addEventListener("click", loadDashboard);
 document.querySelectorAll('input[name="sales-range"]').forEach((input) => {
-    input.addEventListener("change", renderSelectedSalesRange);
+    input.addEventListener("change", () => {
+        updateSalesPeriodPickers();
+        document.getElementById("salesChartStatus").hidden = true;
+        if (salesSummary) {
+            document.getElementById("salesChart").classList.add("is-range-switch");
+            renderSelectedSalesRange();
+        }
+    });
 });
+const initialDate = getLocalDateValue();
+document.getElementById("salesDateInput").value = initialDate;
+document.getElementById("salesMonthInput").value = initialDate.slice(0, 7);
+document.getElementById("salesDateInput").addEventListener("change", refreshSalesChartForPeriod);
+document.getElementById("salesMonthInput").addEventListener("change", refreshSalesChartForPeriod);
+updateSalesPeriodPickers();
 
 if (!localStorage.getItem("access_token")) {
     window.location.href = "/";

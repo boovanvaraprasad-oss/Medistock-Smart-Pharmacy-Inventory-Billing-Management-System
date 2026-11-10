@@ -7,7 +7,7 @@
 }
 
 .purchase-form label {
-    color: #33453d;
+    color: #17383d;
     font-weight: 700;
 }
 
@@ -17,10 +17,10 @@
     width: 100%;
     min-height: 42px;
     padding: 9px 11px;
-    border: 1px solid #cbd7d2;
+    border: 1px solid #d6e5e8;
     border-radius: 8px;
     background: #ffffff;
-    color: #17231f;
+    color: #17383d;
     font: inherit;
 }
 
@@ -43,7 +43,7 @@
 
 #orderDetailsSection h3 {
     margin: 24px 0 12px;
-    color: #263b33;
+    color: #17383d;
 }
 
 .order-actions {
@@ -56,16 +56,16 @@
     display: inline-block;
     padding: 5px 9px;
     border-radius: 999px;
-    background: #edf3f0;
-    color: #33453d;
+    background: #f1f7f8;
+    color: #17383d;
     font-size: 0.84rem;
     font-weight: 700;
     text-transform: capitalize;
 }
 
 .order-status[data-status="received"] {
-    background: #e6f5ef;
-    color: #12664f;
+    background: #e4f7f4;
+    color: #075d63;
 }
 
 .order-status[data-status="cancelled"] {

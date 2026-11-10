@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Store Manager</title>
-    <link rel="stylesheet" href="css/medicines.css">
-    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
-    <link rel="stylesheet" href="css/store_manager_dashboard.css">
-    <link rel="stylesheet" href="css/record-search.css">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <link rel="stylesheet" href="css/medicines.css?v=20261109-palette-v1">
+    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/store_manager_dashboard.css?v=20261105-sales-periods2">
+    <link rel="stylesheet" href="css/record-search.css?v=20261109-palette-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261109-pharmacy-palette-v3">
     <script src="js/components/theme-bootstrap.js"></script>
 </head>
-<body>
+<body class="app-theme-ready">
     <main class="page store-manager-page">
         <header class="page-header">
             <div><p class="eyebrow">Management overview</p><h1>Store Manager dashboard</h1><p class="subtitle">Monitor sales, inventory health, and purchasing activity.</p></div>
@@ -36,9 +36,14 @@
                             <button type="button" data-range="day" aria-pressed="true">Day</button><button type="button" data-range="month" aria-pressed="false">Month</button><button type="button" data-range="year" aria-pressed="false">Year</button>
                         </div>
                     </div>
+                    <div class="manager-period-pickers">
+                        <label id="managerSalesDatePicker" for="managerSalesDateInput">Date<input id="managerSalesDateInput" type="date" aria-label="Choose sales date"></label>
+                        <label id="managerSalesMonthPicker" for="managerSalesMonthInput" hidden>Month<input id="managerSalesMonthInput" type="month" aria-label="Choose sales month"></label>
+                    </div>
                     <div class="sales-total"><span>All-time sales</span><strong id="salesChartTotal">—</strong></div>
                     <div id="salesChart" class="manager-sales-chart" role="img" aria-label="Sales chart"></div>
                     <p id="salesChartEmpty" class="manager-empty" hidden>No sales recorded for this period.</p>
+                    <p id="managerSalesChartStatus" class="manager-muted" role="status" aria-live="polite" hidden></p>
                 </section>
                 <section class="manager-panel alerts-panel">
                     <div class="manager-panel-heading"><div><p class="eyebrow">Action needed</p><h2>Stock and order alerts</h2></div></div>
@@ -64,9 +69,9 @@
             </div>
         </section>
     </main>
-    <script src="js/api/client.js"></script>
+    <script src="js/api/client.js?v=20261105-sales-periods"></script>
     <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
     <script src="js/components/record-search.js"></script>
-    <script src="js/store_manager_dashboard.js"></script>
+    <script src="js/store_manager_dashboard.js?v=20261109-range-switch"></script>
 </body>
 </html>

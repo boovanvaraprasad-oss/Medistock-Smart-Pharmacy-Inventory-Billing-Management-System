@@ -5,7 +5,7 @@
 .record-search label {
     display: block;
     margin-bottom: 8px;
-    color: #33453d;
+    color: #17383d;
     font-weight: 700;
 }
 
@@ -20,16 +20,16 @@
     width: min(440px, 100%);
     min-height: 42px;
     padding: 0 12px;
-    border: 1px solid #cbd7d2;
+    border: 1px solid #d6e5e8;
     border-radius: 8px;
     background: #ffffff;
-    color: #17231f;
+    color: #17383d;
     font: inherit;
 }
 
 .search-controls input:focus-visible {
     outline: 3px solid rgba(22, 125, 96, 0.22);
-    border-color: #167d60;
+    border-color: #08777b;
 }
 
 .record-search .button {
@@ -46,27 +46,27 @@
 }
 
 .record-search .button-primary {
-    background: #147a61;
+    background: #08777b;
     color: #ffffff;
 }
 
 .record-search .button-primary:hover:not(:disabled) {
-    background: #0f654f;
+    background: #075d63;
 }
 
 .record-search .button-secondary {
-    border-color: #cbd7d2;
+    border-color: #d6e5e8;
     background: #ffffff;
-    color: #263b33;
+    color: #17383d;
 }
 
 .record-search .button-secondary:hover:not(:disabled) {
-    background: #edf3f0;
+    background: #f1f7f8;
 }
 
 .record-search-empty {
     margin: 0;
-    color: #61736b;
+    color: #60777b;
     font-size: 0.9rem;
 }
 

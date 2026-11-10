@@ -145,6 +145,14 @@ async function apiRequest(path, options = {}) {
     return data;
 }
 
+function getDashboardSummaryForPeriod(selectedDate, selectedMonth) {
+    const query = new URLSearchParams();
+    if (selectedDate) query.set("date", selectedDate);
+    if (selectedMonth) query.set("month", selectedMonth);
+    const suffix = query.toString();
+    return apiRequest(`/api/v1/dashboard/summary${suffix ? `?${suffix}` : ""}`);
+}
+
 async function logoutUser() {
     let accessToken = localStorage.getItem("access_token");
     const refreshToken = localStorage.getItem("refresh_token");

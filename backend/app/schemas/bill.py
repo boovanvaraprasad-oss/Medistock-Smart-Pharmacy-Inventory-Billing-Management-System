@@ -14,8 +14,8 @@ class CreateBillRequest(BaseModel):
         max_length=15,
     )
 
-    tax_percentage: float = Field(
-        default=0.0,
+    tax_percentage: float | None = Field(
+        default=None,
         ge=0,
         le=100,
     )

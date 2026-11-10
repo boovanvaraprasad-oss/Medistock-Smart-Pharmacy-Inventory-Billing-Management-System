@@ -1,4 +1,5 @@
-from datetime import datetime, time, timedelta, timezone
+import calendar
+from datetime import date, datetime, time, timedelta, timezone
 from collections import defaultdict
 
 from app.core.database import db
@@ -7,10 +8,15 @@ from app.core.database import db
 INDIA_TIMEZONE = timezone(timedelta(hours=5, minutes=30))
 
 
-async def get_dashboard_summary():
+async def get_dashboard_summary(selected_date: date | None = None, selected_month: str | None = None):
     """Return current inventory and all-time business summary values."""
 
     now = datetime.now(INDIA_TIMEZONE)
+    selected_date = selected_date or now.date()
+    try:
+        selected_month_date = datetime.strptime(selected_month, "%Y-%m").date() if selected_month else now.date().replace(day=1)
+    except ValueError:
+        selected_month_date = now.date().replace(day=1)
     today_start = datetime.combine(now.date(), time.min)
     expiring_cutoff = datetime.combine(
         now.date() + timedelta(days=31),
@@ -115,6 +121,12 @@ async def get_dashboard_summary():
     purchases_by_year = defaultdict(float)
     purchases_by_hour_today = defaultdict(float)
     purchases_by_day_current_month = defaultdict(float)
+    sales_by_hour_selected_date = defaultdict(float)
+    purchases_by_hour_selected_date = defaultdict(float)
+    sales_by_day_selected_month = defaultdict(float)
+    purchases_by_day_selected_month = defaultdict(float)
+    selected_date_sales_total = 0.0
+    selected_month_sales_total = 0.0
     completed_bill_count_today = 0
     yesterday_sales_total = 0.0
     received_purchase_total_all_time = 0.0
@@ -139,11 +151,21 @@ async def get_dashboard_summary():
         elif local_sale_date.date() == now.date() - timedelta(days=1):
             yesterday_sales_total += amount
 
+        if local_sale_date.date() == selected_date:
+            selected_date_sales_total += amount
+            sales_by_hour_selected_date[local_sale_date.hour] += amount
+
         if (
             local_sale_date.year == now.year
             and local_sale_date.month == now.month
         ):
             sales_by_day_current_month[local_sale_date.day] += amount
+        if (
+            local_sale_date.year == selected_month_date.year
+            and local_sale_date.month == selected_month_date.month
+        ):
+            selected_month_sales_total += amount
+            sales_by_day_selected_month[local_sale_date.day] += amount
 
     # Measure purchases when stock is received. Older orders use their ObjectId
     # creation time because they predate the received_at timestamp.
@@ -177,11 +199,18 @@ async def get_dashboard_summary():
             purchases_by_year[local_received_date.year] += amount
             if local_received_date.date() == now.date():
                 purchases_by_hour_today[local_received_date.hour] += amount
+            if local_received_date.date() == selected_date:
+                purchases_by_hour_selected_date[local_received_date.hour] += amount
             if (
                 local_received_date.year == now.year
                 and local_received_date.month == now.month
             ):
                 purchases_by_day_current_month[local_received_date.day] += amount
+            if (
+                local_received_date.year == selected_month_date.year
+                and local_received_date.month == selected_month_date.month
+            ):
+                purchases_by_day_selected_month[local_received_date.day] += amount
 
     open_purchase_order_count = await db.purchase_orders.count_documents(
         {
@@ -398,6 +427,16 @@ async def get_dashboard_summary():
                 2,
             ),
             "current_date": now.date().isoformat(),
+            "selected_date": selected_date.isoformat(),
+            "selected_date_sales_total": round(selected_date_sales_total, 2),
+            "selected_date_hourly_totals": [
+                {
+                    "hour": hour,
+                    "total_amount": round(sales_by_hour_selected_date[hour], 2),
+                    "purchase_amount": round(purchases_by_hour_selected_date[hour], 2),
+                }
+                for hour in range(now.hour + 1 if selected_date == now.date() else 24)
+            ],
             "daily_sales_total": round(
                 sum(sales_by_hour_today.values()),
                 2,
@@ -426,6 +465,21 @@ async def get_dashboard_summary():
                 for hour in range(now.hour + 1)
             ],
             "current_month": now.strftime("%B %Y"),
+            "selected_month": selected_month_date.strftime("%B %Y"),
+            "selected_month_sales_total": round(selected_month_sales_total, 2),
+            "selected_month_daily_totals": [
+                {
+                    "day": day,
+                    "total_amount": round(sales_by_day_selected_month[day], 2),
+                    "purchase_amount": round(purchases_by_day_selected_month[day], 2),
+                }
+                for day in range(
+                    1,
+                    now.day + 1
+                    if selected_month_date.year == now.year and selected_month_date.month == now.month
+                    else calendar.monthrange(selected_month_date.year, selected_month_date.month)[1] + 1,
+                )
+            ],
             "monthly_sales_total": round(
                 sum(sales_by_day_current_month.values()),
                 2,

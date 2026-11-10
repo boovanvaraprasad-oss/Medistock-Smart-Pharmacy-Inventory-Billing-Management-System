@@ -54,6 +54,12 @@ app.mount(
 )
 
 app.mount(
+    "/assets",
+    StaticFiles(directory=FRONTEND_DIR / "assets"),
+    name="frontend-assets",
+)
+
+app.mount(
     "/",
     StaticFiles(
         directory=FRONTEND_HTML_DIR,

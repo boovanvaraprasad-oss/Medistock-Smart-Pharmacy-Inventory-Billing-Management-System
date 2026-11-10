@@ -1,10 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
+    --login-teal-deep: #075d63;
+    --login-teal: #08777b;
+    --login-aqua: #22b9b5;
+    --login-mint: #67d2ae;
+    --login-ink: #17383d;
+    --login-edge: #d6e5e8;
     color-scheme: light;
     font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
-    color: #14251e;
-    background: #032d22;
+    color: var(--login-ink);
+    background: var(--login-teal-deep);
 }
 
 * {
@@ -33,7 +39,7 @@ textarea {
     overflow: hidden;
     padding: 32px 20px;
     isolation: isolate;
-    background: #188451;
+    background: radial-gradient(ellipse at 18% 20%, rgb(34 185 181 / 38%), transparent 38%), linear-gradient(135deg, #08777b 0%, #0b9c9d 56%, #075d63 100%);
 }
 
 .login-card {
@@ -50,25 +56,32 @@ textarea {
 .brand {
     display: flex;
     align-items: center;
-    gap: 7px;
     width: fit-content;
     margin-bottom: 15px;
-    color: #075c3e;
+    color: var(--login-teal-deep);
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.04em;
     text-decoration: none;
 }
 
+.brand img {
+    display: block;
+    width: min(100%, 205px);
+    height: 52px;
+    object-fit: contain;
+    object-position: left center;
+}
+
 .brand-plus {
-    color: #168957;
+    color: var(--login-aqua);
     font-size: 2rem;
     line-height: 0.7;
 }
 
 .login-card h1 {
     margin: 0 0 14px;
-    color: #14251e;
+    color: var(--login-ink);
     font-size: 1.5rem;
 }
 
@@ -94,21 +107,21 @@ textarea {
     width: 100%;
     min-height: 42px;
     padding: 9px 12px;
-    border: 1px solid #cbd9d2;
+    border: 1px solid var(--login-edge);
     border-radius: 8px;
     outline: none;
     background: #fff;
-    color: #14251e;
+    color: var(--login-ink);
     font: inherit;
 }
 
 .form-field input::placeholder {
-    color: #85958d;
+    color: #60777b;
 }
 
 .form-field input:focus {
-    border-color: #168957;
-    box-shadow: 0 0 0 3px rgba(22, 137, 87, 0.15);
+    border-color: var(--login-aqua);
+    box-shadow: 0 0 0 3px rgb(34 185 181 / 18%);
 }
 
 .password-input-wrap {
@@ -132,17 +145,17 @@ textarea {
     border: 0;
     border-radius: 7px;
     background: transparent;
-    color: #537166;
+    color: #60777b;
     cursor: pointer;
 }
 
 .password-visibility-toggle:hover {
-    background: #edf7f2;
-    color: #075c3e;
+    background: #e4f7f4;
+    color: var(--login-teal-deep);
 }
 
 .password-visibility-toggle:focus-visible {
-    outline: 2px solid #168957;
+    outline: 2px solid var(--login-aqua);
     outline-offset: 2px;
 }
 
@@ -174,7 +187,7 @@ textarea {
 }
 
 .login-options a {
-    color: #08704b;
+    color: var(--login-teal);
     font-weight: 700;
     text-decoration: none;
 }
@@ -189,7 +202,7 @@ textarea {
     min-height: 42px;
     border: 0;
     border-radius: 8px;
-    background: #075c3e;
+    background: var(--login-teal-deep);
     color: #fff;
     cursor: pointer;
     font: inherit;
@@ -199,7 +212,7 @@ textarea {
 }
 
 .login-button:hover {
-    background: #064b34;
+    background: #075d63;
 }
 
 .login-button:active {
@@ -233,8 +246,8 @@ textarea {
     opacity: 0.95;
     pointer-events: none;
     filter:
-        drop-shadow(0 0 8px #8af4bb)
-        drop-shadow(0 0 18px rgba(111, 231, 168, 0.7));
+        drop-shadow(0 0 8px #b8f4e1)
+        drop-shadow(0 0 18px rgb(103 210 174 / 65%));
 }
 
 .medical-art {
@@ -254,11 +267,11 @@ textarea {
 .art-syringe {
     position: absolute;
     display: block;
-    border: 3px solid #a7f3c8;
-    background-color: rgba(44, 172, 112, 0.25);
+    border: 3px solid #b8f4e1;
+    background-color: rgb(34 185 181 / 24%);
     box-shadow:
-        0 0 12px rgba(111, 231, 168, 0.7),
-        inset 0 0 8px rgba(184, 247, 210, 0.18);
+        0 0 12px rgb(103 210 174 / 56%),
+        inset 0 0 8px rgb(184 244 225 / 18%);
 }
 
 .art-capsule {
@@ -275,7 +288,7 @@ textarea {
     left: 0;
     width: 100%;
     height: 3px;
-    background: #b8f7d2;
+    background: #b8f4e1;
     content: "";
 }
 
@@ -300,8 +313,8 @@ textarea {
     border-radius: 50%;
     background: linear-gradient(
         to bottom,
-        rgba(184, 247, 210, 0.85) 0 49%,
-        rgba(15, 106, 69, 0.55) 50% 100%
+        rgb(184 244 225 / 88%) 0 49%,
+        rgb(7 93 99 / 58%) 50% 100%
     );
 }
 
@@ -322,10 +335,10 @@ textarea {
     left: 20px;
     width: 54px;
     height: 24px;
-    border: 3px solid #a7f3c8;
+    border: 3px solid #b8f4e1;
     border-bottom: 0;
     border-radius: 8px 8px 0 0;
-    background: rgba(44, 172, 112, 0.3);
+    background: rgb(34 185 181 / 28%);
     content: "";
 }
 
@@ -336,14 +349,14 @@ textarea {
     width: 70px;
     height: 58px;
     border-radius: 7px;
-    background: rgba(232, 255, 241, 0.92);
+    background: rgb(241 247 248 / 94%);
     content: "";
 }
 
 .art-bottle span {
     z-index: 1;
     margin-top: 25px;
-    color: #08704b;
+    color: var(--login-teal-deep);
     font-size: 2.8rem;
     font-weight: 800;
 }
@@ -363,7 +376,7 @@ textarea {
     left: -13px;
     width: 68px;
     height: 17px;
-    border: 3px solid #a7f3c8;
+    border: 3px solid #b8f4e1;
     border-radius: 5px;
     content: "";
 }
@@ -374,12 +387,12 @@ textarea {
     left: 9px;
     width: 25px;
     height: 90px;
-    border-top: 3px solid #b8f7d2;
-    border-bottom: 3px solid #b8f7d2;
+    border-top: 3px solid #b8f4e1;
+    border-bottom: 3px solid #b8f4e1;
     background: repeating-linear-gradient(
         to bottom,
         transparent 0 15px,
-        #b8f7d2 16px 18px
+        #b8f4e1 16px 18px
     );
     content: "";
 }

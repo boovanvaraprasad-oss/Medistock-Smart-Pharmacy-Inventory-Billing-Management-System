@@ -12,7 +12,7 @@ from app.services.stock_transactions import create_stock_transaction
 INDIA_TIMEZONE = timezone(timedelta(hours=5, minutes=30))
 
 
-async def generate_invoice_number() -> str:
+async def generate_invoice_number(prefix: str = "INV") -> str:
     """Generate a unique sequential invoice number."""
     counter = await db.counters.find_one_and_update(
         {"_id": "invoice_number"},
@@ -20,13 +20,14 @@ async def generate_invoice_number() -> str:
         upsert=True,
         return_document=ReturnDocument.AFTER,
     )
-    return f"INV-{counter['sequence']:06d}"
+    return f"{prefix}-{counter['sequence']:06d}"
 
 
 async def create_bill(
     customer_name: str,
     customer_phone: str,
     tax_percentage: float = 0.0,
+    invoice_prefix: str = "INV",
 ):
     """Create a new draft bill."""
     if not 0 <= tax_percentage <= 100:
@@ -35,7 +36,7 @@ async def create_bill(
             detail="Tax percentage must be between 0 and 100",
         )
 
-    invoice_number = await generate_invoice_number()
+    invoice_number = await generate_invoice_number(invoice_prefix)
 
     bill = {
         "invoice_number": invoice_number,

@@ -1,5 +1,5 @@
 .pharmacist-page {
-    color: #17231f;
+    color: #17383d;
 }
 
 .pharmacist-page .page-header {
@@ -14,12 +14,12 @@
     margin-bottom: 22px;
     padding: 22px 24px;
     border-radius: 16px;
-    background: #e6f7ef;
+    background: #e4f7f4;
 }
 
 .welcome-row h2 {
     margin: 0;
-    color: #123d2e;
+    color: #17383d;
     font-size: 1.4rem;
 }
 
@@ -40,10 +40,10 @@
     gap: 14px;
     min-height: 112px;
     padding: 20px;
-    border: 1px solid #dce8e2;
+    border: 1px solid #d6e5e8;
     border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .metric-icon {
@@ -53,22 +53,22 @@
     flex: 0 0 44px;
     place-items: center;
     border-radius: 50%;
-    background: #d8f7e9;
-    color: #087651;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 1.2rem;
     font-weight: 700;
 }
 
 .metric-label {
     display: block;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.9rem;
 }
 
 .pharmacist-metric strong {
     display: block;
     margin-top: 3px;
-    color: #12392c;
+    color: #17383d;
     font-size: 1.7rem;
 }
 
@@ -82,10 +82,10 @@
 .pharmacist-panels .panel {
     min-width: 0;
     padding: 20px;
-    border: 1px solid #dce8e2;
+    border: 1px solid #d6e5e8;
     border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .pharmacist-panels .section-heading {
@@ -94,12 +94,12 @@
 
 .pharmacist-panels .section-heading h2 {
     margin: 0;
-    color: #173c2f;
+    color: #17383d;
     font-size: 1.15rem;
 }
 
 .pharmacist-panels .section-heading a {
-    color: #087651;
+    color: #08777b;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
@@ -122,17 +122,17 @@
 .pharmacist-panels th,
 .pharmacist-panels td {
     padding: 12px 10px;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
     white-space: nowrap;
 }
 
 .pharmacist-panels th {
-    color: #61736b;
+    color: #60777b;
     font-size: 0.83rem;
 }
 
 .pharmacist-panels td {
-    color: #263b33;
+    color: #17383d;
     font-size: 0.9rem;
 }
 
@@ -142,7 +142,7 @@
     align-items: center;
     gap: 12px;
     padding: 13px 0;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
 }
 
 .recent-bill:last-child {
@@ -156,11 +156,11 @@
 
 .recent-bill small {
     margin-top: 3px;
-    color: #71827b;
+    color: #60777b;
 }
 
 .bill-amount {
-    color: #173c2f;
+    color: #17383d;
     font-weight: 700;
     white-space: nowrap;
 }
@@ -170,20 +170,20 @@
     margin-top: 5px;
     padding: 3px 8px;
     border-radius: 99px;
-    background: #edf3f0;
-    color: #52615b;
+    background: #f1f7f8;
+    color: #60777b;
     font-size: 0.75rem;
     text-transform: capitalize;
 }
 
 .bill-status-pill[data-status="completed"] {
-    background: #e3f5ec;
-    color: #12664f;
+    background: #e4f7f4;
+    color: #075d63;
 }
 
 .empty-state {
     padding: 18px 0 4px;
-    color: #71827b;
+    color: #60777b;
 }
 
 @media (max-width: 900px) {

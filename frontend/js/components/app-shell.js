@@ -1,6 +1,14 @@
 (() => {
     document.documentElement.dataset.theme = localStorage.getItem("medistock_theme") === "dark" ? "dark" : "light";
 
+    if (!document.querySelector('link[rel="icon"]')) {
+        const favicon = document.createElement("link");
+        favicon.rel = "icon";
+        favicon.type = "image/svg+xml";
+        favicon.href = "/assets/medistock-mark.svg";
+        document.head.append(favicon);
+    }
+
     const navigationItems = [
         { label: "Overview", href: "dashboard.html", icon: "layout-dashboard", permissions: [] },
         { label: "Staff & Users", href: "users.html", icon: "users", permissions: ["user:read", "user:write"] },
@@ -28,8 +36,6 @@
         // The cached user can be refreshed after the shell has already rendered.
         // Clear its previous elements before rebuilding to avoid duplicate profiles.
         document.querySelectorAll(".app-sidebar, .app-header-profile, .app-account-bar, .app-header-notifications").forEach((element) => element.remove());
-        document.body.classList.remove("has-app-sidebar");
-
         const overviewPage = getDashboardForRole(currentUser.role);
         const sidebar = document.createElement("aside");
         sidebar.className = "app-sidebar";
@@ -39,18 +45,16 @@
         brand.href = overviewPage;
         brand.setAttribute("aria-label", "MediStock overview");
 
-        const mark = document.createElement("span");
+        const mark = document.createElement("img");
         mark.className = "app-sidebar-mark";
+        mark.src = "/assets/medistock-mark.svg";
+        mark.alt = "";
         mark.setAttribute("aria-hidden", "true");
-        mark.textContent = "✚";
 
         const brandCopy = document.createElement("span");
         brandCopy.className = "app-sidebar-brand-copy";
-        const brandName = document.createElement("strong");
-        brandName.textContent = "MediStock";
-        const brandDescription = document.createElement("small");
-        brandDescription.textContent = "Pharmacy inventory";
-        brandCopy.append(brandName, brandDescription);
+        brandCopy.setAttribute("aria-hidden", "true");
+        brandCopy.innerHTML = '<strong><span>Medi</span><span>Stock</span></strong><small>Pharmacy inventory</small>';
 
         const toggle = document.createElement("button");
         toggle.className = "app-sidebar-toggle";
@@ -260,7 +264,6 @@
                 const sidebar = document.querySelector(".app-sidebar");
                 if (!sidebar) return;
                 sidebar.remove();
-                document.body.classList.remove("has-app-sidebar");
                 addSidebar(event.detail);
             });
             return;

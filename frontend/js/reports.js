@@ -3,6 +3,18 @@ const reportNumber = new Intl.NumberFormat("en-IN");
 const reportRange = document.getElementById("reportRange");
 const reportTrendChart = document.getElementById("reportTrendChart");
 let reportData = null;
+let reportChartRequest = 0;
+
+function reportLocalDate() {
+    const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+}
+
+function updateReportPeriodPickers() {
+    document.getElementById("reportDatePicker").hidden = reportRange.value !== "day";
+    document.getElementById("reportMonthPicker").hidden = reportRange.value !== "month";
+}
 
 function reportText(id, value) {
     const element = document.getElementById(id);
@@ -13,13 +25,13 @@ function renderReportTrend() {
     if (!reportData) return;
     const range = reportRange.value;
     const sales = reportData.sales;
-    const series = range === "month" ? sales.monthly_daily_totals : range === "year" ? sales.yearly_totals : sales.daily_hourly_totals;
+    const series = range === "month" ? (sales.selected_month_daily_totals || sales.monthly_daily_totals) : range === "year" ? sales.yearly_totals : (sales.selected_date_hourly_totals || sales.daily_hourly_totals);
     const label = range === "month" ? (entry) => entry.day : range === "year" ? (entry) => entry.year : (entry) => String(entry.hour).padStart(2, "0");
     const hasValues = series.some((entry) => entry.total_amount > 0 || entry.purchase_amount > 0);
     reportTrendChart.replaceChildren();
     reportTrendChart.hidden = !hasValues;
     document.getElementById("reportTrendEmpty").hidden = hasValues;
-    reportText("reportRangeCaption", range === "month" ? `${sales.current_month} · daily totals through today` : range === "year" ? "Annual totals" : `Today, ${new Date(`${sales.current_date}T00:00:00`).toLocaleDateString("en-IN")} · hourly totals`);
+    reportText("reportRangeCaption", range === "month" ? `${sales.selected_month || sales.current_month} · daily totals` : range === "year" ? "Annual totals" : `${new Date(`${sales.selected_date || sales.current_date}T00:00:00`).toLocaleDateString("en-IN")} · hourly totals`);
     if (!hasValues) return;
 
     const svgNS = "http://www.w3.org/2000/svg";
@@ -49,13 +61,14 @@ function renderReportTrend() {
     }
 
     const makePath = (points) => points.map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ");
-    [[salesPoints, "#0c9b70", "report-sales-line"], [purchasePoints, "#94a3b8", "report-purchases-line"]].forEach(([points, color, className]) => {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    [[salesPoints, isDark ? "#22b9b5" : "#0b9c9d", "report-sales-line"], [purchasePoints, isDark ? "#c4d2e8" : "#94a3b8", "report-purchases-line"]].forEach(([points, color, className]) => {
         const path = document.createElementNS(svgNS, "path");
         path.setAttribute("d", makePath(points)); path.setAttribute("fill", "none"); path.setAttribute("stroke", color); path.setAttribute("stroke-width", className === "report-sales-line" ? "3" : "2.5");
         if (className === "report-purchases-line") path.setAttribute("stroke-dasharray", "6 5");
         svg.append(path);
         points.forEach((point) => {
-            const circle = document.createElementNS(svgNS, "circle"); circle.setAttribute("cx", point.x); circle.setAttribute("cy", point.y); circle.setAttribute("r", "3.5"); circle.setAttribute("fill", color);
+            const circle = document.createElementNS(svgNS, "circle"); circle.setAttribute("cx", point.x); circle.setAttribute("cy", point.y); circle.setAttribute("r", "4.5"); circle.setAttribute("fill", color); circle.setAttribute("class", "report-chart-point"); circle.setAttribute("tabindex", "0");
             const title = document.createElementNS(svgNS, "title"); title.textContent = `${className === "report-sales-line" ? "Revenue" : "Received purchases"} · ${point.label}: ${reportCurrency.format(point.value)}`; circle.append(title); svg.append(circle);
         });
     });
@@ -65,6 +78,28 @@ function renderReportTrend() {
         const text = document.createElementNS(svgNS, "text"); text.setAttribute("x", point.x); text.setAttribute("y", height - 8); text.setAttribute("text-anchor", "middle"); text.setAttribute("class", "report-axis-label"); text.textContent = point.label; svg.append(text);
     });
     reportTrendChart.append(svg);
+}
+
+async function refreshReportTrendForPeriod() {
+    if (!reportData) return;
+    const status = document.getElementById("reportTrendStatus");
+    const requestId = ++reportChartRequest;
+    status.hidden = false;
+    status.textContent = "Updating chart…";
+    try {
+        const range = reportRange.value;
+        const summary = await getDashboardSummaryForPeriod(
+            range === "day" ? document.getElementById("reportDateInput").value : undefined,
+            range === "month" ? document.getElementById("reportMonthInput").value : undefined
+        );
+        if (requestId !== reportChartRequest) return;
+        reportData.sales = summary.sales;
+        renderReportTrend();
+        status.hidden = true;
+    } catch (error) {
+        if (requestId !== reportChartRequest) return;
+        status.textContent = error.message || "Unable to load sales for this period.";
+    }
 }
 
 function renderReportDetails() {
@@ -97,7 +132,11 @@ async function loadReports() {
     const loading = document.getElementById("reportsLoading"), error = document.getElementById("reportsError"), body = document.getElementById("reportsBody"), refresh = document.getElementById("reportsRefresh");
     loading.hidden = false; error.hidden = true; body.hidden = true; refresh.disabled = true;
     try {
-        reportData = await apiRequest("/api/v1/dashboard/summary");
+        const range = reportRange.value;
+        reportData = await getDashboardSummaryForPeriod(
+            range === "day" ? document.getElementById("reportDateInput").value : undefined,
+            range === "month" ? document.getElementById("reportMonthInput").value : undefined
+        );
         const { sales, inventory, medicines, purchasing } = reportData;
         reportText("reportTodayRevenue", reportCurrency.format(sales.daily_sales_total));
         reportText("reportTodayBills", `${reportNumber.format(sales.daily_completed_bill_count)} completed bills today`);
@@ -115,6 +154,12 @@ async function loadReports() {
     } finally { refresh.disabled = false; }
 }
 
-reportRange.addEventListener("change", renderReportTrend);
+reportRange.addEventListener("change", () => { updateReportPeriodPickers(); refreshReportTrendForPeriod(); });
+const reportInitialDate = reportLocalDate();
+document.getElementById("reportDateInput").value = reportInitialDate;
+document.getElementById("reportMonthInput").value = reportInitialDate.slice(0, 7);
+document.getElementById("reportDateInput").addEventListener("change", refreshReportTrendForPeriod);
+document.getElementById("reportMonthInput").addEventListener("change", refreshReportTrendForPeriod);
+updateReportPeriodPickers();
 document.getElementById("reportsRefresh").addEventListener("click", loadReports);
 loadReports();

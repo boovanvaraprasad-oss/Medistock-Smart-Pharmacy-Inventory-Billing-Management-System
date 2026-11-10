@@ -1,5 +1,5 @@
 .purchase-page {
-    color: #17231f;
+    color: #17383d;
 }
 
 .purchase-page .page-header {
@@ -13,20 +13,20 @@
     gap: 22px;
     margin-bottom: 20px;
     padding: 22px 24px;
-    border: 1px solid #d7eee3;
+    border: 1px solid #e4f7f4;
     border-radius: 16px;
-    background: linear-gradient(110deg, #e5f7ef, #f7fcf9);
+    background: linear-gradient(110deg, #e4f7f4, #f7fcf9);
 }
 
 .purchase-welcome h2 {
     margin: 0;
-    color: #104733;
+    color: #17383d;
     font-size: 1.45rem;
 }
 
 .purchase-welcome p:last-child {
     margin: 7px 0 0;
-    color: #60756b;
+    color: #60777b;
 }
 
 .purchase-shortcuts {
@@ -49,14 +49,14 @@
     align-items: center;
     gap: 14px;
     padding: 18px;
-    border: 1px solid #e0ebe5;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .purchase-metric-green {
-    background: linear-gradient(120deg, #e9faf3, #ffffff);
+    background: linear-gradient(120deg, #e4f7f4, #ffffff);
 }
 
 .purchase-metric-warning {
@@ -71,8 +71,8 @@
     flex: 0 0 44px;
     place-items: center;
     border-radius: 50%;
-    background: #d7f6e9;
-    color: #087651;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 1.15rem;
     font-weight: 800;
 }
@@ -88,14 +88,14 @@
 
 .purchase-metric .metric-label {
     display: block;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.85rem;
 }
 
 .purchase-metric strong {
     display: block;
     margin-top: 3px;
-    color: #12392c;
+    color: #17383d;
     font-size: 1.65rem;
     line-height: 1.2;
 }
@@ -110,10 +110,10 @@
 .purchase-panel {
     min-width: 0;
     padding: 20px;
-    border: 1px solid #dce8e2;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .purchase-panel-heading {
@@ -126,13 +126,13 @@
 
 .purchase-panel-heading h2 {
     margin: 0;
-    color: #173c2f;
+    color: #17383d;
     font-size: 1.15rem;
 }
 
 .purchase-panel-heading .eyebrow {
     margin: 0 0 5px;
-    color: #087651;
+    color: #08777b;
     font-size: 0.73rem;
     font-weight: 800;
     letter-spacing: 0.09em;
@@ -140,7 +140,7 @@
 }
 
 .purchase-panel-heading a {
-    color: #087651;
+    color: #08777b;
     font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
@@ -164,18 +164,18 @@
 .purchase-panel th,
 .purchase-panel td {
     padding: 12px 10px;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
     vertical-align: top;
 }
 
 .purchase-panel th {
-    color: #61736b;
+    color: #60777b;
     font-size: 0.82rem;
     white-space: nowrap;
 }
 
 .purchase-panel td {
-    color: #263b33;
+    color: #17383d;
     font-size: 0.88rem;
 }
 
@@ -184,7 +184,7 @@
     padding: 4px 9px;
     border-radius: 99px;
     background: #f0f2f1;
-    color: #58645e;
+    color: #60777b;
     font-size: 0.76rem;
     font-weight: 700;
     text-transform: capitalize;
@@ -201,12 +201,12 @@
 }
 
 .purchase-status[data-status="received"] {
-    background: #e3f5ec;
-    color: #12664f;
+    background: #e4f7f4;
+    color: #075d63;
 }
 
 .purchase-value {
-    color: #173c2f;
+    color: #17383d;
     font-weight: 700;
     white-space: nowrap;
 }
@@ -215,7 +215,7 @@
     display: inline-block;
     max-width: 180px;
     overflow: hidden;
-    color: #71827b;
+    color: #60777b;
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: bottom;
@@ -230,7 +230,7 @@
     align-items: center;
     gap: 11px;
     padding: 13px 0;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
 }
 
 .supplier-entry:last-child {
@@ -244,8 +244,8 @@
     flex: 0 0 38px;
     place-items: center;
     border-radius: 12px;
-    background: #e5f7ef;
-    color: #087651;
+    background: #e4f7f4;
+    color: #08777b;
     font-weight: 800;
 }
 
@@ -255,18 +255,18 @@
 }
 
 .supplier-copy strong {
-    color: #243a31;
+    color: #17383d;
     font-size: 0.9rem;
 }
 
 .supplier-copy small {
     margin-top: 3px;
-    color: #71827b;
+    color: #60777b;
 }
 
 .purchase-empty {
     padding: 14px 0 2px;
-    color: #71827b;
+    color: #60777b;
 }
 
 @media (max-width: 1050px) {

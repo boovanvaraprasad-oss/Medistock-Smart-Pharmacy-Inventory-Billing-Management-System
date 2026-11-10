@@ -7,7 +7,6 @@ const createBillSection = document.getElementById("createBillSection");
 const createBillForm = document.getElementById("createBillForm");
 const customerNameInput = document.getElementById("customerName");
 const customerPhoneInput = document.getElementById("customerPhone");
-const taxPercentageInput = document.getElementById("taxPercentage");
 const createBillButton = document.getElementById("createBillButton");
 const refreshButton = document.getElementById("refreshButton");
 const batchReturnActionsHeading = document.getElementById("batchReturnActionsHeading");
@@ -616,13 +615,11 @@ createBillForm.addEventListener("submit", async (event) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 customer_name: customerNameInput.value.trim(),
-                customer_phone: customerPhoneInput.value.trim(),
-                tax_percentage: Number(taxPercentageInput.value)
+                customer_phone: customerPhoneInput.value.trim()
             })
         });
 
         createBillForm.reset();
-        taxPercentageInput.value = "0";
         showMessage(successMessage, `Draft ${bill.invoice_number} created.`);
         await loadBills();
         await openBill(bill.id);

@@ -3,8 +3,8 @@
 :root {
     color-scheme: light;
     font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
-    color: #172a24;
-    background: #f3f8f6;
+    color: #17383d;
+    background: #f1f7f8;
     font-synthesis: none;
 }
 
@@ -58,7 +58,7 @@ button {
     justify-content: space-between;
     gap: 20px;
     padding: 14px clamp(22px, 4vw, 54px);
-    border-bottom: 1px solid #e5eeea;
+    border-bottom: 1px solid #d6e5e8;
     background: rgb(255 255 255 / 94%);
     backdrop-filter: blur(12px);
 }
@@ -69,7 +69,7 @@ button {
 }
 
 .topbar-kicker {
-    color: #71827b;
+    color: #60777b;
     font-size: 0.73rem;
     font-weight: 700;
     letter-spacing: 0.09em;
@@ -78,7 +78,7 @@ button {
 
 .topbar-title {
     margin-top: 0;
-    color: #064936;
+    color: #08777b;
     font-size: 1.2rem;
     font-weight: 700;
 }
@@ -91,22 +91,22 @@ button {
 
 .today-date,
 .updated-at {
-    color: #71827b;
+    color: #60777b;
     font-size: 0.82rem;
 }
 
 .refresh-button {
     min-height: 40px;
     padding: 0 14px;
-    border: 1px solid #d5e2dc;
+    border: 1px solid #d6e5e8;
     border-radius: 9px;
     background: #ffffff;
-    color: #244a3b;
+    color: #17383d;
     font-weight: 700;
 }
 
 .refresh-button:hover {
-    background: #edf7f2;
+    background: #f1f7f8;
 }
 
 .refresh-button:disabled {
@@ -127,7 +127,7 @@ button {
 
 .eyebrow {
     margin: 0 0 8px;
-    color: #17815e;
+    color: #08777b;
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.1em;
@@ -167,10 +167,10 @@ p {
     gap: 14px;
     padding: 17px;
     overflow: hidden;
-    border: 1px solid #e2ece7;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 5px 18px rgb(20 60 43 / 4%);
+    box-shadow: 0 5px 18px rgb(23 56 61 / 4%);
 }
 
 a.metric-card {
@@ -179,7 +179,7 @@ a.metric-card {
 
 a.metric-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 9px 24px rgb(20 60 43 / 9%);
+    box-shadow: 0 9px 24px rgb(23 56 61 / 9%);
 }
 
 .metric-card-warning {
@@ -193,7 +193,7 @@ a.metric-card:hover {
 }
 
 .metric-card-green {
-    background: linear-gradient(135deg, #e8fbf3, #ffffff);
+    background: linear-gradient(135deg, #e4f7f4, #ffffff);
 }
 
 .metric-icon {
@@ -203,8 +203,8 @@ a.metric-card:hover {
     flex: 0 0 auto;
     place-items: center;
     border-radius: 50%;
-    background: #d4f8e8;
-    color: #078154;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 1.35rem;
     font-weight: 800;
 }
@@ -226,14 +226,14 @@ a.metric-card:hover {
 }
 
 .metric-label {
-    color: #61736b;
+    color: #60777b;
     font-size: 0.82rem;
     line-height: 1.25;
 }
 
 .metric-value {
     overflow-wrap: anywhere;
-    color: #102e24;
+    color: #17383d;
     font-size: clamp(1.55rem, 2.1vw, 2rem);
     font-weight: 800;
     letter-spacing: -0.04em;
@@ -245,7 +245,7 @@ a.metric-card:hover {
 }
 
 .metric-note {
-    color: #71827b;
+    color: #60777b;
     font-size: 0.72rem;
     line-height: 1.3;
 }
@@ -261,7 +261,7 @@ a.metric-card:hover {
     align-items: center;
     gap: 9px 22px;
     margin: 13px 2px 0;
-    color: #65786f;
+    color: #60777b;
     font-size: 0.77rem;
 }
 
@@ -274,17 +274,17 @@ a.metric-card:hover {
 }
 
 .dashboard-summary-strip strong {
-    color: #174d39;
+    color: #08777b;
     font-size: 0.84rem;
 }
 
 .dashboard-summary-strip > a:hover strong {
-    color: #078154;
+    color: #08777b;
 }
 
 .metric-arrow {
     margin-left: auto;
-    color: #16825f;
+    color: #08777b;
     font-size: 1.6rem;
 }
 
@@ -310,7 +310,7 @@ a.metric-card:hover {
 
 .sales-panel-top h2 {
     margin: 0 0 6px;
-    color: #18372b;
+    color: #17383d;
     font-size: 1.12rem;
 }
 
@@ -322,11 +322,28 @@ a.metric-card:hover {
     gap: 18px;
 }
 
+/* Reserve one picker slot so the range tabs stay in place when switching to Year. */
+.sales-panel-controls .sales-period-slot {
+    position: relative;
+    order: 1;
+    flex: 0 0 150px;
+    width: 150px;
+    height: 54px;
+}
+.sales-period-slot .sales-period-picker {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+}
+.sales-panel-controls .cir-tabs { order: 2; }
+.sales-panel-controls .sales-chart-legend { order: 3; }
+.sales-panel-controls .sales-all-time { order: 4; }
+
 .sales-chart-legend {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #65786f;
+    color: #60777b;
     font-size: 0.72rem;
     white-space: nowrap;
 }
@@ -343,7 +360,7 @@ a.metric-card:hover {
     border-radius: 50%;
 }
 
-.legend-dot-revenue { background: #0c9b70; }
+.legend-dot-revenue { background: #0b9c9d; }
 .legend-dot-purchases { background: #94a3b8; }
 
 .sales-all-time {
@@ -353,20 +370,59 @@ a.metric-card:hover {
 }
 
 .sales-all-time span {
-    color: #71827b;
+    color: #60777b;
     font-size: 0.72rem;
 }
 
 .sales-all-time strong {
-    color: #064936;
+    color: #08777b;
     font-size: 1.12rem;
 }
 
 .sales-chart-caption {
     margin: 0;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.8rem;
 }
+
+.sales-period-picker,
+.manager-period-pickers label {
+    display: grid;
+    gap: 4px;
+    color: #60777b;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.sales-period-picker input,
+.manager-period-pickers input {
+    min-height: 36px;
+    max-width: 150px;
+    padding: 0 9px;
+    border: 1px solid #d6e5e8;
+    border-radius: 9px;
+    background: #fff;
+    color: #17383d;
+    font: inherit;
+    font-size: 0.78rem;
+}
+
+.sales-period-picker[hidden],
+.manager-period-pickers [hidden] { display: none !important; }
+
+.sales-chart-status { margin: 8px 0 0; color: #60777b; font-size: 0.78rem; }
+
+.sales-chart-point,
+.purchase-chart-point { cursor: pointer; transition: r 150ms ease, filter 150ms ease; }
+.sales-chart-point,
+.purchase-chart-point { opacity: 0; pointer-events: none; }
+.sales-chart-active-dot { stroke: #ffffff; stroke-width: 2; pointer-events: none; }
+.sales-chart-active-dot.revenue { fill: #0b9c9d; }
+.sales-chart-active-dot.purchases { fill: #94a3b8; }
+.sales-chart-point:hover,
+.sales-chart-point:focus-visible { opacity: 1; r: 6px; filter: drop-shadow(0 0 4px rgb(34 185 181 / 65%)); outline: none; }
+.purchase-chart-point:hover,
+.purchase-chart-point:focus-visible { opacity: 1; r: 5px; filter: drop-shadow(0 0 4px rgb(148 163 184 / 70%)); outline: none; }
 
 .cir-tabs {
     position: relative;
@@ -374,9 +430,9 @@ a.metric-card:hover {
     align-items: center;
     gap: 4px;
     padding: 5px;
-    border: 1px solid #e2ece7;
+    border: 1px solid #d6e5e8;
     border-radius: 999px;
-    background: #f8fbf9;
+    background: #f1f7f8;
     box-shadow: 0 1px 2px rgb(14 17 22 / 5%), 0 12px 24px -20px rgb(14 17 22 / 25%);
 }
 
@@ -387,8 +443,8 @@ a.metric-card:hover {
     width: calc((100% - 20px) / 3);
     height: 36px;
     border-radius: 999px;
-    background: #064936;
-    box-shadow: 0 2px 7px rgb(6 73 54 / 24%);
+    background: var(--ms-teal-800, #08777b);
+    box-shadow: 0 2px 7px rgb(8 119 123 / 24%);
     content: "";
     pointer-events: none;
     transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -420,7 +476,7 @@ a.metric-card:hover {
     justify-content: center;
     padding: 0 15px;
     border-radius: 999px;
-    color: #5b7167;
+    color: #60777b;
     cursor: pointer;
     font-size: 0.82rem;
     font-weight: 600;
@@ -431,7 +487,7 @@ a.metric-card:hover {
 }
 
 .cir-tabs__t:hover {
-    color: #064936;
+    color: var(--ms-teal-800, #08777b);
 }
 
 .cir-tabs__r:checked + .cir-tabs__t {
@@ -439,7 +495,7 @@ a.metric-card:hover {
 }
 
 .cir-tabs__r:focus-visible + .cir-tabs__t {
-    outline: 3px solid rgb(34 173 122 / 35%);
+    outline: 3px solid rgb(34 185 181 / 40%);
     outline-offset: 2px;
 }
 
@@ -457,12 +513,12 @@ a.metric-card:hover {
     align-items: end;
     gap: clamp(2px, 0.5vw, 8px);
     padding: 12px 12px 0;
-    border-bottom: 1px solid #dfe9e4;
+    border-bottom: 1px solid #d6e5e8;
     background: repeating-linear-gradient(
         to top,
         transparent 0,
         transparent 48px,
-        #edf2ef 49px,
+        #f1f7f8 49px,
         transparent 50px
     );
 }
@@ -479,7 +535,7 @@ a.metric-card:hover {
 .sales-bar-value {
     max-width: 100%;
     overflow: hidden;
-    color: #61736b;
+    color: #60777b;
     font-size: 0.62rem;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -497,30 +553,30 @@ a.metric-card:hover {
     width: 100%;
     min-height: 3px;
     border-radius: 7px 7px 0 0;
-    background: linear-gradient(180deg, #22ad7a, #087451);
+    background: linear-gradient(180deg, #22b9b5, #08777b);
     transition: height 250ms ease;
 }
 
 .sales-bar-year {
     align-self: center;
-    color: #53685f;
+    color: #60777b;
     font-size: 0.68rem;
     font-weight: 700;
 }
 
 .chart-empty {
     padding: 35px 12px;
-    color: #71827b;
+    color: #60777b;
     text-align: center;
 }
 
 .content-panel {
     min-width: 0;
     padding: 21px;
-    border: 1px solid #e2ece7;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 5px 18px rgb(20 60 43 / 4%);
+    box-shadow: 0 5px 18px rgb(23 56 61 / 4%);
 }
 
 .panel-heading {
@@ -536,7 +592,7 @@ a.metric-card:hover {
 
 .panel-heading h2 {
     margin-bottom: 0;
-    color: #18372b;
+    color: #17383d;
     font-size: 1.12rem;
 }
 
@@ -556,7 +612,7 @@ a.metric-card:hover {
     flex: 0 0 auto;
     place-items: center;
     border-radius: 50%;
-    background: conic-gradient(#159567 0% 100%);
+    background: conic-gradient(#08777b 0% 100%);
 }
 
 .donut-center {
@@ -572,13 +628,13 @@ a.metric-card:hover {
 }
 
 .donut-center strong {
-    color: #173c2e;
+    color: #17383d;
     font-size: 1.55rem;
 }
 
 .donut-center span {
     margin-top: 3px;
-    color: #74847d;
+    color: #60777b;
     font-size: 0.72rem;
     line-height: 1.3;
 }
@@ -594,12 +650,12 @@ a.metric-card:hover {
     grid-template-columns: 12px 1fr auto;
     align-items: center;
     gap: 9px;
-    color: #63766d;
+    color: #60777b;
     font-size: 0.82rem;
 }
 
 .legend-row strong {
-    color: #233d32;
+    color: #17383d;
     font-size: 0.88rem;
 }
 
@@ -610,7 +666,7 @@ a.metric-card:hover {
 }
 
 .dot-healthy {
-    background: #159567;
+    background: #08777b;
 }
 
 .dot-low {
@@ -654,7 +710,7 @@ a.metric-card:hover {
 
 .dashboard-heading h1 {
     margin: 0;
-    color: #102e24;
+    color: #17383d;
     font-size: clamp(1.65rem, 2.5vw, 2.1rem);
     font-weight: 800;
     letter-spacing: -0.045em;
@@ -663,7 +719,7 @@ a.metric-card:hover {
 
 .dashboard-heading > div:first-child > p:last-child {
     margin: 6px 0 0;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.92rem;
 }
 
@@ -679,10 +735,10 @@ a.metric-card:hover {
     align-items: center;
     justify-content: center;
     padding: 0 17px;
-    border: 1px solid #d9e6df;
+    border: 1px solid #d6e5e8;
     border-radius: 12px;
     background: rgb(255 255 255 / 88%);
-    color: #174d39;
+    color: #08777b;
     font-size: 0.88rem;
     font-weight: 700;
     box-shadow: 0 6px 18px rgb(24 72 51 / 5%);
@@ -691,18 +747,18 @@ a.metric-card:hover {
 
 .dashboard-action:hover {
     transform: translateY(-2px);
-    background: #f1faf5;
+    background: #f1f7f8;
     box-shadow: 0 10px 22px rgb(24 72 51 / 10%);
 }
 
 .dashboard-action-primary {
-    border-color: #087451;
-    background: #087451;
+    border-color: #08777b;
+    background: #08777b;
     color: #fff;
 }
 
 .dashboard-action-primary:hover {
-    background: #066346;
+    background: #075d63;
     color: #fff;
 }
 
@@ -735,7 +791,7 @@ a.metric-card:hover {
 
 a.metric-card:hover {
     transform: translateY(-3px);
-    border-color: #a7ddc2;
+    border-color: #67d2ae;
     box-shadow: 0 18px 36px rgb(24 93 63 / 12%), inset 0 1px 0 #fff;
 }
 
@@ -807,12 +863,12 @@ a.metric-card:hover {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    color: #526b60;
+    color: #60777b;
     font-size: 0.84rem;
 }
 
 .stock-status-label strong {
-    color: #16815c;
+    color: #08777b;
     font-size: 0.88rem;
 }
 
@@ -820,7 +876,7 @@ a.metric-card:hover {
     height: 10px;
     overflow: hidden;
     border-radius: 999px;
-    background: #edf2f0;
+    background: #f1f7f8;
 }
 
 .stock-status-fill {
@@ -831,7 +887,7 @@ a.metric-card:hover {
     transition: width 420ms ease;
 }
 
-.fill-healthy { background: linear-gradient(90deg, #25b585, #078357); }
+.fill-healthy { background: linear-gradient(90deg, #22b9b5, #08777b); }
 .fill-low { background: linear-gradient(90deg, #f8cc5a, #e6a819); }
 .fill-empty { background: linear-gradient(90deg, #f28179, #df4943); }
 
@@ -851,7 +907,7 @@ a.metric-card:hover {
     align-items: baseline;
     justify-content: space-between;
     gap: 10px;
-    color: #526b60;
+    color: #60777b;
     font-size: 0.75rem;
     font-weight: 700;
 }
@@ -864,7 +920,7 @@ a.metric-card:hover {
 
 .category-distribution-labels strong {
     flex: 0 0 auto;
-    color: #16815c;
+    color: #08777b;
     font-size: 0.72rem;
 }
 
@@ -872,14 +928,14 @@ a.metric-card:hover {
     height: 9px;
     overflow: hidden;
     border-radius: 999px;
-    background: #edf2f0;
+    background: #f1f7f8;
 }
 
 .category-distribution-fill {
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #18a879, #11b49a);
+    background: linear-gradient(90deg, #0b9c9d, #22b9b5);
     transition: width 420ms ease;
 }
 
@@ -898,7 +954,7 @@ a.metric-card:hover {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     align-items: center;
     gap: 12px;
-    border-top: 1px solid #edf2ef;
+    border-top: 1px solid #f1f7f8;
 }
 
 .top-medicine-rank {
@@ -907,8 +963,8 @@ a.metric-card:hover {
     height: 30px;
     place-items: center;
     border-radius: 9px;
-    background: #e8f7f0;
-    color: #087451;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 0.72rem;
     font-weight: 800;
 }
@@ -921,19 +977,19 @@ a.metric-card:hover {
 
 .top-medicine-copy strong {
     overflow: hidden;
-    color: #244238;
+    color: #17383d;
     font-size: 0.83rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .top-medicine-copy small {
-    color: #7b8983;
+    color: #60777b;
     font-size: 0.73rem;
 }
 
 .top-medicine-revenue {
-    color: #18805b;
+    color: #08777b;
     font-size: 0.82rem;
 }
 
@@ -942,6 +998,7 @@ a.metric-card:hover {
 }
 
 .sales-chart {
+    position: relative;
     display: block;
     width: 100%;
     height: 280px;
@@ -960,8 +1017,60 @@ a.metric-card:hover {
     overflow: visible;
 }
 
+.sales-revenue-line,
+.sales-purchases-line {
+    animation: sales-chart-line-draw 1500ms ease both;
+}
+
+#salesChart.is-range-switch .sales-revenue-line,
+#salesChart.is-range-switch .sales-purchases-line,
+#salesChart.is-range-switch .sales-area-fill { animation-duration: 360ms; }
+
+.sales-area-fill { animation: sales-chart-area-reveal 1500ms ease both; }
+.sales-chart-crosshair { stroke: #94a3b8; stroke-width: 1; stroke-dasharray: 3 4; pointer-events: none; }
+.sales-chart-tooltip {
+    position: absolute;
+    z-index: 2;
+    min-width: 168px;
+    padding: 10px 12px;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 11px;
+    background: rgb(15 23 42 / 94%);
+    box-shadow: 0 12px 30px rgb(15 23 42 / 24%);
+    color: #f8fafc;
+    font-size: 0.74rem;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+}
+.sales-chart-tooltip[hidden] { display: none; }
+.sales-tooltip-date { display: block; margin-bottom: 7px; color: #fff; font-weight: 700; }
+.sales-tooltip-row,
+.sales-tooltip-row > span { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.sales-tooltip-row + .sales-tooltip-row { margin-top: 5px; }
+.sales-tooltip-row > span { justify-content: flex-start; color: #cbd5e1; }
+.sales-tooltip-row > strong { color: #fff; font-variant-numeric: tabular-nums; }
+.sales-tooltip-swatch { width: 8px; height: 8px; border-radius: 50%; }
+.sales-tooltip-swatch.revenue { background: #67d2ae; }
+.sales-tooltip-swatch.purchases { background: #cbd5e1; }
+
+@keyframes sales-chart-line-draw {
+    from { stroke-dashoffset: var(--sales-line-length); }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes sales-chart-area-reveal {
+    from { clip-path: inset(0 100% 0 0); opacity: 0.4; }
+    to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sales-revenue-line,
+    .sales-purchases-line,
+    .sales-area-fill { animation: none; stroke-dashoffset: 0 !important; }
+}
+
 .sales-grid-line {
-    stroke: #e7efeb;
+    stroke: #d6e5e8;
     stroke-dasharray: 4 5;
     stroke-width: 1;
 }
@@ -974,7 +1083,7 @@ a.metric-card:hover {
 
 .sales-chart-point {
     fill: #ffffff;
-    stroke: #0c9b70;
+    stroke: #0b9c9d;
     stroke-width: 2.5;
 }
 
@@ -986,12 +1095,12 @@ a.metric-card:hover {
 
 .metric-comparison {
     margin-top: 3px;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.69rem;
     font-weight: 600;
 }
 
-.metric-comparison.is-positive { color: #13805e; }
+.metric-comparison.is-positive { color: #08777b; }
 .metric-comparison.is-negative { color: #c5403c; }
 
 .owner-low-stock-alerts {
@@ -1002,7 +1111,7 @@ a.metric-card:hover {
 
 .low-stock-list-title {
     margin: 4px 0 2px;
-    color: #4d6258;
+    color: #60777b;
     font-size: 0.8rem;
 }
 
@@ -1025,14 +1134,14 @@ a.metric-card:hover {
 
 .low-stock-alert-row strong {
     overflow: hidden;
-    color: #294338;
+    color: #17383d;
     font-size: 0.76rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .low-stock-alert-row small {
-    color: #7a8b83;
+    color: #60777b;
     font-size: 0.68rem;
 }
 
@@ -1042,7 +1151,7 @@ a.metric-card:hover {
 }
 
 .low-stock-alert-row.is-empty .low-stock-alert-value { color: #c43b3b; }
-.low-stock-alert-row:hover { border-color: #addac7; background: #f7fcf9; }
+.low-stock-alert-row:hover { border-color: #67d2ae; background: #f7fcf9; }
 
 @media (prefers-reduced-motion: no-preference) {
     .owner-welcome,
@@ -1072,7 +1181,7 @@ a.metric-card:hover {
     gap: 11px;
     min-height: 66px;
     padding: 10px 2px;
-    border-top: 1px solid #edf2ef;
+    border-top: 1px solid #f1f7f8;
 }
 
 .alert-row > span:nth-child(2) {
@@ -1081,12 +1190,12 @@ a.metric-card:hover {
 }
 
 .alert-row strong {
-    color: #244238;
+    color: #17383d;
     font-size: 0.84rem;
 }
 
 .alert-row small {
-    color: #7b8983;
+    color: #60777b;
     font-size: 0.74rem;
 }
 
@@ -1095,7 +1204,7 @@ a.metric-card:hover {
 }
 
 .alert-row:hover strong {
-    color: #078154;
+    color: #08777b;
 }
 
 .alert-symbol {
@@ -1105,7 +1214,7 @@ a.metric-card:hover {
     place-items: center;
     border-radius: 10px;
     background: #f1f6f3;
-    color: #17815e;
+    color: #08777b;
     font-weight: 800;
 }
 
@@ -1121,7 +1230,7 @@ a.metric-card:hover {
 
 .message {
     margin: 0 0 18px;
-    color: #708078;
+    color: #60777b;
 }
 
 .message-error {
@@ -1149,6 +1258,10 @@ a.metric-card:hover {
 }
 
 @media (max-width: 700px) {
+    .sales-period-slot:not(:has(.sales-period-picker:not([hidden]))) {
+        display: none;
+    }
+
     .topbar {
         position: static;
         min-height: 64px;

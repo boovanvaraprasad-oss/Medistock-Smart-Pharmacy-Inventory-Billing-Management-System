@@ -6,11 +6,11 @@
 
 .settings-header h1 {
     margin: 0 0 7px;
-    color: #102f25;
+    color: #17383d;
     font-size: clamp(1.8rem, 3vw, 2.5rem);
 }
 
-.settings-header p:last-child { margin: 0; color: #71827b; }
+.settings-header p:last-child { margin: 0; color: #60777b; }
 
 .settings-content {
     width: min(980px, 100%);
@@ -20,11 +20,50 @@
 
 .settings-card {
     padding: 25px;
-    border: 1px solid #dbe9e2;
+    border: 1px solid #d6e5e8;
     border-radius: 18px;
     background: #ffffff;
-    box-shadow: 0 8px 30px rgb(6 78 59 / 7%);
+    box-shadow: 0 8px 30px rgb(8 119 123 / 7%);
 }
+
+.settings-content { display: grid; gap: 20px; }
+.settings-card[hidden] { display: none; }
+.settings-form {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(180px, 2fr);
+    align-items: center;
+    gap: 12px 18px;
+    padding-top: 18px;
+    border-top: 1px solid #d6e5e8;
+}
+.settings-form label { color: #17383d; font-size: 0.92rem; font-weight: 600; }
+.settings-form input {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+    border: 1px solid #d6e5e8;
+    border-radius: 10px;
+    background: #fff;
+    color: #17383d;
+    font: inherit;
+}
+.settings-form input:focus { outline: 3px solid rgb(8 119 123 / 18%); border-color: #08777b; }
+.settings-hint { grid-column: 2; margin-top: -6px !important; }
+.settings-save-button {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #08777b;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.settings-save-button:hover { background: #075d63; }
+.settings-card .settings-status.is-error { color: #b42318; }
 
 .settings-card-copy {
     display: flex;
@@ -39,13 +78,13 @@
     height: 46px;
     place-items: center;
     border-radius: 14px;
-    background: #e1f7ed;
-    color: #087c5c;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 1.5rem;
 }
 
-.settings-card h2 { margin: 0 0 5px; color: #17372b; font-size: 1.1rem; }
-.settings-card p { margin: 0; color: #71827b; font-size: 0.9rem; }
+.settings-card h2 { margin: 0 0 5px; color: #17383d; font-size: 1.1rem; }
+.settings-card p { margin: 0; color: #60777b; font-size: 0.9rem; }
 
 .theme-setting {
     display: flex;
@@ -53,17 +92,19 @@
     justify-content: space-between;
     gap: 18px;
     padding: 18px 0 8px;
-    border-top: 1px solid #e7efeb;
+    border-top: 1px solid #d6e5e8;
     cursor: pointer;
 }
 
 .theme-setting > span { display: grid; gap: 5px; }
-.theme-setting strong { color: #243c32; font-size: 0.92rem; }
-.theme-setting small { color: #71827b; font-size: 0.82rem; }
-.theme-setting input { width: 48px; height: 26px; accent-color: #0a805e; cursor: pointer; }
-.settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #087c5c; font-size: 0.8rem; }
+.theme-setting strong { color: #17383d; font-size: 0.92rem; }
+.theme-setting small { color: #60777b; font-size: 0.82rem; }
+.theme-setting input { width: 48px; height: 26px; accent-color: #08777b; cursor: pointer; }
+.settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #08777b; font-size: 0.8rem; }
 
 @media (max-width: 760px) {
     .settings-content { margin: 18px auto; padding-inline: 16px; }
     .settings-card { padding: 18px; }
+    .settings-form { grid-template-columns: 1fr; }
+    .settings-hint, .settings-save-button { grid-column: 1; }
 }

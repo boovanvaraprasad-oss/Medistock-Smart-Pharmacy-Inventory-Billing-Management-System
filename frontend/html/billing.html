@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Billing</title>
-    <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/categories.css?v=20261109-palette-v1">
     <link rel="stylesheet" href="css/billing.css?v=20261027-2">
-    <link rel="stylesheet" href="css/confirm-dialog.css">
-    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
-    <link rel="stylesheet" href="css/record-search.css">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <link rel="stylesheet" href="css/confirm-dialog.css?v=20261109-palette-v1">
+    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/record-search.css?v=20261109-palette-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261109-pharmacy-palette-v3">
     <script src="js/components/theme-bootstrap.js"></script>
 </head>
-<body>
+<body class="app-theme-ready">
     <main class="page">
         <header class="page-header">
             <div>
@@ -29,7 +29,7 @@
         <section id="createBillSection" class="panel" hidden>
             <h2>Create bill</h2>
             <p class="helper-text">
-                Add the customer and tax details first. Stock is deducted only when you complete the bill.
+                Add the customer details first. The default tax rate from Settings is applied to new bills. Stock is deducted only when you complete the bill.
             </p>
 
             <form id="createBillForm" class="billing-form">
@@ -38,9 +38,6 @@
 
                 <label for="customerPhone">Customer phone</label>
                 <input id="customerPhone" type="tel" minlength="10" maxlength="15" required>
-
-                <label for="taxPercentage">Tax percentage</label>
-                <input id="taxPercentage" type="number" min="0" max="100" step="0.01" value="0" required>
 
                 <div class="form-actions">
                     <button id="createBillButton" class="button button-primary" type="submit">

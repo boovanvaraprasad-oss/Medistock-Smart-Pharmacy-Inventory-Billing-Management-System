@@ -5,6 +5,13 @@ const managerRefresh = document.getElementById("refreshButton");
 const managerNumber = new Intl.NumberFormat("en-IN");
 const managerCurrency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 });
 let managerSales = null;
+let managerChartRequest = 0;
+
+function managerLocalDate() {
+    const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+}
 
 function managerText(id, value) { document.getElementById(id).textContent = value; }
 
@@ -13,9 +20,9 @@ function drawManagerSales() {
     const range = document.querySelector(".manager-range button[aria-pressed='true']")?.dataset.range || "day";
     let rows, amount, caption, label;
     if (range === "month") {
-        rows = managerSales.monthly_daily_totals || [];
-        amount = managerSales.monthly_sales_total || 0;
-        caption = `${managerSales.current_month} · daily sales through today`;
+        rows = managerSales.selected_month_daily_totals || managerSales.monthly_daily_totals || [];
+        amount = managerSales.selected_month_sales_total ?? managerSales.monthly_sales_total ?? 0;
+        caption = `${managerSales.selected_month || managerSales.current_month} · daily sales`;
         label = (entry) => entry.day;
     } else if (range === "year") {
         rows = managerSales.yearly_totals || [];
@@ -23,10 +30,11 @@ function drawManagerSales() {
         caption = "All-time sales grouped by year";
         label = (entry) => entry.year;
     } else {
-        rows = managerSales.daily_hourly_totals || [];
-        amount = managerSales.daily_sales_total || 0;
-        const date = new Date(`${managerSales.current_date}T00:00:00`);
-        caption = `Today, ${date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · sales by hour`;
+        rows = managerSales.selected_date_hourly_totals || managerSales.daily_hourly_totals || [];
+        amount = managerSales.selected_date_sales_total ?? managerSales.daily_sales_total ?? 0;
+        const selectedDate = managerSales.selected_date || managerSales.current_date;
+        const date = new Date(`${selectedDate}T00:00:00`);
+        caption = `${date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })} · sales by hour`;
         label = (entry) => String(entry.hour).padStart(2, "0");
     }
     managerText("salesCaption", caption);
@@ -46,7 +54,9 @@ function drawManagerSales() {
         bar.className = "manager-bar";
         const value = Number(entry.total_amount) || 0;
         bar.style.height = `${Math.max(value / max * 100, value ? 4 : 2)}%`;
-        group.title = `${label(entry)}: ${managerCurrency.format(value)}`;
+        group.title = `Revenue · ${label(entry)}: ${managerCurrency.format(value)}`;
+        group.setAttribute("aria-label", group.title);
+        group.tabIndex = 0;
         const track = document.createElement("span");
         track.className = "manager-bar-track";
         track.append(bar);
@@ -54,6 +64,33 @@ function drawManagerSales() {
         tick.textContent = label(entry);
         group.append(track, tick);
         chart.append(group);
+    }
+}
+
+function updateManagerPeriodPickers() {
+    const range = document.querySelector(".manager-range button[aria-pressed='true']")?.dataset.range || "day";
+    document.getElementById("managerSalesDatePicker").hidden = range !== "day";
+    document.getElementById("managerSalesMonthPicker").hidden = range !== "month";
+}
+
+async function refreshManagerSalesForPeriod() {
+    const status = document.getElementById("managerSalesChartStatus");
+    const requestId = ++managerChartRequest;
+    const range = document.querySelector(".manager-range button[aria-pressed='true']")?.dataset.range || "day";
+    status.hidden = false;
+    status.textContent = "Updating chart…";
+    try {
+        const summary = await getDashboardSummaryForPeriod(
+            range === "day" ? document.getElementById("managerSalesDateInput").value : undefined,
+            range === "month" ? document.getElementById("managerSalesMonthInput").value : undefined
+        );
+        if (requestId !== managerChartRequest) return;
+        managerSales = summary.sales;
+        drawManagerSales();
+        status.hidden = true;
+    } catch (error) {
+        if (requestId !== managerChartRequest) return;
+        status.textContent = error.message || "Unable to load sales for this period.";
     }
 }
 
@@ -81,7 +118,7 @@ async function loadStoreManagerDashboard() {
         const user = await getCurrentUser();
         if (getDashboardForRole(user.role) !== "store_manager_dashboard.html") { window.location.replace(getDashboardForRole(user.role)); return; }
         const [summary, bills, orders, suppliers] = await Promise.all([
-            apiRequest("/api/v1/dashboard/summary"), apiRequest("/api/v1/bills"),
+            getDashboardSummaryForPeriod(document.getElementById("managerSalesDateInput").value, document.getElementById("managerSalesMonthInput").value), apiRequest("/api/v1/bills"),
             apiRequest("/api/v1/purchase-orders"), apiRequest("/api/v1/suppliers")
         ]);
         const medicines = summary.medicines || {}, inventory = summary.inventory || {}, sales = summary.sales || {};
@@ -117,7 +154,14 @@ async function loadStoreManagerDashboard() {
 
 document.querySelectorAll(".manager-range button").forEach((button) => button.addEventListener("click", () => {
     document.querySelectorAll(".manager-range button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+    updateManagerPeriodPickers();
     drawManagerSales();
 }));
+const managerInitialDate = managerLocalDate();
+document.getElementById("managerSalesDateInput").value = managerInitialDate;
+document.getElementById("managerSalesMonthInput").value = managerInitialDate.slice(0, 7);
+document.getElementById("managerSalesDateInput").addEventListener("change", refreshManagerSalesForPeriod);
+document.getElementById("managerSalesMonthInput").addEventListener("change", refreshManagerSalesForPeriod);
+updateManagerPeriodPickers();
 managerRefresh.addEventListener("click", loadStoreManagerDashboard);
 loadStoreManagerDashboard();

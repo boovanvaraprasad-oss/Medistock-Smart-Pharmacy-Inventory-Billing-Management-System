@@ -1,5 +1,5 @@
 .inventory-page {
-    color: #17231f;
+    color: #17383d;
 }
 
 .inventory-page .page-header {
@@ -13,20 +13,20 @@
     gap: 22px;
     margin-bottom: 20px;
     padding: 22px 24px;
-    border: 1px solid #d7eee3;
+    border: 1px solid #e4f7f4;
     border-radius: 16px;
-    background: linear-gradient(110deg, #e5f7ef, #f7fcf9);
+    background: linear-gradient(110deg, #e4f7f4, #f7fcf9);
 }
 
 .inventory-welcome h2 {
     margin: 0;
-    color: #104733;
+    color: #17383d;
     font-size: 1.45rem;
 }
 
 .inventory-welcome p:last-child {
     margin: 7px 0 0;
-    color: #60756b;
+    color: #60777b;
 }
 
 .inventory-metrics {
@@ -43,14 +43,14 @@
     align-items: center;
     gap: 14px;
     padding: 18px;
-    border: 1px solid #e0ebe5;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .inventory-metric-green {
-    background: linear-gradient(120deg, #e9faf3, #ffffff);
+    background: linear-gradient(120deg, #e4f7f4, #ffffff);
 }
 
 .inventory-metric-warning {
@@ -70,8 +70,8 @@
     flex: 0 0 44px;
     place-items: center;
     border-radius: 50%;
-    background: #d7f6e9;
-    color: #087651;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 1.2rem;
     font-weight: 800;
 }
@@ -92,14 +92,14 @@
 
 .inventory-metric .metric-label {
     display: block;
-    color: #71827b;
+    color: #60777b;
     font-size: 0.88rem;
 }
 
 .inventory-metric strong {
     display: block;
     margin-top: 3px;
-    color: #12392c;
+    color: #17383d;
     font-size: 1.65rem;
     line-height: 1.2;
 }
@@ -114,10 +114,10 @@
 .inventory-panel {
     min-width: 0;
     padding: 20px;
-    border: 1px solid #dce8e2;
+    border: 1px solid #d6e5e8;
     border-radius: 15px;
     background: #ffffff;
-    box-shadow: 0 8px 22px rgb(21 62 46 / 5%);
+    box-shadow: 0 8px 22px rgb(23 56 61 / 5%);
 }
 
 .inventory-panel-heading {
@@ -130,13 +130,13 @@
 
 .inventory-panel-heading h2 {
     margin: 0;
-    color: #173c2f;
+    color: #17383d;
     font-size: 1.15rem;
 }
 
 .inventory-panel-heading .eyebrow {
     margin: 0 0 5px;
-    color: #087651;
+    color: #08777b;
     font-size: 0.73rem;
     font-weight: 800;
     letter-spacing: 0.09em;
@@ -144,7 +144,7 @@
 }
 
 .inventory-panel-heading a {
-    color: #087651;
+    color: #08777b;
     font-size: 0.88rem;
     font-weight: 700;
     text-decoration: none;
@@ -168,17 +168,17 @@
 .inventory-panel th,
 .inventory-panel td {
     padding: 12px 10px;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
     white-space: nowrap;
 }
 
 .inventory-panel th {
-    color: #61736b;
+    color: #60777b;
     font-size: 0.82rem;
 }
 
 .inventory-panel td {
-    color: #263b33;
+    color: #17383d;
     font-size: 0.9rem;
 }
 
@@ -188,7 +188,7 @@
     align-items: center;
     gap: 12px;
     padding: 13px 0;
-    border-bottom: 1px solid #e8efeb;
+    border-bottom: 1px solid #d6e5e8;
 }
 
 .batch-alert:last-child {
@@ -217,24 +217,24 @@
 }
 
 .batch-alert-copy strong {
-    color: #243a31;
+    color: #17383d;
     font-size: 0.9rem;
 }
 
 .batch-alert-copy small {
     margin-top: 3px;
-    color: #71827b;
+    color: #60777b;
 }
 
 .batch-alert-quantity {
-    color: #173c2f;
+    color: #17383d;
     font-weight: 700;
     white-space: nowrap;
 }
 
 .inventory-empty {
     padding: 14px 0 2px;
-    color: #71827b;
+    color: #60777b;
 }
 
 @media (max-width: 920px) {

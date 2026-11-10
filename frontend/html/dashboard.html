@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediStock Owner Dashboard</title>
-    <link rel="stylesheet" href="css/app-shell.css?v=20261104-notification-bell">
-    <link rel="stylesheet" href="css/dashboard.css?v=20261104-features">
-    <link rel="stylesheet" href="css/record-search.css">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261104-features2">
+    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
+    <link rel="stylesheet" href="css/dashboard.css?v=20261109-range-layout">
+    <link rel="stylesheet" href="css/record-search.css?v=20261109-palette-v1">
+    <link rel="stylesheet" href="css/app-theme.css?v=20261109-pharmacy-palette-v3">
     <script src="js/components/theme-bootstrap.js"></script>
 </head>
-<body>
+<body class="app-theme-ready">
     <main class="page main-area">
             <header class="topbar">
                 <div>
@@ -108,6 +108,14 @@
                                     <input class="cir-tabs__r" type="radio" name="sales-range" id="cir-r-year" value="year">
                                     <label class="cir-tabs__t" for="cir-r-year">Year</label>
                                 </div>
+                                <div class="sales-period-slot">
+                                    <label class="sales-period-picker" id="salesDatePicker" for="salesDateInput">Date
+                                        <input id="salesDateInput" type="date" aria-label="Choose sales date">
+                                    </label>
+                                    <label class="sales-period-picker" id="salesMonthPicker" for="salesMonthInput" hidden>Month
+                                        <input id="salesMonthInput" type="month" aria-label="Choose sales month">
+                                    </label>
+                                </div>
                                 <div class="sales-all-time">
                                     <span>All-time sales</span>
                                     <strong id="salesGraphTotal">₹—</strong>
@@ -116,6 +124,7 @@
                         </div>
                         <div id="salesChart" class="sales-chart" role="img" aria-label="Today's sales by hour"></div>
                         <p id="salesChartEmpty" class="chart-empty" hidden>No completed sales to graph yet.</p>
+                        <p id="salesChartStatus" class="sales-chart-status" role="status" aria-live="polite" hidden></p>
                       </section>
 
                       <section class="content-panel inventory-panel">
@@ -193,9 +202,9 @@
             </section>
     </main>
 
-    <script src="js/api/client.js"></script>
+    <script src="js/api/client.js?v=20261105-sales-periods"></script>
     <script src="js/components/app-shell.js?v=20261104-reference-icons"></script>
     <script src="js/components/record-search.js?v=20261104-alert-search"></script>
-    <script src="js/dashboard.js?v=20261104-features2"></script>
+    <script src="js/dashboard.js?v=20261109-range-switch"></script>
 </body>
 </html>

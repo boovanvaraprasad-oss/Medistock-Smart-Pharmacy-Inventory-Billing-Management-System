@@ -5,7 +5,7 @@
 .batches-page .search-form > label {
     display: block;
     margin-bottom: 8px;
-    color: #33453d;
+    color: #17383d;
     font-weight: 700;
 }
 
@@ -20,16 +20,16 @@
     width: min(550px, 100%);
     min-height: 42px;
     padding: 0 12px;
-    border: 1px solid #cbd7d2;
+    border: 1px solid #d6e5e8;
     border-radius: 8px;
     background: #ffffff;
-    color: #17231f;
+    color: #17383d;
     font: inherit;
 }
 
 .batches-page .search-controls input:focus-visible {
     outline: 3px solid rgb(22 125 96 / 22%);
-    border-color: #167d60;
+    border-color: #08777b;
 }
 
 .batches-page .search-controls .button {
@@ -42,17 +42,17 @@
     align-items: baseline;
     gap: 7px;
     margin: 0 0 20px;
-    color: #66736e;
+    color: #60777b;
 }
 
 .batches-summary strong {
-    color: #18372b;
+    color: #17383d;
     font-size: 1.1rem;
 }
 
 .batches-table-wrap {
     overflow-x: auto;
-    border: 1px solid #e0e8e4;
+    border: 1px solid #d6e5e8;
     border-radius: 12px;
     background: #ffffff;
 }
@@ -66,13 +66,13 @@
 .batches-table-wrap th,
 .batches-table-wrap td {
     padding: 14px 16px;
-    border-bottom: 1px solid #e5ece8;
+    border-bottom: 1px solid #d6e5e8;
     white-space: nowrap;
 }
 
 .batches-table-wrap th {
-    background: #edf4f0;
-    color: #52675d;
+    background: #f1f7f8;
+    color: #60777b;
     font-size: 0.9rem;
 }
 
@@ -86,8 +86,8 @@
     min-height: 26px;
     padding: 3px 10px;
     border-radius: 999px;
-    background: #e7f7ef;
-    color: #08724e;
+    background: #e4f7f4;
+    color: #08777b;
     font-size: 0.82rem;
     font-weight: 700;
 }
@@ -104,7 +104,7 @@
 
 .batch-status[data-status="depleted"] {
     background: #eef1ef;
-    color: #5c6862;
+    color: #60777b;
 }
 
 @media (max-width: 600px) {

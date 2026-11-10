@@ -36,6 +36,7 @@ from app.services.bills import (
     get_bill_details,
     get_all_bills,
 )
+from app.core.database import db
 
 
 router = APIRouter(
@@ -55,10 +56,19 @@ async def create_new_bill(
         require_permission(BILL_CREATE)
     ),
 ):
+    settings = await db.settings.find_one({"_id": "pharmacy_settings"}) or {}
+    tax_percentage = (
+        data.tax_percentage
+        if data.tax_percentage is not None
+        else settings.get("default_tax_percentage", 0.0)
+    )
+    invoice_prefix = settings.get("invoice_prefix", "INV")
+
     return await create_bill(
         customer_name=data.customer_name,
         customer_phone=data.customer_phone,
-        tax_percentage=data.tax_percentage,
+        tax_percentage=tax_percentage,
+        invoice_prefix=invoice_prefix,
     )
 
 
