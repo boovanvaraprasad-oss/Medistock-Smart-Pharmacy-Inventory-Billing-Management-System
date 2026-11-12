@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock | My Profile</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page profile-page">
+        <header class="page-header">
+            <div><p class="eyebrow">Your account</p><h1>My profile</h1><p class="subtitle">Keep your contact details up to date. The owner can view staff profiles.</p></div>
+        </header>
+        <p id="profileMessage" class="profile-message" role="status" aria-live="polite"></p>
+        <form id="profileForm" class="profile-card">
+            <label for="fullName">Full name</label>
+            <input id="fullName" name="full_name" type="text" maxlength="120" autocomplete="name" placeholder="Your name">
+            <label for="email">Email</label>
+            <input id="email" type="email" readonly aria-describedby="emailHelp">
+            <small id="emailHelp">Email is managed by the owner and cannot be changed here.</small>
+            <label for="phone">Phone number</label>
+            <input id="phone" name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="Your contact number">
+            <label for="role">Role</label>
+            <input id="role" type="text" readonly>
+            <button id="saveProfile" class="button button-primary profile-save" type="submit">Save profile</button>
+        </form>
+    </main>
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/profile.js"></script>
+</body>
+</html>

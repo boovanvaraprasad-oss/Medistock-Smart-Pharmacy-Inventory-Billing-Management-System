@@ -17,10 +17,10 @@
     min-height: 42px;
     width: 100%;
     padding: 0 11px;
-    border: 1px solid #d6e5e8;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #17383d;
+    border: 1px solid var(--ms-edge);
+    border-radius: var(--ms-radius-md);
+    background: var(--ms-white);
+    color: var(--ms-ink);
 }
 
 .supplier-form .form-actions {

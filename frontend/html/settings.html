@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock Settings</title>
-    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/settings.css?v=20261110-store-details-v1">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
-    <script src="js/components/theme-bootstrap.js"></script>
+    <title>MediStock | Settings</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
     
 </head>
 <body class="app-theme-ready">
@@ -35,7 +36,7 @@
                     <input id="storeEmail" name="email" type="email" maxlength="254" autocomplete="email" placeholder="pharmacy@example.com">
                     <label for="storeLicenseNumber">Pharmacy license number</label>
                     <input id="storeLicenseNumber" name="license_number" type="text" maxlength="100" autocomplete="off" placeholder="License or registration number">
-                    <button id="storeSettingsSaveButton" class="settings-save-button" type="submit">Save store details</button>
+                    <button id="storeSettingsSaveButton" class="button button-primary settings-save-button" type="submit">Save store details</button>
                 </form>
                 <p id="storeSettingsStatus" class="settings-status" role="status" aria-live="polite"></p>
             </section>
@@ -53,7 +54,7 @@
                     <label for="invoicePrefix">Invoice prefix</label>
                     <input id="invoicePrefix" name="invoice_prefix" type="text" minlength="1" maxlength="12" pattern="[A-Za-z0-9-]+" required>
                     <p class="settings-hint">Example: INV produces invoice numbers such as INV-000001.</p>
-                    <button class="settings-save-button" type="submit">Save billing defaults</button>
+                    <button class="button button-primary settings-save-button" type="submit">Save billing defaults</button>
                 </form>
                 <p id="billingSettingsStatus" class="settings-status" role="status" aria-live="polite"></p>
             </section>
@@ -73,8 +74,8 @@
             </section>
         </section>
     </main>
-    <script src="js/api/client.js"></script>
-    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
-    <script src="js/settings.js?v=20261110-store-details-v1"></script>
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/settings.js"></script>
 </body>
 </html>

@@ -13,9 +13,10 @@
 .settings-header p:last-child { margin: 0; color: #60777b; }
 
 .settings-content {
-    width: min(980px, 100%);
-    margin: 30px auto;
-    padding: 0 26px 44px;
+    width: 100%;
+    max-width: 980px;
+    margin: 24px 0 0;
+    padding: 0 0 44px;
 }
 
 .settings-card {
@@ -65,17 +66,7 @@
 .settings-save-button {
     grid-column: 2;
     justify-self: start;
-    min-height: 44px;
-    padding: 0 18px;
-    border: 0;
-    border-radius: 10px;
-    background: #08777b;
-    color: #fff;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
 }
-.settings-save-button:hover { background: #075d63; }
 .settings-save-button:disabled { opacity: 0.65; cursor: wait; }
 .settings-card .settings-status.is-error { color: #b42318; }
 

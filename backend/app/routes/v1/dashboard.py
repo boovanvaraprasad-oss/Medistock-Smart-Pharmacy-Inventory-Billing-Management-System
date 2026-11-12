@@ -13,6 +13,7 @@ router = APIRouter(
 )
 
 
+@router.get("")
 @router.get("/summary")
 async def get_summary(
     selected_date: date | None = Query(default=None, alias="date"),

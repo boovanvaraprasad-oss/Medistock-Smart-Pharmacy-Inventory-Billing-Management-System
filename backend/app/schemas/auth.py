@@ -30,7 +30,8 @@ class RefreshTokenRequest(BaseModel):
 
 
 class LogoutRequest(BaseModel):
-    refresh_token: str
+    refresh_token: str | None = None
+    access_token: str | None = None
 
 
 class MeResponse(BaseModel):
@@ -39,6 +40,29 @@ class MeResponse(BaseModel):
     role: str
     is_active: bool
     permissions: list[str]
+    full_name: str = ""
+    phone: str = ""
+
+
+class UpdateProfileRequest(BaseModel):
+    full_name: str = ""
+    phone: str = ""
+
+    @field_validator("full_name")
+    @classmethod
+    def clean_full_name(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) > 120:
+            raise ValueError("Name must be 120 characters or fewer")
+        return value
+
+    @field_validator("phone")
+    @classmethod
+    def clean_phone(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) > 30:
+            raise ValueError("Phone must be 30 characters or fewer")
+        return value
 
 
 class ChangePasswordRequest(BaseModel):

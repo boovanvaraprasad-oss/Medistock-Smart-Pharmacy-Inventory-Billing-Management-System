@@ -32,7 +32,7 @@ const roleDetails = {
 
 const tileDefinitions = [
     {
-        title: "Overview",
+        title: "Dashboard",
         description: "Your role dashboard and pharmacy activity.",
         href: (user) => getDashboardForRole(user.role),
         icon: "overview"
@@ -212,10 +212,9 @@ function renderHome(user) {
         label: "Team access",
         description: "Choose an area available to your account."
     };
-    const name = user.name || user.full_name || user.email || "there";
+    const name = user.full_name || user.name || "there";
     const allowedTiles = tileDefinitions.filter((tile) => canSeeTile(tile, user));
 
-    document.getElementById("homeUser").textContent = `${name} · ${roleLabel(user.role)}`;
     document.getElementById("welcomeName").textContent = name;
     document.getElementById("roleLabel").textContent = details.label;
     document.getElementById("roleDescription").textContent = details.description;

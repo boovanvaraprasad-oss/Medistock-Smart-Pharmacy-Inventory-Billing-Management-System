@@ -66,8 +66,9 @@ async def get_audit_logs(
     )
     records = await cursor.to_list(length=limit)
     actor_ids = list({record.get("actor_user_id") for record in records if isinstance(record.get("actor_user_id"), ObjectId)})
-    users = await db.users.find({"_id": {"$in": actor_ids}}, {"email": 1}).to_list(length=limit) if actor_ids else []
+    users = await db.users.find({"_id": {"$in": actor_ids}}, {"email": 1, "full_name": 1, "name": 1}).to_list(length=limit) if actor_ids else []
     emails = {user["_id"]: user.get("email", "") for user in users}
+    names = {user["_id"]: user.get("full_name") or user.get("name", "") for user in users}
 
     supplier_ids = set()
     for record in records:
@@ -106,6 +107,7 @@ async def get_audit_logs(
                 "entity_label": record.get("entity_label", ""),
                 "actor_user_id": str(record.get("actor_user_id", "")),
                 "actor_email": emails.get(record.get("actor_user_id"), "Former or unknown user"),
+                "actor_name": names.get(record.get("actor_user_id"), ""),
                 "actor_role": record.get("actor_role", "Unknown"),
                 "created_at": record.get("created_at"),
                 "details": audit_details(record),

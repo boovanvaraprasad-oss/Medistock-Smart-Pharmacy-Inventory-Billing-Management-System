@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock Audit Trail</title>
-    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/audit_trail.css?v=20261110-audit-v1">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
-    <script src="js/components/theme-bootstrap.js"></script>
+    <title>MediStock | Audit Trail</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/audit_trail.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
 </head>
 <body class="app-theme-ready">
     <main class="page audit-page">
@@ -19,8 +20,8 @@
         <p id="auditError" class="audit-message audit-error" role="alert" hidden></p>
         <section class="audit-panel">
             <form id="auditFilters" class="audit-filters" role="search">
-                <label>Search<input id="auditSearch" type="search" maxlength="100" placeholder="Actor, supplier, medicine, invoice, or record"></label>
-                <label>Action<select id="auditAction"><option value="">All actions</option>
+                <label for="auditSearch">Search audit trail<input id="auditSearch" type="search" maxlength="100" placeholder="Action, performed by, record, invoice, or details"></label>
+                <label for="auditAction">Action<select id="auditAction"><option value="">All actions</option>
                     <option value="BILL_COMPLETE">Bill completed</option><option value="BILL_RETURN">Bill returned</option>
                     <option value="STOCK_ADJUSTMENT">Stock adjusted</option><option value="STOCK_REDUCE">Stock reduced</option>
                     <option value="STOCK_BATCH_CREATE">Stock batch created</option>
@@ -43,8 +44,8 @@
             </nav>
         </section>
     </main>
-    <script src="js/api/client.js?v=20261110-audit-v1"></script>
-    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
-    <script src="js/audit_trail.js?v=20261110-audit-v2"></script>
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/audit_trail.js"></script>
 </body>
 </html>

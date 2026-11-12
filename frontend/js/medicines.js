@@ -1,6 +1,4 @@
-const searchForm = document.getElementById("searchForm");
-const searchInput = document.getElementById("searchInput");
-const clearButton = document.getElementById("clearButton");
+const medicineSearchInput = document.getElementById("medicineSearch");
 const previousButton = document.getElementById("previousButton");
 const nextButton = document.getElementById("nextButton");
 const statusMessage = document.getElementById("statusMessage");
@@ -72,7 +70,12 @@ function displayMedicines(medicines) {
         }
         addCell(row, currencyFormatter.format(medicine.price ?? 0));
         addCell(row, numberFormatter.format(medicine.reorder_threshold ?? 0));
-        addCell(row, medicine.is_active ? "Active" : "Inactive");
+
+        const statusCell = addCell(row, "");
+        const statusPill = document.createElement("span");
+        statusPill.className = `status-pill ${medicine.is_active ? "status-active" : "status-inactive"}`;
+        statusPill.textContent = medicine.is_active ? "Active" : "Inactive";
+        statusCell.appendChild(statusPill);
 
         const actionsCell = addCell(row, "");
 
@@ -81,13 +84,13 @@ function displayMedicines(medicines) {
             actions.className = "row-actions";
 
             const editButton = document.createElement("button");
-            editButton.className = "button button-secondary";
+            editButton.className = "button button-secondary button-small";
             editButton.type = "button";
             editButton.textContent = "Edit";
             editButton.addEventListener("click", () => startEditingMedicine(medicine));
 
             const statusButton = document.createElement("button");
-            statusButton.className = "button button-secondary";
+            statusButton.className = "button button-secondary button-small";
             statusButton.type = "button";
             statusButton.textContent = medicine.is_active ? "Deactivate" : "Activate";
             statusButton.addEventListener("click", () => toggleMedicineStatus(medicine));
@@ -100,7 +103,7 @@ function displayMedicines(medicines) {
 
         if (canDeleteMedicines) {
             const deleteButton = document.createElement("button");
-            deleteButton.className = "button button-secondary medicine-delete-button";
+            deleteButton.className = "button button-danger button-small";
             deleteButton.type = "button";
             deleteButton.textContent = "Delete";
             deleteButton.addEventListener("click", () => deleteMedicine(medicine, deleteButton));
@@ -354,15 +357,25 @@ async function initializeMedicinePage() {
     }
 }
 
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    currentSearch = searchInput.value.trim();
-    currentPage = 1;
-    loadMedicines();
+medicineSearchInput?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        currentSearch = medicineSearchInput.value.trim();
+        currentPage = 1;
+        loadMedicines();
+    }
 });
 
-clearButton.addEventListener("click", () => {
-    searchInput.value = "";
+medicineSearchInput?.addEventListener("input", () => {
+    if (!medicineSearchInput.value.trim() && currentSearch) {
+        currentSearch = "";
+        currentPage = 1;
+        loadMedicines();
+    }
+});
+
+document.getElementById("refreshButton")?.addEventListener("click", () => {
+    if (medicineSearchInput) medicineSearchInput.value = "";
     currentSearch = "";
     currentPage = 1;
     loadMedicines();

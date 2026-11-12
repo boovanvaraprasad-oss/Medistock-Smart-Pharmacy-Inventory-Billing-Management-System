@@ -26,6 +26,8 @@ class StaffResponse(BaseModel):
     email: EmailStr
     role: str
     is_active: bool
+    full_name: str = ""
+    phone: str = ""
 
 
 class UpdateStaffRequest(BaseModel):

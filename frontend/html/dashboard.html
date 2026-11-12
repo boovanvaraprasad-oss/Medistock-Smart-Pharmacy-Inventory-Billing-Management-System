@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock Owner Dashboard</title>
-    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/dashboard.css?v=20261109-range-layout">
-    <link rel="stylesheet" href="css/record-search.css?v=20261109-palette-v1">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
-    <script src="js/components/theme-bootstrap.js"></script>
+    <title>MediStock | Owner Dashboard</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
 </head>
 <body class="app-theme-ready">
     <main class="page main-area">
             <header class="topbar">
                 <div>
-                    <p class="topbar-title">Overview</p>
+                    <p class="topbar-title">Dashboard</p>
                 </div>
                 <div class="topbar-actions">
                     <span id="todayDate" class="today-date"></span>
                     <span id="updatedAt" class="updated-at"></span>
-                    <button id="refreshButton" class="refresh-button" type="button">
-                        <span aria-hidden="true">↻</span> Refresh
+                    <button id="refreshButton" class="button button-secondary" type="button">
+                        Refresh
                     </button>
                 </div>
             </header>
@@ -33,7 +34,7 @@
                     <section class="dashboard-heading" aria-labelledby="dashboardHeading">
                         <div>
                             <p class="eyebrow">Owner dashboard</p>
-                            <h1 id="dashboardHeading">Pharmacy overview</h1>
+                            <h1 id="dashboardHeading">Pharmacy dashboard</h1>
                             <p>Real-time inventory, sales and purchasing status.</p>
                         </div>
                         <div class="dashboard-heading-actions">
@@ -202,9 +203,9 @@
             </section>
     </main>
 
-    <script src="js/api/client.js?v=20261105-sales-periods"></script>
-    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
-    <script src="js/components/record-search.js?v=20261104-alert-search"></script>
-    <script src="js/dashboard.js?v=20261109-range-switch"></script>
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/dashboard.js"></script>
 </body>
 </html>

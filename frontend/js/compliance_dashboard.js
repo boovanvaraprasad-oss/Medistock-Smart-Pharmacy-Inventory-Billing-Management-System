@@ -23,7 +23,7 @@ function renderStaff(users) {
     complianceSet("activeStaffCount", `${complianceNumber.format(active.length)} active`);
     users.slice(0, 8).forEach((user) => {
         const row = document.createElement("tr");
-        complianceCell(row, user.email || "Unknown account");
+        complianceCell(row, user.full_name || user.name || user.email || "Unknown account");
         complianceCell(row, (user.role || "unknown").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()));
         const state = complianceCell(row, user.is_active === false ? "Inactive" : "Active");
         state.className = user.is_active === false ? "compliance-state state-inactive" : "compliance-state state-active";

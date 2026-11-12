@@ -203,11 +203,22 @@ async def get_login_history(
         .limit(limit)
     )
     items = []
-    async for entry in cursor:
+    entries = await cursor.to_list(length=limit)
+    account_emails = {entry.get("email", "") for entry in entries if entry.get("email")}
+    users = await db.users.find(
+        {"email": {"$in": list(account_emails)}},
+        {"email": 1, "full_name": 1, "name": 1},
+    ).to_list(length=limit) if account_emails else []
+    names = {
+        user.get("email"): user.get("full_name") or user.get("name", "")
+        for user in users
+    }
+    for entry in entries:
         items.append(
             {
                 "id": str(entry["_id"]),
                 "email": entry.get("email", ""),
+                "full_name": names.get(entry.get("email"), ""),
                 "role": entry.get("role"),
                 "success": entry.get("success", False),
                 "timestamp": entry.get("timestamp"),

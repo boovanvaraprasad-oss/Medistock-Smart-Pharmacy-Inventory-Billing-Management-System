@@ -2,12 +2,8 @@ const statusMessage = document.getElementById("statusMessage");
 const errorMessage = document.getElementById("errorMessage");
 const batchContent = document.getElementById("batchContent");
 const batchRows = document.getElementById("batchRows");
-const searchForm = document.getElementById("searchForm");
-const searchInput = document.getElementById("searchInput");
-const clearButton = document.getElementById("clearButton");
 const refreshButton = document.getElementById("refreshButton");
 const emptyMessage = document.getElementById("emptyMessage");
-const noMatchesMessage = document.getElementById("noMatchesMessage");
 
 const batchNumberFormatter = new Intl.NumberFormat("en-IN");
 const batchMoneyFormatter = new Intl.NumberFormat("en-IN", {
@@ -49,19 +45,6 @@ function getBatchStatus(batch) {
     return { label: "Available", value: "available" };
 }
 
-function filterBatchRows() {
-    const query = searchInput.value.trim().toLocaleLowerCase();
-    let visibleRows = 0;
-
-    for (const row of batchRows.querySelectorAll("tr[data-batch-row]")) {
-        const matches = !query || row.dataset.searchText.includes(query);
-        row.hidden = !matches;
-        if (matches) visibleRows += 1;
-    }
-
-    noMatchesMessage.hidden = !query || visibleRows > 0 || emptyMessage.hidden === false;
-}
-
 function renderBatches(batches, medicineNames) {
     batchRows.replaceChildren();
     let totalUnits = 0;
@@ -96,7 +79,6 @@ function renderBatches(batches, medicineNames) {
     document.getElementById("batchCount").textContent = batchNumberFormatter.format(batches.length);
     document.getElementById("unitCount").textContent = batchNumberFormatter.format(totalUnits);
     emptyMessage.hidden = batches.length > 0;
-    filterBatchRows();
 }
 
 async function loadBatches() {
@@ -136,17 +118,6 @@ async function loadBatches() {
     }
 }
 
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    filterBatchRows();
-});
-
-searchInput.addEventListener("input", filterBatchRows);
-clearButton.addEventListener("click", () => {
-    searchInput.value = "";
-    filterBatchRows();
-    searchInput.focus();
-});
 refreshButton.addEventListener("click", loadBatches);
 
 loadBatches();

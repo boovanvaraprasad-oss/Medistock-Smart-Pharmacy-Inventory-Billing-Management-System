@@ -232,11 +232,6 @@
     white-space: nowrap;
 }
 
-.inventory-empty {
-    padding: 14px 0 2px;
-    color: #60777b;
-}
-
 @media (max-width: 920px) {
     .inventory-panels {
         grid-template-columns: 1fr;

@@ -10,7 +10,9 @@
     }
 
     const navigationItems = [
-        { label: "Home", href: "home.html", icon: "layout-dashboard", permissions: [] },
+        { label: "Dashboard", href: (user) => getDashboardForRole(user.role), icon: "layout-dashboard", permissions: [] },
+        { label: "Home", href: "home.html", icon: "house", permissions: [] },
+        { label: "My Profile", href: "profile.html", icon: "user-round", permissions: [] },
         { label: "Staff & Users", href: "users.html", icon: "users", permissions: ["user:read", "user:write"] },
         { label: "Medicines", href: "medicines.html", icon: "pill", permissions: ["medicine:read", "medicine:write"] },
         { label: "Stock Batches", href: "batches.html", icon: "boxes", permissions: ["stock:read"] },
@@ -83,7 +85,7 @@
 
             const link = document.createElement("a");
             link.className = "app-side-link";
-            const pageHref = item.href;
+            const pageHref = typeof item.href === "function" ? item.href(currentUser) : item.href;
             link.href = pageHref;
             if (currentFile === pageHref) link.setAttribute("aria-current", "page");
 
@@ -100,12 +102,12 @@
         const avatar = document.createElement("span");
         avatar.className = "app-sidebar-avatar";
         avatar.setAttribute("aria-hidden", "true");
-        avatar.textContent = (currentUser.name || currentUser.email || "U").trim().charAt(0).toUpperCase();
+        avatar.textContent = (currentUser.full_name || currentUser.name || "U").trim().charAt(0).toUpperCase();
 
         const userInfo = document.createElement("span");
         userInfo.className = "app-sidebar-user";
         const userName = document.createElement("strong");
-        userName.textContent = currentUser.name || currentUser.email || "User";
+        userName.textContent = currentUser.full_name || currentUser.name || "User";
         const role = document.createElement("small");
         role.textContent = (currentUser.role || "Staff")
             .replaceAll("_", " ")
@@ -138,24 +140,31 @@
             }
         });
 
-        const profile = document.createElement("div");
-        profile.className = "app-header-profile";
-        profile.setAttribute("aria-label", "Signed-in account");
-        profile.append(avatar, userInfo, logout);
+        const isDashboardPage = /^(?:dashboard|(?:pharmacist|inventory|purchase|store_manager|compliance)_dashboard)\.html$/.test(currentFile);
+        let profile = null;
+        if (isDashboardPage) {
+            profile = document.createElement("div");
+            profile.className = "app-header-profile";
+            profile.setAttribute("aria-label", "Signed-in account");
+            profile.append(avatar, userInfo, logout);
+        }
 
-        const notificationsLink = document.createElement("a");
-        notificationsLink.className = "app-header-notifications";
-        notificationsLink.href = "notifications.html";
-        notificationsLink.setAttribute("aria-label", "Notifications");
-        const notificationIcon = document.createElement("span");
-        notificationIcon.className = "app-header-notification-icon";
-        notificationIcon.setAttribute("aria-hidden", "true");
-        notificationIcon.append(createNavigationIcon("bell"));
-        notificationsLink.append(notificationIcon);
-        const notificationBadge = document.createElement("span");
-        notificationBadge.className = "app-notification-badge";
-        notificationBadge.hidden = true;
-        notificationsLink.append(notificationBadge);
+        let notificationsLink = null;
+        if (isDashboardPage) {
+            notificationsLink = document.createElement("a");
+            notificationsLink.className = "app-header-notifications";
+            notificationsLink.href = "notifications.html";
+            notificationsLink.setAttribute("aria-label", "Notifications");
+            const notificationIcon = document.createElement("span");
+            notificationIcon.className = "app-header-notification-icon";
+            notificationIcon.setAttribute("aria-hidden", "true");
+            notificationIcon.append(createNavigationIcon("bell"));
+            notificationsLink.append(notificationIcon);
+            const notificationBadge = document.createElement("span");
+            notificationBadge.className = "app-notification-badge";
+            notificationBadge.hidden = true;
+            notificationsLink.append(notificationBadge);
+        }
 
         const menuSections = [nav];
         if (permissions.includes("bill:create")) {
@@ -194,19 +203,20 @@
         const pageHeader = page?.querySelector(".topbar, .page-header, header");
         const pageActions = pageHeader?.querySelector(".topbar-actions");
         if (pageActions) {
-            pageActions.append(notificationsLink);
-            pageActions.append(profile);
+            if (notificationsLink) pageActions.append(notificationsLink);
+            if (profile) pageActions.append(profile);
         } else if (pageHeader) {
-            pageHeader.append(notificationsLink);
-            pageHeader.append(profile);
-        } else if (page) {
+            if (notificationsLink) pageHeader.append(notificationsLink);
+            if (profile) pageHeader.append(profile);
+        } else if (page && (notificationsLink || profile)) {
             const accountBar = document.createElement("div");
             accountBar.className = "app-account-bar";
-            accountBar.append(notificationsLink, profile);
+            if (notificationsLink) accountBar.append(notificationsLink);
+            if (profile) accountBar.append(profile);
             page.prepend(accountBar);
         }
 
-        apiRequest("/api/v1/notifications")
+        if (notificationsLink) apiRequest("/api/v1/notifications")
             .then((data) => {
                 const badge = notificationsLink.querySelector(".app-notification-badge");
                 if (!badge) return;
@@ -232,6 +242,8 @@
 
         const markup = {
             "layout-dashboard": '<rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect>',
+            house: '<path d="m3 10 9-7 9 7"></path><path d="M5 9v12h14V9M9 21v-7h6v7"></path>',
+            "user-round": '<circle cx="12" cy="8" r="4"></circle><path d="M5 21a7 7 0 0 1 14 0"></path>',
             users: '<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="10" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>',
             pill: '<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path>',
             boxes: '<path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path><path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"></path><path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"></path>',

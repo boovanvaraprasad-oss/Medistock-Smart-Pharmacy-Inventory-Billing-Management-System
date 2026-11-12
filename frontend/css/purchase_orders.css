@@ -1,13 +1,19 @@
 .purchase-form {
     display: grid;
-    grid-template-columns: minmax(180px, 1fr) minmax(180px, 2fr);
-    align-items: center;
-    gap: 12px 16px;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    align-items: start;
+    gap: 14px 18px;
     margin-top: 18px;
 }
 
-.purchase-form label {
-    color: #17383d;
+.purchase-field {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+}
+
+.purchase-field label {
+    color: var(--ms-ink, #17383d);
     font-weight: 700;
 }
 
@@ -17,15 +23,16 @@
     width: 100%;
     min-height: 42px;
     padding: 9px 11px;
-    border: 1px solid #d6e5e8;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #17383d;
+    border: 1px solid var(--ms-edge);
+    border-radius: var(--ms-radius-md);
+    background: var(--ms-white);
+    color: var(--ms-ink);
     font: inherit;
 }
 
 .purchase-form textarea {
     resize: vertical;
+    min-height: 72px;
 }
 
 .purchase-form .form-actions {
@@ -33,44 +40,58 @@
 }
 
 .item-form {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
     margin-bottom: 28px;
-}
-
-.item-form label {
-    align-self: end;
 }
 
 #orderDetailsSection h3 {
     margin: 24px 0 12px;
-    color: #17383d;
+    color: var(--ms-ink, #17383d);
+}
+
+/* Table Column Alignment */
+table:has(#orderRows) th:nth-child(2),
+table:has(#orderRows) td:nth-child(2),
+#orderRows td:nth-child(2) {
+    text-align: center;
+}
+
+table:has(#orderRows) th:nth-child(4),
+table:has(#orderRows) td:nth-child(4),
+#orderRows td:nth-child(4) {
+    text-align: right;
+}
+
+table:has(#itemRows) th:nth-child(3),
+table:has(#itemRows) td:nth-child(3),
+table:has(#itemRows) th:nth-child(4),
+table:has(#itemRows) td:nth-child(4),
+table:has(#itemRows) th:nth-child(5),
+table:has(#itemRows) td:nth-child(5),
+#itemRows td:nth-child(3),
+#itemRows td:nth-child(4),
+#itemRows td:nth-child(5) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+table:has(#itemRows) th:nth-child(5),
+table:has(#itemRows) td:nth-child(5),
+#itemRows td:nth-child(5) {
+    font-weight: 600;
+}
+
+table:has(#itemRows) th:nth-child(6),
+table:has(#itemRows) td:nth-child(6),
+#itemRows td:nth-child(6) {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 .order-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-}
-
-.order-status {
-    display: inline-block;
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: #f1f7f8;
-    color: #17383d;
-    font-size: 0.84rem;
-    font-weight: 700;
-    text-transform: capitalize;
-}
-
-.order-status[data-status="received"] {
-    background: #e4f7f4;
-    color: #075d63;
-}
-
-.order-status[data-status="cancelled"] {
-    background: #fff2f1;
-    color: #8f2d26;
 }
 
 @media (max-width: 640px) {

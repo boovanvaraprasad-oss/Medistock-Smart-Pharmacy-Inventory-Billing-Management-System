@@ -79,7 +79,7 @@ function renderUsers() {
     if (staffUsers.length === 0) {
         const row = document.createElement("tr");
         const cell = document.createElement("td");
-        cell.colSpan = 4;
+        cell.colSpan = 6;
         cell.textContent = "No staff accounts found.";
         row.appendChild(cell);
         userRows.appendChild(row);
@@ -88,9 +88,17 @@ function renderUsers() {
 
     for (const user of staffUsers) {
         const row = document.createElement("tr");
+        const nameCell = document.createElement("td");
+        nameCell.textContent = user.full_name || "—";
+        row.appendChild(nameCell);
+
         const emailCell = document.createElement("td");
         emailCell.textContent = user.email;
         row.appendChild(emailCell);
+
+        const phoneCell = document.createElement("td");
+        phoneCell.textContent = user.phone || "—";
+        row.appendChild(phoneCell);
 
         const roleCell = document.createElement("td");
         roleCell.textContent = roleLabel(user.role);

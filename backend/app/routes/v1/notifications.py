@@ -32,6 +32,14 @@ async def mark_notification_read(
     return await set_notification_read(current_user, data.notification_id)
 
 
+@router.patch("/{notification_id}/read")
+async def mark_notification_read_by_id(
+    notification_id: str,
+    current_user=Depends(require_permission(STOCK_READ)),
+):
+    return await set_notification_read(current_user, notification_id)
+
+
 @router.post("/read-all")
 async def mark_all_notifications_read(
     current_user=Depends(require_permission(STOCK_READ)),

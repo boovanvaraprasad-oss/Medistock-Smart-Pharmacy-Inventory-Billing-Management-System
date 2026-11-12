@@ -60,42 +60,32 @@
 
 #signupForm button,
 #backToLogin {
-    min-height: 45px;
-    padding: 0 16px;
-    border: 1px solid var(--ms-teal-800);
-    border-radius: 10px;
-    background: var(--ms-teal-800);
-    color: #ffffff;
-    font: inherit;
-    font-weight: 700;
-    transition: background-color 160ms ease, transform 160ms ease;
-}
-
-#signupForm button:hover,
-#backToLogin:hover {
-    transform: translateY(-1px);
-    background: var(--ms-teal-900);
+    width: 100%;
 }
 
 #backToLogin {
-    width: 100%;
     margin-top: 10px;
-    border-color: var(--ms-edge);
-    background: transparent;
-    color: var(--ms-teal-900);
 }
 
 #message:not(:empty) {
     margin-top: 16px;
     padding: 12px 14px;
-    border: 1px solid var(--ms-success-edge);
-    border-radius: 10px;
-    background: var(--ms-success-bg);
-    color: var(--ms-success-ink);
+    border-radius: var(--ms-radius-sm, 8px);
     line-height: 1.45;
+    font-size: 0.9rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    #signupForm button,
-    #backToLogin { transition: none; }
+#message.message-error,
+#message.is-error {
+    border: 1px solid var(--ms-danger-edge);
+    background: var(--ms-danger-bg);
+    color: var(--ms-danger-ink);
 }
+
+#message.message-success,
+#message.is-success {
+    border: 1px solid var(--ms-success-edge);
+    background: var(--ms-success-bg);
+    color: var(--ms-success-ink);
+}
+

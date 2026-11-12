@@ -27,6 +27,8 @@ def to_staff_response(user: dict) -> dict:
         "email": user["email"],
         "role": user["role"],
         "is_active": user.get("is_active", True),
+        "full_name": user.get("full_name", ""),
+        "phone": user.get("phone", ""),
     }
 
 

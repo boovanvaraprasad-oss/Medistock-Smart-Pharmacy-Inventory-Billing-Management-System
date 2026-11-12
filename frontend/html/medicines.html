@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock Medicines</title>
-    <link rel="stylesheet" href="css/medicines.css?v=20261109-palette-v1">
-    <link rel="stylesheet" href="css/confirm-dialog.css?v=20261109-palette-v1">
-    <link rel="stylesheet" href="css/app-shell.css?v=20261109-pharmacy-palette-v3">
-    <link rel="stylesheet" href="css/app-theme.css?v=20261110-role-home-v1">
-    <script src="js/components/theme-bootstrap.js"></script>
+    <title>MediStock | Medicines</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/medicines.css">
+    <link rel="stylesheet" href="/css/confirm-dialog.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
 </head>
 <body class="app-theme-ready">
     <main class="page">
@@ -98,51 +100,56 @@
             </form>
         </section>
 
-        <form id="searchForm" class="search-form">
-            <label for="searchInput">Medicine name</label>
-            <div class="search-controls">
-                <input
-                    id="searchInput"
-                    type="search"
-                    maxlength="100"
-                    placeholder="Search medicines"
-                >
-                <button class="button button-primary" type="submit">Search</button>
-                <button class="button button-secondary" id="clearButton" type="button">Clear</button>
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Medicine catalog</h2>
+                    <p id="listDescription" class="helper-text">Review and search medicines in stock.</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
             </div>
-        </form>
 
-        <p id="statusMessage" class="status-message" role="status">Loading medicines…</p>
+            <div class="record-search" role="search">
+                <label for="medicineSearch">Search medicines</label>
+                <input id="medicineSearch" type="search" data-record-search="#medicineRows" placeholder="Search medicines by name or SKU" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching medicines.</p>
+            </div>
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Medicine</th>
-                        <th>SKU</th>
-                        <th>Form</th>
-                        <th>Stock</th>
-                        <th>Batches (quantity)</th>
-                        <th>Price</th>
-                        <th>Reorder at</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="medicineRows"></tbody>
-            </table>
-        </div>
+            <p id="statusMessage" class="status-message" role="status">Loading medicines…</p>
 
-        <nav class="pagination" aria-label="Medicine list pages">
-            <button class="button button-secondary" id="previousButton" type="button">Previous</button>
-            <span id="pageInfo"></span>
-            <button class="button button-secondary" id="nextButton" type="button">Next</button>
-        </nav>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>SKU</th>
+                            <th>Form</th>
+                            <th>Stock</th>
+                            <th>Batches (quantity)</th>
+                            <th>Price</th>
+                            <th>Reorder at</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicineRows"></tbody>
+                </table>
+            </div>
+
+            <nav class="pagination" aria-label="Medicine list pages">
+                <button class="button button-secondary" id="previousButton" type="button">Previous</button>
+                <span id="pageInfo"></span>
+                <button class="button button-secondary" id="nextButton" type="button">Next</button>
+            </nav>
+        </section>
     </main>
 
-    <script src="js/api/client.js"></script>
-    <script src="js/components/confirm-dialog.js"></script>
-    <script src="js/components/app-shell.js?v=20261110-role-home-v1"></script>
-    <script src="js/medicines.js"></script>
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/confirm-dialog.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/medicines.js"></script>
 </body>
 </html>

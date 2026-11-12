@@ -49,6 +49,7 @@ function renderNotifications() {
         if (!item.is_read) {
             const readButton = document.createElement("button");
             readButton.type = "button";
+            readButton.className = "button button-secondary button-small";
             readButton.textContent = "Mark read";
             readButton.addEventListener("click", () => markRead(item.id));
             actions.append(readButton);

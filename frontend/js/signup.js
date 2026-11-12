@@ -2,6 +2,16 @@ const signupForm = document.getElementById("signupForm");
 const backToLogin = document.getElementById("backToLogin");
 const message = document.getElementById("message");
 
+function showErrorMessage(text) {
+    message.className = "message message-error";
+    message.textContent = text;
+}
+
+function showSuccessMessage(text) {
+    message.className = "message message-success";
+    message.textContent = text;
+}
+
 signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -11,7 +21,7 @@ signupForm.addEventListener("submit", async (event) => {
         document.getElementById("confirmPassword").value;
 
     if (password !== confirmPassword) {
-        message.textContent = "Passwords do not match.";
+        showErrorMessage("Passwords do not match.");
         return;
     }
 
@@ -30,13 +40,13 @@ signupForm.addEventListener("submit", async (event) => {
         const data = await response.json();
 
         if (!response.ok) {
-            message.textContent =
-                data.detail || "Registration failed.";
+            showErrorMessage(data.detail || "Registration failed.");
             return;
         }
 
-        message.textContent =
-            "Account created successfully. Opening your MediStock workspace…";
+        showSuccessMessage(
+            "Account created successfully. Opening your MediStock workspace…"
+        );
 
         try {
             const tokens = await loginUser(email, password);
@@ -49,8 +59,9 @@ signupForm.addEventListener("submit", async (event) => {
             localStorage.removeItem("access_token");
             localStorage.removeItem("refresh_token");
             sessionStorage.removeItem("medistock_current_user");
-            message.textContent =
-                "Your account was created. Please sign in to continue.";
+            showSuccessMessage(
+                "Your account was created. Please sign in to continue."
+            );
             window.setTimeout(() => {
                 window.location.href = "/login.html";
             }, 1800);
@@ -58,8 +69,7 @@ signupForm.addEventListener("submit", async (event) => {
 
     } catch (error) {
         console.error(error);
-        message.textContent =
-            "Unable to connect to the server.";
+        showErrorMessage("Unable to connect to the server.");
     }
 });
 

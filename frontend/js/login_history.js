@@ -38,15 +38,21 @@ function renderLoginRows(items) {
     document.getElementById("emptyMessage").hidden = items.length > 0;
     for (const entry of items) {
         const row = document.createElement("tr");
-        appendHistoryCell(row, entry.email || "Unknown account");
+        appendHistoryCell(row, entry.full_name || entry.name || entry.email || "Unknown account");
         appendHistoryCell(row, entry.role
             ? entry.role.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
             : "Unknown");
         const time = formatHistoryTime(entry.timestamp);
         appendHistoryCell(row, time.date);
         appendHistoryCell(row, time.time);
-        const result = appendHistoryCell(row, entry.success ? "Successful" : "Failed", `history-result ${entry.success ? "result-success" : "result-failed"}`);
-        result.setAttribute("aria-label", `Login ${entry.success ? "successful" : "failed"}`);
+        const resultCell = document.createElement("td");
+        resultCell.className = "history-result";
+        const resultPill = document.createElement("span");
+        resultPill.className = `status-pill ${entry.success ? "status-active" : "status-danger"}`;
+        resultPill.textContent = entry.success ? "Successful" : "Failed";
+        resultPill.setAttribute("aria-label", `Login ${entry.success ? "successful" : "failed"}`);
+        resultCell.append(resultPill);
+        row.append(resultCell);
         appendHistoryCell(row, entry.ip_address || "—");
         const browser = appendHistoryCell(row, browserLabel(entry.user_agent));
         if (entry.user_agent) browser.title = entry.user_agent;

@@ -10,6 +10,7 @@ from app.schemas.auth import (
     LogoutRequest,
     MeResponse,
     ChangePasswordRequest,
+    UpdateProfileRequest,
 )
 
 from app.services.auth import (
@@ -21,7 +22,7 @@ from app.services.auth import (
     change_user_password,
 )
 
-from app.core.database import db
+from app.core.database import client, db
 from app.core.email_rules import MEDISTOCK_EMAIL_DOMAIN
 
 from app.core.security import (
@@ -37,6 +38,7 @@ from app.core.dependencies import (
     require_permission,
 )
 from app.core.permissions import LOGIN_LOG_READ, ROLE_PERMISSIONS
+from app.services.audit_log import create_audit_log
 
 
 router = APIRouter(
@@ -101,6 +103,7 @@ async def oauth2_login(
 
 
 @router.get("/login-logs")
+@router.get("/login-history")
 async def read_login_history(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=25, ge=1, le=100),
@@ -225,6 +228,7 @@ async def register(data: RegisterRequest):
     return {
         "message": "User registered successfully",
         "email": user["email"],
+        "role": user.get("role", "owner"),
     }
 
 
@@ -253,7 +257,42 @@ async def get_me(
         "role": role,
         "is_active": user.get("is_active", True),
         "permissions": ROLE_PERMISSIONS.get(role, []),
+        "full_name": user.get("full_name", ""),
+        "phone": user.get("phone", ""),
     }
+
+
+@router.patch("/me/profile")
+async def update_my_profile(
+    data: UpdateProfileRequest,
+    current_user=Depends(get_current_user),
+):
+    user_id = ObjectId(current_user["sub"])
+    user = await db.users.find_one({"_id": user_id}, {"password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    changes = {"full_name": data.full_name, "phone": data.phone}
+    previous = {key: user.get(key, "") for key in changes}
+    if changes != previous:
+        async def transaction_work(session):
+            await db.users.update_one(
+                {"_id": user_id}, {"$set": changes}, session=session
+            )
+            await create_audit_log(
+                action="USER_PROFILE_UPDATE",
+                entity_type="users",
+                entity_id=str(user_id),
+                entity_label=user.get("email", str(user_id)),
+                actor_user_id=str(user_id),
+                actor_role=user.get("role", ""),
+                details={"updated_fields": list(changes)},
+                session=session,
+            )
+
+        async with await client.start_session() as session:
+            await session.with_transaction(transaction_work)
+    return {"full_name": data.full_name, "phone": data.phone}
 
 
 # ---------------------------------------------------------
@@ -312,39 +351,24 @@ async def logout(
             detail="Access token has no identifier",
         )
 
-    # Decode refresh token
-
-    refresh_payload = decode_refresh_token(
-        data.refresh_token
-    )
-
-    if not refresh_payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired refresh token",
-        )
-
-    refresh_jti = refresh_payload.get("jti")
-
-    if not refresh_jti:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has no identifier",
-        )
-
     # Revoke access token
-
     await revoke_token(
         access_jti,
         access_payload["exp"],
     )
 
-    # Revoke refresh token
-
-    await revoke_token(
-        refresh_jti,
-        refresh_payload["exp"],
-    )
+    # Decode and revoke refresh token if provided
+    if data.refresh_token:
+        refresh_payload = decode_refresh_token(
+            data.refresh_token
+        )
+        if refresh_payload:
+            refresh_jti = refresh_payload.get("jti")
+            if refresh_jti:
+                await revoke_token(
+                    refresh_jti,
+                    refresh_payload["exp"],
+                )
 
     return {
         "message": "Successfully logged out",

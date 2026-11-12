@@ -55,7 +55,7 @@ function renderAuditRows(items) {
                 : "—";
         const recordCell = appendAuditCell(row, `${entityType} · ${recordRef}`);
         if (entry.entity_id) recordCell.title = `Record ID: ${entry.entity_id}`;
-        const actor = entry.actor_email || "Unknown user";
+        const actor = entry.actor_name || entry.actor_email || "Unknown user";
         const role = (entry.actor_role || "unknown").replaceAll("_", " ");
         appendAuditCell(row, `${actor} · ${role}`);
         appendAuditCell(row, auditDetailsText(entry.details), "audit-details");

@@ -6,12 +6,9 @@
   <meta name="theme-color" content="#075D63">
   <title>MediStock | Home</title>
   <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="/js/components/theme-bootstrap.js"></script>
-  <link rel="stylesheet" href="/css/app-theme.css?v=20261110-dark-palette-v1">
-  <link rel="stylesheet" href="/css/home.css?v=20261110-role-home-v1">
+  <link rel="stylesheet" href="/css/app-theme.css">
+  <link rel="stylesheet" href="/css/home.css">
 </head>
 <body class="app-theme-ready home-page">
   <main class="home-shell">
@@ -21,10 +18,6 @@
         <span>MediStock</span>
       </a>
       <div class="home-account">
-        <a class="home-notifications" href="/notifications.html" aria-label="Open notifications" title="Notifications">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-        </a>
-        <span class="home-user" id="homeUser">Loading account…</span>
         <button class="home-logout" id="logoutButton" type="button">Log out</button>
       </div>
     </header>
@@ -43,6 +36,6 @@
     <footer class="home-footer">MediStock · Pharmacy inventory and billing</footer>
   </main>
   <script src="/js/api/client.js"></script>
-  <script src="/js/home.js?v=20261110-role-home-v1"></script>
+  <script src="/js/home.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 
 .notifications-header h1 { margin: 0 0 7px; color: #17383d; font-size: clamp(1.8rem, 3vw, 2.5rem); }
 .notifications-header p:last-child { margin: 0; color: #60777b; }
-.notifications-content { width: min(1120px, 100%); margin: 26px auto; padding: 0 26px 48px; }
+.notifications-content { width: 100%; max-width: 1120px; margin: 24px 0 0; padding: 0 0 48px; }
 
 .notifications-toolbar {
     display: flex;
@@ -52,7 +52,7 @@
 .notification-error { padding: 13px 16px; border: 1px solid #f1c7c4; border-radius: 11px; background: #fff4f3; color: #a72a27; }
 
 @media (max-width: 700px) {
-    .notifications-content { margin: 16px auto; padding-inline: 15px; }
+    .notifications-content { margin: 16px 0 0; padding: 0 0 32px; }
     .notification-card { grid-template-columns: 36px minmax(0, 1fr); align-items: start; gap: 10px; padding: 13px; }
     .notification-icon { width: 34px; height: 34px; }
     .notification-actions { grid-column: 2; }

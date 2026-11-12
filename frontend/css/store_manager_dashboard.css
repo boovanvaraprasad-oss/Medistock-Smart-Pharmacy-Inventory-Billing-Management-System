@@ -49,8 +49,6 @@
 .manager-panel th,.manager-panel td { padding: 11px 9px; border-bottom: 1px solid #d6e5e8; vertical-align: middle; }
 .manager-panel th { color: #60777b; font-size: .8rem; white-space: nowrap; }
 .manager-panel td { color: #17383d; font-size: .86rem; }
-.manager-bill-status { display: inline-block; padding: 4px 9px; border-radius: 99px; background: #f0f2f1; color: #60777b; font-size: .74rem; font-weight: 700; text-transform: capitalize; }
-.manager-bill-status[data-status="completed"] { background: #e4f7f4; color: #075d63; }
 .manager-bill-total { color: #17383d!important; font-weight: 700; white-space: nowrap; }
 .manager-order-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
 .manager-order-stats div { padding: 14px 12px; border-radius: 12px; background: #f1f7f8; }
