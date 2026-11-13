@@ -17,12 +17,19 @@
     <main class="page login-history-page">
         <header class="page-header">
             <div>
-                <p class="eyebrow">Security &amp; access</p>
+                <p class="eyebrow">Administration &amp; security</p>
                 <h1>Login history</h1>
                 <p class="subtitle">Review successful and failed sign-in attempts.</p>
             </div>
-            <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+            <div class="header-actions">
+                <a href="users.html" class="button button-secondary" id="backToUsersBtn">← Staff accounts</a>
+                <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+            </div>
         </header>
+        <nav class="sub-nav" aria-label="Staff management navigation">
+            <a href="users.html" class="sub-nav-item" id="staffAccountsTab">Staff accounts</a>
+            <a href="login_history.html" class="sub-nav-item is-active" aria-current="page">Login history</a>
+        </nav>
         <p id="statusMessage" class="message" role="status" hidden></p>
         <p id="errorMessage" class="message message-error" role="alert" hidden></p>
         <section class="history-panel">

@@ -237,6 +237,12 @@ async function initializeUsersPage() {
         currentUser = await getCurrentUser();
         permissions = currentUser.permissions || [];
 
+        const hasLoginHistoryAccess = permissions.includes("login_log:read") || ["owner", "store_manager"].includes(currentUser.role);
+        const viewLoginBtn = document.getElementById("viewLoginHistoryBtn");
+        const loginTab = document.getElementById("loginHistoryTab");
+        if (viewLoginBtn) viewLoginBtn.hidden = !hasLoginHistoryAccess;
+        if (loginTab) loginTab.hidden = !hasLoginHistoryAccess;
+
         if (permissions.includes("user:write")) {
             createSection.hidden = false;
             for (const [value, label] of STAFF_ROLES) {
@@ -248,6 +254,10 @@ async function initializeUsersPage() {
         }
 
         if (!permissions.includes("user:read")) {
+            if (hasLoginHistoryAccess) {
+                window.location.replace("login_history.html");
+                return;
+            }
             showMessage(errorMessage, "Your role can’t view staff accounts.");
             listDescription.textContent = "Access restricted.";
             return;

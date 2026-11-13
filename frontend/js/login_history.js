@@ -71,6 +71,11 @@ async function loadLoginHistory() {
             window.location.replace(getDashboardForRole(user.role));
             return;
         }
+        const canViewStaffAccounts = (user.permissions || []).includes("user:read") || user.role === "owner";
+        const backBtn = document.getElementById("backToUsersBtn");
+        const staffTab = document.getElementById("staffAccountsTab");
+        if (backBtn) backBtn.hidden = !canViewStaffAccounts;
+        if (staffTab) staffTab.hidden = !canViewStaffAccounts;
         const params = new URLSearchParams({ page: String(historyPage), limit: String(historyPageSize) });
         if (historyFilter.value !== "") params.set("success", historyFilter.value);
         const data = await apiRequest(`/api/v1/auth/login-logs?${params}`);

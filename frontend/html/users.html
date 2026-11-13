@@ -20,7 +20,15 @@
                 <h1>Staff &amp; users</h1>
                 <p class="subtitle">Manage staff access and account status.</p>
             </div>
+            <div class="header-actions">
+                <a href="login_history.html" class="button button-secondary" id="viewLoginHistoryBtn">View login history</a>
+            </div>
         </header>
+
+        <nav class="sub-nav" aria-label="Staff management navigation">
+            <a href="users.html" class="sub-nav-item is-active" aria-current="page">Staff accounts</a>
+            <a href="login_history.html" class="sub-nav-item" id="loginHistoryTab">Login history</a>
+        </nav>
 
         <p id="statusMessage" class="message" role="status" hidden></p>
         <p id="errorMessage" class="message message-error" role="alert" hidden></p>

@@ -4,42 +4,463 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07575D">
-  <meta name="description" content="MediStock helps pharmacies manage inventory, expiry dates and billing in one place.">
-  <title>MediStock | Pharmacy management, made clear</title>
+  <meta name="description" content="MediStock is the smart pharmacy inventory, FEFO batch tracking, and billing management system built for pharmacies of all sizes.">
+  <title>MediStock | Smart Pharmacy Inventory &amp; Billing Management System</title>
   <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{--teal:#08777B;--bright:#0B9C9D;--aqua:#22B9B5;--mint:#67D2AE;--ink:#17383D;--white:#fff;--soft:#D4F0E8;--font:'Inter',system-ui,sans-serif}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{min-width:320px;margin:0;color:var(--ink);font-family:var(--font)}a{color:inherit}
-    .hero{position:relative;isolation:isolate;display:flex;min-height:min(780px,100svh);flex-direction:column;overflow:hidden;color:var(--white);background:#07575D url('/assets/pharmacy-counter-bg.jpg') center 56%/cover no-repeat}
-    .hero:before{position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(4,48,54,.88) 0%,rgba(4,57,62,.72) 48%,rgba(4,57,62,.2) 100%),linear-gradient(0deg,rgba(4,48,54,.32),transparent 42%);content:""}
-    .topbar{display:flex;width:min(1200px,100%);align-items:center;justify-content:space-between;gap:24px;margin:0 auto;padding:26px 34px}
-    .brand{display:inline-flex;align-items:center;gap:10px;color:var(--white);font-size:23px;font-weight:700;letter-spacing:-.045em;text-decoration:none}.brand img{width:31px;height:31px;object-fit:contain}
-    .nav{display:flex;align-items:center;gap:30px}.nav a{color:rgba(255,255,255,.88);font-size:13px;font-weight:500;text-decoration:none}.nav a:hover,.nav a:focus-visible{color:var(--mint)}
-    .nav .nav-login{padding:11px 19px;border:1px solid rgba(255,255,255,.62);border-radius:999px;color:var(--white)}.nav .nav-login:hover{border-color:var(--mint);background:var(--mint);color:var(--ink)}
-    .hero-copy{width:min(1200px,100%);margin:auto auto;padding:60px 34px 112px}.copy-inner{max-width:620px}.eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 20px;color:#B8EBDD;font-size:11px;font-weight:700;letter-spacing:.19em;text-transform:uppercase}.eyebrow:before{width:24px;height:2px;border-radius:3px;background:var(--mint);content:""}
-    h1{max-width:610px;margin:0;color:var(--white);font-size:clamp(46px,7vw,78px);font-weight:600;line-height:1.02;letter-spacing:-.065em}h1 span{display:block;color:var(--mint)}.lead{max-width:500px;margin:22px 0 0;color:var(--soft);font-size:16px;line-height:1.75}
-    .actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:30px}.button{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 22px;border:1px solid transparent;border-radius:999px;background:var(--bright);color:var(--white);font-size:13px;font-weight:700;text-decoration:none;transition:background .18s,transform .18s}.button:hover{transform:translateY(-1px);background:var(--aqua)}.button-secondary{border-color:rgba(255,255,255,.52);background:transparent;color:var(--white)}.button-secondary:hover{border-color:var(--mint);background:rgba(103,210,174,.12)}
-    .features{padding:70px 34px 84px;background:#F4F8F7}.features-inner{width:min(1120px,100%);margin:0 auto}.section-heading{max-width:580px;margin:0 auto 36px;text-align:center}.section-heading .eyebrow{justify-content:center;color:var(--teal)}.section-heading h2{margin:0;color:var(--ink);font-size:clamp(28px,4vw,40px);line-height:1.15;letter-spacing:-.045em}.section-heading p{margin:12px 0 0;color:#52696C;font-size:14px;line-height:1.7}
-    .feature-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}.feature{padding:20px 4px}.feature-mark{display:grid;width:42px;height:42px;place-items:center;border-radius:12px;background:#DDF2E9;color:var(--teal);font-size:19px;font-weight:700}.feature h3{margin:16px 0 7px;color:var(--ink);font-size:16px;font-weight:600}.feature p{margin:0;color:#52696C;font-size:13px;line-height:1.7}
-    footer{padding:22px 34px;background:#F4F8F7;color:#60777B;font-size:12px;text-align:center}
-    @media(max-width:650px){.hero{min-height:710px;min-height:max(710px,100svh);background-position:58% center}.hero:before{background:linear-gradient(90deg,rgba(4,48,54,.86),rgba(4,57,62,.56)),linear-gradient(0deg,rgba(4,48,54,.42),transparent 55%)}.topbar{padding:20px 22px}.brand{font-size:20px}.nav{gap:14px}.nav a:not(.nav-login){display:none}.nav .nav-login{padding:10px 15px}.hero-copy{padding:62px 24px 80px}.lead{font-size:15px}.features{padding:56px 24px}.feature-list{grid-template-columns:1fr;gap:12px}.feature{padding:12px 0}.section-heading{text-align:left}.section-heading .eyebrow{justify-content:flex-start}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button{transition:none}}
-  </style>
+  <link rel="stylesheet" href="/css/landing.css">
 </head>
 <body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="topbar">
+      <a class="brand" href="/" aria-label="MediStock home">
+        <img src="/assets/medistock-mark.svg" alt="" width="32" height="32">
+        <span>MediStock</span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#features">Features</a>
+        <a href="#workflow">How It Works</a>
+        <a href="#roles">Team Roles</a>
+        <a href="#contact">Connect with Us</a>
+        <a class="nav-login" href="/login.html">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
   <main>
+    <!-- Hero Section -->
     <section class="hero" aria-labelledby="hero-title">
-      <header class="topbar">
-        <a class="brand" href="/" aria-label="MediStock home"><img src="/assets/medistock-mark.svg" alt=""><span>MediStock</span></a>
-        <nav class="nav" aria-label="Main navigation"><a href="#features">Features</a><a href="#how-it-helps">How it helps</a><a class="nav-login" href="/login.html">Sign in</a></nav>
-      </header>
-      <div class="hero-copy"><div class="copy-inner"><p class="eyebrow">Smart pharmacy management</p><h1 id="hero-title">Every batch,<span>every bill.</span></h1><p class="lead">Keep your pharmacy moving with clear stock tracking, expiry visibility and faster billing—all in one place.</p><div class="actions"><a class="button" href="/login.html">Sign in to MediStock</a><a class="button button-secondary" href="#features">Explore features</a></div></div></div>
+      <div class="hero-content">
+        <div class="hero-inner">
+          <p class="eyebrow">Smart Pharmacy Management</p>
+          <h1 id="hero-title">Every batch tracked.<span>Every bill simplified.</span></h1>
+          <p class="lead">
+            Eliminate expired dead-stock with intelligent FEFO auto-dispensing, record customer sales in seconds with GST-ready billing, and empower your pharmacy team with tailored role workspaces.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="/login.html">Sign In to MediStock</a>
+            <a class="btn btn-secondary" href="#features">Explore Features</a>
+            <a class="btn btn-secondary" href="#contact">Connect with Us</a>
+          </div>
+        </div>
+      </div>
     </section>
-    <section class="features" id="features" aria-labelledby="features-title"><div class="features-inner"><div class="section-heading" id="how-it-helps"><p class="eyebrow">A clearer way to work</p><h2 id="features-title">The essentials, together</h2><p>Spend less time switching between tasks and more time serving your customers.</p></div><div class="feature-list"><article class="feature"><span class="feature-mark" aria-hidden="true">＋</span><h3>Know what’s in stock</h3><p>See medicines, batches and quantities in one organized inventory.</p></article><article class="feature"><span class="feature-mark" aria-hidden="true">◷</span><h3>Stay ahead of expiry</h3><p>Spot approaching expiry dates early and keep batch details visible.</p></article><article class="feature"><span class="feature-mark" aria-hidden="true">✓</span><h3>Keep billing moving</h3><p>Find items quickly and record pharmacy sales with less friction.</p></article></div></div></section>
+
+    <!-- Trust & Key Metrics Ribbon -->
+    <section class="trust-ribbon" aria-label="Key system highlights">
+      <div class="trust-ribbon-inner">
+        <div class="stat-item">
+          <span class="stat-icon" aria-hidden="true">⚡</span>
+          <div class="stat-text">
+            <strong>FEFO Auto-Dispensing</strong>
+            <span>Earliest expiry prioritized</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon" aria-hidden="true">◷</span>
+          <div class="stat-text">
+            <strong>Expiry Watchdog</strong>
+            <span>30-day proactive warnings</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon" aria-hidden="true">₹</span>
+          <div class="stat-text">
+            <strong>Rapid POS Checkout</strong>
+            <span>Cash calculation &amp; UPI QR</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon" aria-hidden="true">🛡</span>
+          <div class="stat-text">
+            <strong>Audit &amp; Compliance</strong>
+            <span>Full regulatory traceability</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Capabilities / Features (6 Cards) -->
+    <section class="section section-alt" id="features" aria-labelledby="features-title">
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="eyebrow">Core Capabilities</p>
+          <h2 id="features-title">Engineered for High-Velocity Pharmacy Operations</h2>
+          <p>Built specifically to withstand busy counter hours, reduce costly inventory wastage, and automate regulatory compliance.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">⚡</span>
+            <h3>FEFO Intelligent Dispensing</h3>
+            <p>Automatically allocates earliest-expiring stock first during customer checkout. Completely prevents expired medicine batches from reaching patients.</p>
+            <span class="feature-tag">Zero Dead Stock</span>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">◷</span>
+            <h3>Expiry &amp; Low-Stock Watchdog</h3>
+            <p>Visual status badges highlight batches approaching their 30-day expiry window. Dynamic threshold alerts notify you before essential medicines run dry.</p>
+            <span class="feature-tag">Proactive Alerts</span>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">🧾</span>
+            <h3>Rapid POS Billing &amp; Invoicing</h3>
+            <p>Lightning-fast typeahead medicine lookup by name or SKU, tax computation, cash change calculator, UPI support, and one-click printable receipts.</p>
+            <span class="feature-tag">Counter Speed</span>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">📥</span>
+            <h3>Procurement &amp; Batch Intake</h3>
+            <p>Track purchase orders from draft to received. Record batch numbers, manufacturing dates, expiry dates, supplier pricing, and stock movements.</p>
+            <span class="feature-tag">Supply Pipeline</span>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">📊</span>
+            <h3>Financial Analytics &amp; Exports</h3>
+            <p>Real-time analytics for today's revenue, monthly trends, and fast-moving items. Export comprehensive Excel (.xlsx) and PDF reports with one click.</p>
+            <span class="feature-tag">Instant Reporting</span>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon-wrap" aria-hidden="true">🔒</span>
+            <h3>Audit Trail &amp; Regulatory Control</h3>
+            <p>Tamper-evident logs record every stock adjustment, bill return, price update, and staff action. Built-in brute-force lockout protects patient and sales data.</p>
+            <span class="feature-tag">Accountability</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-Step Counter Workflow -->
+    <section class="section" id="workflow" aria-labelledby="workflow-title">
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="eyebrow">Counter Workflow</p>
+          <h2 id="workflow-title">How MediStock Powers Your Pharmacy</h2>
+          <p>From supplier delivery receiving to patient checkout in three seamless steps.</p>
+        </div>
+
+        <div class="workflow-grid">
+          <article class="step-card">
+            <span class="step-badge">1</span>
+            <h3>Intake &amp; Batch Registration</h3>
+            <p>Receive supplier shipments and log batch numbers, manufacturing dates, expiry dates, and unit purchase costs into your active ledger.</p>
+            <div class="step-highlight">✓ Real-time ledger intake</div>
+          </article>
+
+          <article class="step-card">
+            <span class="step-badge">2</span>
+            <h3>FEFO Auto-Dispense &amp; Checkout</h3>
+            <p>Add medicines at the counter. MediStock automatically picks the oldest active batch, applies GST, calculates change, and generates the bill.</p>
+            <div class="step-highlight">✓ Oldest valid stock billed first</div>
+          </article>
+
+          <article class="step-card">
+            <span class="step-badge">3</span>
+            <h3>Live Monitoring &amp; Reorders</h3>
+            <p>Stock levels update instantly across all dashboards. Threshold alerts prompt timely supplier replenishment before medicines run dry.</p>
+            <div class="step-highlight">✓ Zero stock-out surprises</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role-Based Workspaces (6 Roles) -->
+    <section class="section section-alt" id="roles" aria-labelledby="roles-title">
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="eyebrow">Team Architecture</p>
+          <h2 id="roles-title">Built for the Whole Pharmacy Team</h2>
+          <p>Each staff member receives a dedicated dashboard with the exact tools and permissions required for their daily responsibilities.</p>
+        </div>
+
+        <div class="roles-grid">
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Pharmacy Owner</h3>
+              <span class="role-badge">Executive</span>
+            </div>
+            <p>Complete business oversight with revenue charts, staff account controls, store license settings, and master data management.</p>
+            <ul class="role-capabilities">
+              <li>Revenue &amp; profit analytics</li>
+              <li>Staff user administration &amp; RBAC</li>
+              <li>Store &amp; invoice prefix configuration</li>
+            </ul>
+          </article>
+
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Store Manager</h3>
+              <span class="role-badge">Management</span>
+            </div>
+            <p>Daily store supervision, high-value purchase order approvals, sales reconciliation, and cross-department monitoring.</p>
+            <ul class="role-capabilities">
+              <li>Sales &amp; order oversight</li>
+              <li>Pending draft bill completion</li>
+              <li>Staff performance tracking</li>
+            </ul>
+          </article>
+
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Pharmacist</h3>
+              <span class="role-badge">Dispensing</span>
+            </div>
+            <p>High-speed billing counter optimized for patient care, instant medicine search, FEFO batch deduction, and invoice printing.</p>
+            <ul class="role-capabilities">
+              <li>Typeahead medicine lookup</li>
+              <li>Cash change &amp; UPI checkout</li>
+              <li>Instant invoice printing</li>
+            </ul>
+          </article>
+
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Inventory Executive</h3>
+              <span class="role-badge">Inventory</span>
+            </div>
+            <p>Dedicated warehouse and shelf inventory management, batch expiry tracking, physical count adjustments, and customer returns.</p>
+            <ul class="role-capabilities">
+              <li>Batch expiry monitoring (&lt;30 days)</li>
+              <li>Stock adjustment with reasons</li>
+              <li>Customer return intake</li>
+            </ul>
+          </article>
+
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Purchase Executive</h3>
+              <span class="role-badge">Procurement</span>
+            </div>
+            <p>Supplier relationship management, purchase order generation, and goods receipt verification into active stock batches.</p>
+            <ul class="role-capabilities">
+              <li>Purchase order lifecycle tracking</li>
+              <li>Supplier directory management</li>
+              <li>Shipment intake &amp; price audits</li>
+            </ul>
+          </article>
+
+          <article class="role-card">
+            <div class="role-header">
+              <h3>Compliance Officer</h3>
+              <span class="role-badge">Compliance</span>
+            </div>
+            <p>Regulatory adherence oversight, controlled substance dispensation audits, staff activity inspection, and security access logs.</p>
+            <ul class="role-capabilities">
+              <li>Controlled substance registers</li>
+              <li>Tamper-evident audit logs</li>
+              <li>Sign-in lockout security review</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Connect with Us / Contact Section -->
+    <section class="section contact-section" id="contact" aria-labelledby="contact-title">
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="eyebrow">Direct Assistance</p>
+          <h2 id="contact-title">Connect with Us</h2>
+          <p>Have questions about setting up MediStock for your pharmacy, need onboarding support, or want a custom demonstration? We are here to help.</p>
+        </div>
+
+        <div class="contact-layout">
+          <!-- Left: Contact Details & Support Info -->
+          <div class="contact-info-col">
+            <div class="contact-card">
+              <h3>We’re here for your pharmacy</h3>
+              <p>Pharmacy operations don’t stop, and neither do we. Reach out through any of our direct channels or visit our store in Tirupati for dedicated support and onboarding guidance.</p>
+
+              <div class="contact-channels">
+                <div class="channel-item">
+                  <span class="channel-icon" aria-hidden="true">✉</span>
+                  <div class="channel-details">
+                    <strong>Email Support</strong>
+                    <a href="mailto:medistock@medistock.com">medistock@medistock.com</a>
+                  </div>
+                </div>
+
+                <div class="channel-item">
+                  <span class="channel-icon" aria-hidden="true">📞</span>
+                  <div class="channel-details">
+                    <strong>Phone Helpline</strong>
+                    <a href="tel:+917894561230">+91 78945 61230</a>
+                  </div>
+                </div>
+
+                <div class="channel-item">
+                  <span class="channel-icon" aria-hidden="true">📍</span>
+                  <div class="channel-details">
+                    <strong>Store Address</strong>
+                    <span>Tirupati, Tirupati City,</span>
+                    <span>Andhra Pradesh, 517505</span>
+                  </div>
+                </div>
+
+                <div class="channel-item">
+                  <span class="channel-icon" aria-hidden="true">📜</span>
+                  <div class="channel-details">
+                    <strong>Pharmacy License Number</strong>
+                    <span>DL No. 123456789</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="support-hours-badge">
+                <span>Support Desk: Mon – Sat, 8:00 AM – 10:00 PM IST</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Interactive Contact Form -->
+          <div class="contact-form-card">
+            <h3>Send us a message</h3>
+            <p>Fill out the form below and our pharmacy technical specialist will get back to you within 24 hours.</p>
+
+            <form id="contactForm" class="contact-form" novalidate>
+              <div class="form-group">
+                <label for="contactName">Your Name *</label>
+                <input id="contactName" name="name" type="text" placeholder="e.g. Dr. Rajesh Kumar" required minlength="2">
+              </div>
+
+              <div class="form-group">
+                <label for="contactEmail">Work Email *</label>
+                <input id="contactEmail" name="email" type="email" placeholder="name@pharmacy.com" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactPharmacy">Pharmacy / Store Name *</label>
+                <input id="contactPharmacy" name="pharmacy" type="text" placeholder="e.g. MediStock Pharmacy" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactPhone">Phone Number</label>
+                <input id="contactPhone" name="phone" type="tel" placeholder="+91 98765 43210">
+              </div>
+
+              <div class="form-group full-width">
+                <label for="contactSubject">Inquiry Type *</label>
+                <select id="contactSubject" name="subject" required>
+                  <option value="">Select how we can help you</option>
+                  <option value="demo">Request a Live System Demo</option>
+                  <option value="onboarding">New Pharmacy Onboarding &amp; Setup</option>
+                  <option value="technical">Technical Support &amp; Configuration</option>
+                  <option value="general">General Inquiries &amp; Feedback</option>
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="contactMessage">Message *</label>
+                <textarea id="contactMessage" name="message" rows="4" placeholder="Tell us about your pharmacy setup, estimated store count, or questions..." required minlength="10"></textarea>
+              </div>
+
+              <div class="form-actions-row">
+                <button type="submit" class="btn btn-submit" id="contactSubmitButton">Send Message</button>
+                <span id="contactFormStatus" class="form-status" role="status" aria-live="polite"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer>MediStock · Pharmacy inventory and billing</footer>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="MediStock home">
+          <img src="/assets/medistock-mark.svg" alt="" width="28" height="28">
+          <span>MediStock</span>
+        </a>
+        <p>Smart pharmacy inventory, FEFO batch tracking, and point-of-sale billing management system.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#workflow">How It Works</a></li>
+          <li><a href="#roles">Role Dashboards</a></li>
+          <li><a href="/login.html">Sign In</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Capabilities</h4>
+        <ul>
+          <li><a href="#features">FEFO Auto-Dispensing</a></li>
+          <li><a href="#features">Batch Expiry Tracking</a></li>
+          <li><a href="#features">GST Billing &amp; Invoicing</a></li>
+          <li><a href="#features">Regulatory Audit Logs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#contact">Contact Support</a></li>
+          <li><a href="mailto:medistock@medistock.com">medistock@medistock.com</a></li>
+          <li><a href="tel:+917894561230">+91 78945 61230</a></li>
+          <li><a href="#contact">Tirupati, Andhra Pradesh</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 MediStock Healthcare Technologies. All rights reserved.</p>
+      <p>Protected by role-based access control and tamper-evident audit logging.</p>
+    </div>
+  </footer>
+
+  <!-- Contact Form Interactive Client Script -->
+  <script>
+    (() => {
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('contactFormStatus');
+      const submitBtn = document.getElementById('contactSubmitButton');
+
+      if (!form) return;
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        // Basic validation
+        const name = document.getElementById('contactName')?.value.trim();
+        const email = document.getElementById('contactEmail')?.value.trim();
+        const pharmacy = document.getElementById('contactPharmacy')?.value.trim();
+        const subject = document.getElementById('contactSubject')?.value;
+        const message = document.getElementById('contactMessage')?.value.trim();
+
+        if (!name || !email || !pharmacy || !subject || !message) {
+          status.textContent = 'Please fill out all required fields marked with *.';
+          status.className = 'form-status';
+          status.style.color = '#b42318';
+          return;
+        }
+
+        // Simulate successful receipt
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        setTimeout(() => {
+          form.reset();
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Message';
+          status.textContent = '✓ Thank you, ' + name + '! Your message has been received. Our pharmacy support specialist will contact you within 24 hours.';
+          status.className = 'form-status is-success';
+          status.style.color = '#176542';
+        }, 600);
+      });
+    })();
+  </script>
 </body>
 </html>

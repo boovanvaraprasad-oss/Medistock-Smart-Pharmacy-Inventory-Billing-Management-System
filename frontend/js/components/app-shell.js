@@ -13,7 +13,7 @@
         { label: "Dashboard", href: (user) => getDashboardForRole(user.role), icon: "layout-dashboard", permissions: [] },
         { label: "Home", href: "home.html", icon: "house", permissions: [] },
         { label: "My Profile", href: "profile.html", icon: "user-round", permissions: [] },
-        { label: "Staff & Users", href: "users.html", icon: "users", permissions: ["user:read", "user:write"] },
+        { label: "Staff & Users", href: (user) => (user.permissions?.includes("user:read") || user.role === "owner" ? "users.html" : "login_history.html"), icon: "users", permissions: ["user:read", "user:write", "login_log:read"] },
         { label: "Medicines", href: "medicines.html", icon: "pill", permissions: ["medicine:read", "medicine:write"] },
         { label: "Stock Batches", href: "batches.html", icon: "boxes", permissions: ["stock:read"] },
         { label: "Categories", href: "categories.html", icon: "grid", permissions: ["medicine:read", "medicine:write"] },
@@ -25,7 +25,6 @@
         { label: "Notifications", href: "notifications.html", icon: "bell", permissions: ["stock:read"] },
         { label: "Reports & Analytics", href: "reports.html", icon: "chart-column", permissions: ["report:view"] },
         { label: "Settings", href: "settings.html", icon: "settings", permissions: [] },
-        { label: "Login History", href: "login_history.html", icon: "history", permissions: [], roles: ["owner", "store_manager"] },
         { label: "Audit Trail", href: "audit_trail.html", icon: "history", permissions: ["audit_log:read"] }
     ];
 
@@ -87,7 +86,8 @@
             link.className = "app-side-link";
             const pageHref = typeof item.href === "function" ? item.href(currentUser) : item.href;
             link.href = pageHref;
-            if (currentFile === pageHref) link.setAttribute("aria-current", "page");
+            const isStaffAndUsersActive = item.label === "Staff & Users" && (currentFile === "users.html" || currentFile === "login_history.html");
+            if (currentFile === pageHref || isStaffAndUsersActive) link.setAttribute("aria-current", "page");
 
             const icon = document.createElement("span");
             icon.className = "app-side-icon";

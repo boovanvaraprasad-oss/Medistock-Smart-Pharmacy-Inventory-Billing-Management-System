@@ -110,6 +110,49 @@ body:is(.has-app-sidebar, .app-theme-ready) > .page {
     gap: 8px;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.sub-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid var(--ms-edge);
+    padding-bottom: 12px;
+}
+
+.sub-nav-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 16px;
+    border: 1px solid var(--ms-edge);
+    border-radius: var(--ms-radius-full, 999px);
+    background: var(--ms-white, #ffffff);
+    color: var(--ms-muted, #52696C);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.sub-nav-item:hover {
+    color: var(--ms-ink, #17383D);
+    background: var(--ms-mist, #E8F4F5);
+    border-color: var(--ms-teal-500, #22B9B5);
+}
+
+.sub-nav-item.is-active,
+.sub-nav-item[aria-current="page"] {
+    background: var(--ms-teal-800, #08777B);
+    border-color: var(--ms-teal-800, #08777B);
+    color: #ffffff;
+}
+
 .button,
 .btn {
     display: inline-flex;
@@ -1287,4 +1330,23 @@ body:is(.has-app-sidebar, .app-theme-ready) > .page .report-chart-point:focus-vi
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) > .page :is(.inventory-icon, .purchase-icon, .manager-metric-icon, .compliance-icon, .metric-icon, .supplier-avatar, .batch-alert-icon, .settings-icon) {
     background-color: var(--ms-success-bg);
     color: var(--ms-mint-400);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sub-nav {
+    border-bottom-color: var(--ms-edge, #31484b);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sub-nav-item {
+    background: var(--ms-surface, #1b2b2e);
+    border-color: var(--ms-edge, #31484b);
+    color: #a9c2c4;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sub-nav-item:hover:not(.is-active):not([aria-current="page"]) {
+    background: var(--ms-surface-raised, #16363B);
+    border-color: var(--ms-teal-500, #22B9B5);
+    color: var(--ms-mint, #67D2AE);
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sub-nav-item.is-active,
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .sub-nav-item[aria-current="page"] {
+    background: var(--ms-teal-800, #08777B);
+    border-color: var(--ms-teal-800, #08777B);
+    color: #ffffff;
 }
