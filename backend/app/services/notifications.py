@@ -111,6 +111,22 @@ async def build_notifications(user):
                 "href": "purchase_orders.html",
             })
 
+    if user.get("role") in ["owner", "store_manager"]:
+        recent_inquiries = await db.inquiries.find(
+            {"status": "new"},
+            {"name": 1, "pharmacy": 1, "subject": 1, "created_at": 1},
+        ).sort("created_at", -1).limit(10).to_list(length=None)
+        for inq in recent_inquiries:
+            alerts.append({
+                "id": f"inquiry:{inq['_id']}",
+                "type": "customer_inquiry",
+                "priority": "info",
+                "title": f"Inquiry: {inq.get('pharmacy', 'Pharmacy')}",
+                "message": f"From {inq.get('name', 'Customer')} ({inq.get('subject', 'General')})",
+                "href": "dashboard.html",
+            })
+
+
     user_id = user["_id"]
     read_docs = await db.notification_reads.find(
         {"user_id": user_id},

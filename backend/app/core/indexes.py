@@ -94,3 +94,11 @@ async def create_indexes():
             "[indexes] revoked_tokens.expires_at "
             f"FAILED: {error}"
         )
+
+    # 4. Inquiries index on created_at for fast descending listing
+    try:
+        await db.inquiries.create_index([("created_at", -1), ("status", 1)])
+        print("[indexes] inquiries.created_at+status ready")
+    except Exception as error:
+        print(f"[indexes] inquiries index FAILED: {error}")
+

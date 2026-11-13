@@ -213,11 +213,20 @@ function renderHome(user) {
         description: "Choose an area available to your account."
     };
     const name = user.full_name || user.name || "there";
+    const displayName = user.full_name || user.name || (user.email ? user.email.split("@")[0] : "User");
     const allowedTiles = tileDefinitions.filter((tile) => canSeeTile(tile, user));
 
     document.getElementById("welcomeName").textContent = name;
     document.getElementById("roleLabel").textContent = details.label;
     document.getElementById("roleDescription").textContent = details.description;
+
+    const profileAvatar = document.getElementById("homeProfileAvatar");
+    const profileName = document.getElementById("homeProfileName");
+    const profileRole = document.getElementById("homeProfileRole");
+    if (profileAvatar) profileAvatar.textContent = displayName.trim().charAt(0).toUpperCase();
+    if (profileName) profileName.textContent = displayName;
+    if (profileRole) profileRole.textContent = roleLabel(user.role);
+
     homeTiles.replaceChildren(...allowedTiles.map((tile) => createHomeTile(tile, user)));
     homeTileCount.textContent = `${allowedTiles.length} areas available to your role`;
 }

@@ -555,6 +555,109 @@ img, svg {
 }
 
 /* ==========================================================================
+   FAQ Accordion Section
+   ========================================================================== */
+.faq-section {
+  background: var(--surface-white);
+}
+
+.faq-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--surface-white);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.faq-item:hover {
+  border-color: var(--teal-600);
+  box-shadow: var(--shadow-md);
+}
+
+.faq-item[open] {
+  border-color: var(--teal-700);
+  background: #FCFDFD;
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--mint-light);
+  color: var(--teal-700);
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.faq-item[open] .faq-toggle-icon {
+  transform: rotate(45deg);
+  background: var(--teal-700);
+  color: #FFFFFF;
+}
+
+.faq-answer {
+  padding: 0 24px 22px;
+  color: var(--ink-muted);
+  font-size: 14.5px;
+  line-height: 1.7;
+  border-top: 1px solid var(--edge-light);
+  margin-top: 4px;
+  padding-top: 16px;
+}
+
+.faq-answer p {
+  margin: 0;
+}
+
+.faq-footer-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 48px;
+  text-align: center;
+}
+
+.faq-footer-cta p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
    Connect With Us / Contact Section
    ========================================================================== */
 .contact-section {
@@ -903,6 +1006,23 @@ img, svg {
 
   .contact-form-card {
     padding: 24px 20px;
+  }
+
+  .faq-question {
+    padding: 16px 18px;
+    font-size: 15px;
+    gap: 12px;
+  }
+
+  .faq-answer {
+    padding: 0 18px 18px;
+    font-size: 13.5px;
+  }
+
+  .faq-toggle-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
   }
 
   .footer-top {

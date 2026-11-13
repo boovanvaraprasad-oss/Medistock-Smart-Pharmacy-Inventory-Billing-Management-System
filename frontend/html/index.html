@@ -24,6 +24,7 @@
         <a href="#features">Features</a>
         <a href="#workflow">How It Works</a>
         <a href="#roles">Team Roles</a>
+        <a href="#faq">FAQs</a>
         <a href="#contact">Connect with Us</a>
         <a class="nav-login" href="/login.html">Sign In</a>
       </nav>
@@ -263,6 +264,90 @@
       </div>
     </section>
 
+    <!-- Frequently Asked Questions (FAQ) Section -->
+    <section class="section faq-section" id="faq" aria-labelledby="faq-title">
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="eyebrow">Got Questions?</p>
+          <h2 id="faq-title">Frequently Asked Questions</h2>
+          <p>Everything you need to know about MediStock’s pharmacy operations, compliance, and billing system.</p>
+        </div>
+
+        <div class="faq-accordion" role="region" aria-label="Frequently Asked Questions list">
+          <!-- Question 1 -->
+          <details class="faq-item" open>
+            <summary class="faq-question">
+              <span>How does FEFO auto-allocation prevent medicine expiry and revenue loss?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>MediStock's First-Expiry, First-Out (FEFO) engine automatically prioritizes batches with the nearest expiry date during POS billing and prescription dispensing. This ensures older batches are dispensed first, preventing stock obsolescence, eliminating manual lot selection, and cutting medicine wastage to zero.</p>
+            </div>
+          </details>
+
+          <!-- Question 2 -->
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Can staff members have differentiated roles and access permissions?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Yes. MediStock enforces strict Role-Based Access Control (RBAC). Pharmacists handle billing and returns; Inventory Executives manage batches and stock intake; Purchase Executives manage vendor orders; Store Managers review operations and audit sign-ins; and Compliance Officers inspect audit logs and narcotic registers. Only the Store Owner has administrative rights to manage user accounts, pricing, and master data.</p>
+            </div>
+          </details>
+
+          <!-- Question 3 -->
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>How does MediStock handle low stock, out-of-stock, and expiry alerts?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>MediStock provides proactive 30-day expiry watchdogs and customizable minimum reorder thresholds. The system flags expiring batches, triggers high-priority alerts in the Notification Center, and displays actionable alerts directly on executive and pharmacist dashboards to prompt timely vendor returns or replenishment.</p>
+            </div>
+          </details>
+
+          <!-- Question 4 -->
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Is every stock adjustment and dispensation recorded in an audit trail?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Absolutely. Every inventory intake, stock adjustment, return, and dispensed invoice generates an immutable audit record logging the exact timestamp, actor ID, action category, before/after values, and mandated clinical reasons. The audit trail is fully searchable and ready for state drug control inspections.</p>
+            </div>
+          </details>
+
+          <!-- Question 5 -->
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>Can receipts and bills be customized with our Pharmacy GST and Drug License numbers?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Yes. MediStock invoices seamlessly integrate your store's legal entity details, Drug License (DL) numbers (Form 20/21), GSTIN, contact numbers, and custom terms. Receipts can be printed directly on 2-inch or 3-inch thermal POS printers or downloaded as standardized PDF invoices with itemized batch numbers and expiry dates.</p>
+            </div>
+          </details>
+
+          <!-- Question 6 -->
+          <details class="faq-item">
+            <summary class="faq-question">
+              <span>What hardware or operating systems are supported?</span>
+              <span class="faq-toggle-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>MediStock runs seamlessly on any modern web browser across Windows, macOS, Linux, and tablets. It natively supports standard USB and Bluetooth barcode scanners, POS thermal receipt printers, and cash drawers without requiring proprietary drivers.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="faq-footer-cta">
+          <p>Have a question that isn’t covered here?</p>
+          <a href="#contact" class="button button-secondary">Talk to our pharmacy team →</a>
+        </div>
+      </div>
+    </section>
+
     <!-- Connect with Us / Contact Section -->
     <section class="section contact-section" id="contact" aria-labelledby="contact-title">
       <div class="section-container">
@@ -390,6 +475,7 @@
           <li><a href="#features">Features</a></li>
           <li><a href="#workflow">How It Works</a></li>
           <li><a href="#roles">Role Dashboards</a></li>
+          <li><a href="#faq">Frequently Asked Questions</a></li>
           <li><a href="/login.html">Sign In</a></li>
         </ul>
       </div>
@@ -430,13 +516,14 @@
 
       if (!form) return;
 
-      form.addEventListener('submit', (event) => {
+      form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        // Basic validation
+        // Validation
         const name = document.getElementById('contactName')?.value.trim();
         const email = document.getElementById('contactEmail')?.value.trim();
         const pharmacy = document.getElementById('contactPharmacy')?.value.trim();
+        const phone = document.getElementById('contactPhone')?.value.trim() || undefined;
         const subject = document.getElementById('contactSubject')?.value;
         const message = document.getElementById('contactMessage')?.value.trim();
 
@@ -447,18 +534,54 @@
           return;
         }
 
-        // Simulate successful receipt
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending…';
+        if (message.length < 10) {
+          status.textContent = 'Please provide a message with at least 10 characters.';
+          status.className = 'form-status';
+          status.style.color = '#b42318';
+          return;
+        }
 
-        setTimeout(() => {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending message…';
+        status.textContent = '';
+        status.className = 'form-status';
+
+        try {
+          const res = await fetch('/api/v1/inquiries', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ name, email, pharmacy, phone, subject, message })
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            let errorMsg = 'Failed to send message. Please try again or reach our team directly.';
+            if (data && data.detail) {
+              if (Array.isArray(data.detail)) {
+                errorMsg = data.detail.map((err) => err.msg || err.message).join(', ');
+              } else if (typeof data.detail === 'string') {
+                errorMsg = data.detail;
+              }
+            }
+            throw new Error(errorMsg);
+          }
+
           form.reset();
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send Message';
-          status.textContent = '✓ Thank you, ' + name + '! Your message has been received. Our pharmacy support specialist will contact you within 24 hours.';
+          status.textContent = '✓ ' + (data.message || ('Thank you, ' + name + '! Your message has been received.'));
           status.className = 'form-status is-success';
           status.style.color = '#176542';
-        }, 600);
+        } catch (err) {
+          status.textContent = '⚠ ' + (err.message || 'Unable to connect to the server. Please call or email us directly.');
+          status.className = 'form-status is-error';
+          status.style.color = '#b42318';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Message';
+        }
       });
     })();
   </script>
