@@ -258,9 +258,21 @@ function renderInquiries() {
             deleteBtn.addEventListener("click", async () => {
                 const inquiryId = deleteBtn.dataset.deleteId;
                 const customerName = deleteBtn.dataset.deleteName || "this customer";
-                if (!confirm(`Are you sure you want to permanently delete the inquiry from "${customerName}"?`)) {
-                    return;
+                const pharmacyName = inq.pharmacy ? ` (${inq.pharmacy})` : "";
+
+                let confirmed = false;
+                if (typeof window.showConfirmDialog === "function") {
+                    confirmed = await window.showConfirmDialog({
+                        title: "Delete inquiry permanently?",
+                        message: `Delete customer inquiry from “${customerName}”${pharmacyName}? This action cannot be undone.`,
+                        confirmText: "Delete inquiry"
+                    });
+                } else {
+                    confirmed = confirm(`Are you sure you want to permanently delete the inquiry from "${customerName}"?`);
                 }
+
+                if (!confirmed) return;
+
                 deleteBtn.disabled = true;
                 deleteBtn.textContent = "Deleting…";
                 try {
@@ -270,7 +282,7 @@ function renderInquiries() {
                     allInquiries = allInquiries.filter((item) => item.id !== inquiryId);
                     renderInquiries();
                     if (inquiryActionStatus) {
-                        inquiryActionStatus.textContent = `Inquiry from "${customerName}" deleted successfully.`;
+                        inquiryActionStatus.textContent = `Inquiry from “${customerName}” was permanently deleted.`;
                         inquiryActionStatus.classList.remove("is-error");
                         setTimeout(() => { if (inquiryActionStatus) inquiryActionStatus.textContent = ""; }, 3500);
                     }
