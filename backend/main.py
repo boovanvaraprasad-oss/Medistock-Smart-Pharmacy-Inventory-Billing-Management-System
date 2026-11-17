@@ -59,6 +59,16 @@ app.mount(
     name="frontend-assets",
 )
 
+UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+(UPLOADS_DIR / "prescriptions").mkdir(parents=True, exist_ok=True)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory=UPLOADS_DIR),
+    name="uploads",
+)
+
 app.mount(
     "/",
     StaticFiles(

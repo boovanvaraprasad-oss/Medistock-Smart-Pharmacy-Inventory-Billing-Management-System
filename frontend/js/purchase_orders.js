@@ -406,6 +406,105 @@ closeDetailsButton.addEventListener("click", () => {
     orderDetailsSection.hidden = true;
 });
 
+// ==========================================================================
+// Add-on 4: Automated Purchase Order Generator Logic
+// ==========================================================================
+const autoPoSection = document.getElementById("autoPoSection");
+const previewLowStockBtn = document.getElementById("previewLowStockBtn");
+const generateAutoPoBtn = document.getElementById("generateAutoPoBtn");
+const lowStockPreviewBox = document.getElementById("lowStockPreviewBox");
+const lowStockSummaryText = document.getElementById("lowStockSummaryText");
+const lowStockSuppliersList = document.getElementById("lowStockSuppliersList");
+
+if (previewLowStockBtn) {
+    previewLowStockBtn.addEventListener("click", async () => {
+        previewLowStockBtn.disabled = true;
+        previewLowStockBtn.textContent = "Checking inventory…";
+        showMessage(errorMessage, "");
+
+        try {
+            const data = await apiRequest("/api/v1/purchase-orders/low-stock-preview");
+
+            if (data.total_low_stock_medicines === 0) {
+                lowStockPreviewBox.hidden = false;
+                lowStockSummaryText.innerHTML = "<strong>✓ Healthy Stock:</strong> All medicines are currently above their reorder thresholds. No replenishment orders are needed right now.";
+                lowStockSuppliersList.replaceChildren();
+                return;
+            }
+
+            lowStockPreviewBox.hidden = false;
+            lowStockSummaryText.innerHTML = `<strong>⚠️ Found ${data.total_low_stock_medicines} low-stock medicine(s)</strong> across <strong>${data.total_suppliers_affected} supplier(s)</strong> needing replenishment:`;
+            lowStockSuppliersList.replaceChildren();
+
+            for (const group of data.suppliers) {
+                const card = document.createElement("div");
+                card.className = "supplier-preview-card";
+
+                const title = document.createElement("div");
+                title.className = "supplier-preview-title";
+                title.innerHTML = `<span>🏢 ${group.supplier_name}</span> <small style="color:var(--ms-slate);">${group.items.length} item(s)</small>`;
+                card.appendChild(title);
+
+                const table = document.createElement("table");
+                table.className = "supplier-preview-items";
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Current Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Suggested Order Qty</th>
+                            <th>Est. Unit Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${group.items.map(item => `
+                            <tr>
+                                <td><strong>${item.medicine_name}</strong> <small style="color:var(--ms-slate);">(${item.sku || 'SKU'})</small></td>
+                                <td><span class="stock-pill-low">${item.current_stock}</span></td>
+                                <td>${item.reorder_threshold}</td>
+                                <td><strong>${item.suggested_quantity}</strong> units</td>
+                                <td>${formatMoney(item.estimated_unit_price)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                `;
+                card.appendChild(table);
+                lowStockSuppliersList.appendChild(card);
+            }
+        } catch (err) {
+            showMessage(errorMessage, err.message);
+        } finally {
+            previewLowStockBtn.disabled = false;
+            previewLowStockBtn.textContent = "🔍 Check Low Stock";
+        }
+    });
+}
+
+if (generateAutoPoBtn) {
+    generateAutoPoBtn.addEventListener("click", async () => {
+        generateAutoPoBtn.disabled = true;
+        generateAutoPoBtn.textContent = "Generating POs…";
+        showMessage(errorMessage, "");
+        showMessage(successMessage, "");
+
+        try {
+            const res = await apiRequest("/api/v1/purchase-orders/generate-from-low-stock", {
+                method: "POST"
+            });
+
+            showMessage(successMessage, res.message);
+            if (lowStockPreviewBox) lowStockPreviewBox.hidden = true;
+            await loadOrders();
+        } catch (err) {
+            showMessage(errorMessage, err.message);
+        } finally {
+            generateAutoPoBtn.disabled = false;
+            generateAutoPoBtn.textContent = "⚡ Generate Purchase Orders";
+        }
+    });
+}
+
 async function initializePage() {
     if (!localStorage.getItem("access_token")) {
         window.location.href = "/";
@@ -446,6 +545,7 @@ async function initializePage() {
 
         if (permissions.includes("purchase:write")) {
             createOrderSection.hidden = false;
+            if (autoPoSection) autoPoSection.hidden = false;
         }
 
         await loadOrders();

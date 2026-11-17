@@ -25,6 +25,33 @@
         <p id="successMessage" class="message message-success" role="status" hidden></p>
         <p id="statusMessage" class="message" role="status">Loading purchase orders…</p>
 
+        <!-- Automated Low Stock PO Generator -->
+        <section id="autoPoSection" class="panel auto-po-panel" hidden>
+            <div class="auto-po-header">
+                <div class="auto-po-info">
+                    <div class="auto-po-badge">⚡ Smart Auto-Reorder</div>
+                    <h2>Automated Purchase Order Generator</h2>
+                    <p class="helper-text">
+                        Scan inventory for medicines at or below reorder threshold and automatically generate draft purchase orders grouped by supplier.
+                    </p>
+                </div>
+                <div class="auto-po-actions">
+                    <button id="previewLowStockBtn" class="button button-secondary" type="button">
+                        🔍 Check Low Stock
+                    </button>
+                    <button id="generateAutoPoBtn" class="button button-primary button-auto-po" type="button">
+                        ⚡ Generate Purchase Orders
+                    </button>
+                </div>
+            </div>
+
+            <!-- Low Stock Preview Dropdown/Box -->
+            <div id="lowStockPreviewBox" class="low-stock-preview-box" hidden>
+                <div id="lowStockSummaryText" class="low-stock-summary"></div>
+                <div id="lowStockSuppliersList" class="low-stock-suppliers-list"></div>
+            </div>
+        </section>
+
         <section id="createOrderSection" class="panel" hidden>
             <h2>Create purchase order</h2>
             <form id="createOrderForm" class="purchase-form">

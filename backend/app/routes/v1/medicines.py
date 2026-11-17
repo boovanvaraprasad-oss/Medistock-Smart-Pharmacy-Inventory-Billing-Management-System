@@ -17,6 +17,7 @@ from app.schemas.medicine import (
 from app.services.medicines import (
     create_medicine,
     get_medicine,
+    get_medicine_by_barcode,
     list_medicines,
     update_medicine,
 )
@@ -79,6 +80,20 @@ async def get_medicines(
         page=page,
         limit=limit,
     )
+
+
+@router.get(
+    "/barcode/{barcode}",
+    response_model=MedicineResponse,
+)
+async def get_medicine_by_barcode_endpoint(
+    barcode: str,
+    current_user=Depends(
+        require_permission(MEDICINE_READ)
+    ),
+):
+    """Lookup medicine instantly by SKU, barcode, or ID."""
+    return await get_medicine_by_barcode(barcode)
 
 
 @router.get(

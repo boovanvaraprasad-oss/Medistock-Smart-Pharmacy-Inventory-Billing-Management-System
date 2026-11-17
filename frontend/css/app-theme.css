@@ -759,6 +759,57 @@ body:is(.has-app-sidebar, .app-theme-ready) :where(*) { font-family: Inter, "Seg
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .app-header-notifications:hover { background: #17383d; color: #ffffff; }
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.settings-form label, .settings-form input) { color: #e8f4f3; }
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-form label { font-weight: 600; }
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.inquiry-card, .smtp-status-box) {
+    border-color: #25464a;
+    background: #0f2326;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-card:hover {
+    border-color: #22b9b5;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-filters {
+    background: #142e32;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-filter-btn {
+    color: #a9c2c4;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-filter-btn:hover {
+    color: #ffffff;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-filter-btn.is-active {
+    background: #1b454a;
+    color: #67d2ae;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) :is(.inquiry-search-box input, .smtp-test-row input) {
+    border-color: #25464a;
+    background: #142e32;
+    color: #f1f7f8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-identity strong {
+    color: #f1f7f8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-identity small {
+    color: #a9c2c4;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-message {
+    border-color: #25464a;
+    background: #142e32;
+    color: #f1f7f8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-tag {
+    background: #1b454a;
+    color: #67d2ae;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-action-btn {
+    border-color: #25464a;
+    background: #142e32;
+    color: #f1f7f8;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .inquiry-action-btn:hover {
+    background: #1e4d53;
+}
+:root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .smtp-value {
+    color: #f1f7f8;
+}
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-hint,
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-status { color: #a9c2c4; }
 :root[data-theme="dark"] body:is(.has-app-sidebar, .app-theme-ready) .settings-status.is-error { color: #ffaaa3; }

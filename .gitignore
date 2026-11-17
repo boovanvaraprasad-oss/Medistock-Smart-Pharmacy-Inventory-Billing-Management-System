@@ -18,3 +18,7 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# User Uploads
+backend/uploads/prescriptions/*
+!backend/uploads/prescriptions/.gitkeep

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock | Billing</title>
+    <title>MediStock | Billing &amp; POS</title>
     <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/css/billing.css">
     <link rel="stylesheet" href="/css/confirm-dialog.css">
@@ -16,9 +16,14 @@
     <main class="page">
         <header class="page-header">
             <div>
-                <p class="eyebrow">Sales</p>
-                <h1>Billing</h1>
-                <p class="subtitle">Create customer bills and record completed sales.</p>
+                <p class="eyebrow">Sales &amp; POS</p>
+                <h1>Billing &amp; Invoices</h1>
+                <p class="subtitle">Smart Pharmacy POS checkout, digital tax invoicing, and barcode scanning.</p>
+            </div>
+            <div class="pos-top-actions">
+                <button id="quickNewSaleBtn" class="button button-primary" type="button">
+                    ➕ New Sale
+                </button>
             </div>
         </header>
 
@@ -26,200 +31,510 @@
         <p id="successMessage" class="message message-success" role="status" hidden></p>
         <p id="statusMessage" class="message" role="status">Loading bills…</p>
 
-        <section id="createBillSection" class="panel" hidden>
-            <h2>Create bill</h2>
-            <p class="helper-text">
-                Add the customer details first. The default tax rate from Settings is applied to new bills. Stock is deducted only when you complete the bill.
-            </p>
+        <!-- POS Mode Navigation Tabs -->
+        <div class="billing-tabs-nav" role="tablist">
+            <button id="tabPosBtn" class="pos-tab is-active" type="button" role="tab" aria-selected="true">
+                <span class="tab-icon">🛒</span> Active POS Sale / Invoice
+            </button>
+            <button id="tabHistoryBtn" class="pos-tab" type="button" role="tab" aria-selected="false">
+                <span class="tab-icon">📋</span> Sales History (<span id="tabBillCount">0</span>)
+            </button>
+        </div>
 
-            <form id="createBillForm" class="billing-form">
-                <div class="billing-field">
-                    <label for="customerName">Customer name</label>
-                    <input id="customerName" type="text" minlength="2" maxlength="100" required>
+        <!-- ==============================================================
+             TAB 1: ACTIVE POS SALE & REDESIGNED INVOICE WORKSTATION
+             ============================================================== -->
+        <div id="posWorkstationView" class="pos-view">
+
+            <!-- Welcome / Start New Sale Panel (Shown when no bill is active or user clicked New Sale) -->
+            <section id="createBillSection" class="panel pos-start-card" hidden>
+                <div class="section-heading">
+                    <div>
+                        <h2>Start New Customer Sale</h2>
+                        <p class="helper-text">
+                            Enter customer details to open a new draft bill. You can immediately scan barcodes or search medicines.
+                        </p>
+                    </div>
                 </div>
 
-                <div class="billing-field">
-                    <label for="customerPhone">Customer phone</label>
-                    <input id="customerPhone" type="tel" minlength="10" maxlength="15" required>
-                </div>
-
-                <div class="form-actions">
-                    <button id="createBillButton" class="button button-primary" type="submit">
-                        Create draft bill
-                    </button>
-                </div>
-            </form>
-        </section>
-
-        <section class="panel">
-            <div class="section-heading">
-                <div>
-                    <h2>Bill list</h2>
-                    <p id="billListDescription" class="helper-text">Loading…</p>
-                </div>
-                <button id="refreshButton" class="button button-secondary" type="button">
-                    Refresh
-                </button>
-            </div>
-
-            <div class="record-search" role="search">
-                <label for="billSearch">Search bills</label>
-                <input id="billSearch" type="search" data-record-search="#billRows" placeholder="Search invoice, customer, payment, or status" autocomplete="off">
-                <p class="record-search-empty" role="status" hidden>No matching bills.</p>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Invoice</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Payment</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="billRows"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="billDetailsSection" class="panel" hidden>
-            <div class="section-heading">
-                <div>
-                    <h2 id="billDetailsTitle">Bill details</h2>
-                    <p id="billDetailsDescription" class="helper-text"></p>
-                </div>
-                <div class="form-actions invoice-actions">
-                    <button id="printInvoiceButton" class="button button-primary" type="button" hidden>
-                        Print invoice
-                    </button>
-                    <button id="closeDetailsButton" class="button button-secondary" type="button">
-                        Close
-                    </button>
-                </div>
-            </div>
-
-            <div id="addBillItemSection" hidden>
-                <h3>Add medicine</h3>
-                <form id="addBillItemForm" class="billing-form item-form">
-                    <div class="billing-field medicine-search-field">
-                        <label for="medicineSearch">Search medicine</label>
-                        <input id="medicineSearch" type="search" maxlength="100" placeholder="Type a medicine name" autocomplete="off">
-                        <span id="medicineSearchStatus" class="medicine-search-status" role="status" aria-live="polite"></span>
+                <form id="createBillForm" class="billing-form pos-start-form">
+                    <div class="billing-field">
+                        <label for="customerName">Customer Name <span class="required">*</span></label>
+                        <input id="customerName" type="text" minlength="2" maxlength="100" placeholder="e.g. Ramesh Kumar" required autofocus>
                     </div>
 
                     <div class="billing-field">
-                        <label for="medicineSelect">Medicine</label>
-                        <select id="medicineSelect" required></select>
+                        <label for="customerPhone">Customer Phone <span class="required">*</span></label>
+                        <input id="customerPhone" type="tel" minlength="10" maxlength="15" placeholder="e.g. 9876543210" required>
                     </div>
 
                     <div class="billing-field">
-                        <label for="quantity">Quantity</label>
-                        <input id="quantity" type="number" min="1" step="1" required>
+                        <label for="customerEmail">Customer Email <span class="rx-opt-hint">(optional, for digital receipt)</span></label>
+                        <input id="customerEmail" type="email" maxlength="150" placeholder="ramesh@example.com">
                     </div>
 
                     <div class="form-actions">
-                        <button id="addItemButton" class="button button-primary" type="submit">
-                            Add to bill
+                        <button id="createBillButton" class="button button-primary" type="submit">
+                            🚀 Start Sale &amp; Open POS Register
                         </button>
                     </div>
                 </form>
-            </div>
+            </section>
 
-            <h3>Items</h3>
-            <div class="record-search" role="search">
-                <label for="billItemSearch">Search items on this bill</label>
-                <input id="billItemSearch" type="search" data-record-search="#billItemRows" placeholder="Search medicine name" autocomplete="off">
-                <p class="record-search-empty" role="status" hidden>No matching bill items.</p>
-            </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Medicine</th>
-                            <th>Quantity</th>
-                            <th>Unit price</th>
-                            <th>Total</th>
-                            <th id="itemActionsHeading">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="billItemRows"></tbody>
-                </table>
-            </div>
-
-            <div class="bill-totals">
-                <p>Subtotal <strong id="billSubtotal">₹0.00</strong></p>
-                <p>Tax <strong id="billTax">₹0.00</strong></p>
-                <p class="bill-grand-total">Total <strong id="billTotal">₹0.00</strong></p>
-            </div>
-
-            <div id="billCompletionActions" class="billing-form payment-form" hidden>
-                <div class="billing-field">
-                    <label for="paymentMethod">Payment method</label>
-                    <select id="paymentMethod" required>
-                        <option value="cash">Cash</option>
-                        <option value="card">Card</option>
-                        <option value="upi">UPI</option>
-                    </select>
+            <!-- Active POS Workstation & Redesigned Invoice Form -->
+            <section id="billDetailsSection" class="panel pos-invoice-panel" hidden>
+                <!-- Invoice Action Toolbar -->
+                <div class="pos-invoice-toolbar">
+                    <div class="pos-invoice-heading">
+                        <h2 id="billDetailsTitle">Invoice INV-000000</h2>
+                        <p id="billDetailsDescription" class="helper-text"></p>
+                    </div>
+                    <div class="form-actions invoice-actions">
+                        <button id="emailReceiptButton" class="button button-secondary" type="button" hidden title="Send digital invoice receipt to customer's email">
+                            📧 Email receipt
+                        </button>
+                        <button id="whatsappReceiptButton" class="button button-secondary button-whatsapp" type="button" hidden title="Share digital invoice receipt via WhatsApp">
+                            💬 WhatsApp receipt
+                        </button>
+                        <button id="printInvoiceButton" class="button button-primary" type="button" hidden>
+                            🖨️ Print invoice
+                        </button>
+                        <button id="closeDetailsButton" class="button button-secondary" type="button" title="Close current bill">
+                            ✕ Close
+                        </button>
+                    </div>
                 </div>
 
-                <div class="billing-field">
-                    <label for="amountReceived">Amount received (₹)</label>
-                    <input
-                        id="amountReceived"
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        inputmode="decimal"
-                        placeholder="Enter amount received"
-                        required
-                    >
+                <!-- REDESIGNED PHARMACY TAX INVOICE CARD (POS & PRINTABLE) -->
+                <div id="printableInvoiceCard" class="printable-invoice-card">
+                    <!-- Invoice Store Brand Header -->
+                    <div class="inv-header">
+                        <div class="inv-brand">
+                            <img src="/assets/medistock-mark.svg" alt="MediStock" class="inv-logo">
+                            <div>
+                                <h1 id="invStoreName" class="inv-store-name">MediStock Pharmacy</h1>
+                                <p class="inv-store-tagline">Licensed Retail Pharmacy &amp; Healthcare POS</p>
+                                <p id="invStoreAddress" class="inv-store-meta">Tirupati, Andhra Pradesh, 517505</p>
+                                <p class="inv-store-meta">
+                                    <span>Ph: <strong id="invStorePhone">+91 78945 61230</strong></span> &bull; 
+                                    <span>DL No: <strong id="invStoreLicense">DL-123456789</strong></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="inv-doc-badge">
+                            <div id="invMemoTitle" class="inv-memo-title">TAX INVOICE</div>
+                            <div id="invMemoSub" class="inv-memo-sub">CASH / CREDIT MEMO</div>
+                            <div id="invNumberBadge" class="inv-number-badge">INV-000000</div>
+                        </div>
+                    </div>
+
+                    <!-- Customer & Invoice Meta Details -->
+                    <div class="inv-meta-grid">
+                        <div class="inv-meta-block">
+                            <div class="inv-meta-heading">Billed To (Customer)</div>
+                            <p id="invCustomerName" class="inv-meta-line"><strong>Customer Name</strong></p>
+                            <p id="invCustomerPhone" class="inv-meta-line">Ph: —</p>
+                            <p id="invCustomerEmail" class="inv-meta-line" hidden>Email: —</p>
+                        </div>
+                        <div class="inv-meta-block inv-meta-right">
+                            <div class="inv-meta-heading">Invoice Details</div>
+                            <p class="inv-meta-line">Date: <strong id="invDateStr">16 Nov 2026</strong></p>
+                            <p class="inv-meta-line">Payment: <strong id="invPaymentMethod">CASH (PAID)</strong></p>
+                            <div id="invRxInfoBox" class="inv-rx-infobox" hidden>
+                                ℞ Prescribed by: <strong id="invRxDoctor">Dr. Doctor</strong> (<span id="invRxReg">Reg No</span>)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- POS Quick Barcode Scanner & Item Entry (Interactive in Draft Mode) -->
+                    <div id="addBillItemSection" class="inv-pos-input-bar" hidden>
+                        <div class="barcode-scan-bar">
+                            <div class="barcode-input-wrap">
+                                <span class="barcode-icon" aria-hidden="true">🏷️</span>
+                                <input id="barcodeInput" type="text" placeholder="Scan barcode or enter SKU (e.g. PARA-650) and press Enter…" autocomplete="off">
+                                <button id="barcodeLookupBtn" class="button button-small button-secondary" type="button">Quick Add</button>
+                            </div>
+                            <div class="scan-bar-controls">
+                                <button id="openCameraScannerButton" class="button button-secondary button-small button-scanner" type="button" title="Scan barcode or QR code with device camera">
+                                    📷 Camera Scan
+                                </button>
+                                <label class="auto-add-label" for="autoAddScanCheckbox" title="Automatically add 1 unit to the bill immediately when scanned">
+                                    <input type="checkbox" id="autoAddScanCheckbox" checked>
+                                    <span>Auto-add 1 unit</span>
+                                </label>
+                            </div>
+                        </div>
+                        <p id="barcodeScanFeedback" class="barcode-feedback" role="status" aria-live="polite" hidden></p>
+
+                        <form id="addBillItemForm" class="billing-form item-form inv-item-form">
+                            <div class="billing-field medicine-search-field">
+                                <label for="medicineSearch">Search Medicine</label>
+                                <input id="medicineSearch" type="search" maxlength="100" placeholder="Type medicine name to filter…" autocomplete="off">
+                                <span id="medicineSearchStatus" class="medicine-search-status" role="status" aria-live="polite"></span>
+                            </div>
+
+                            <div class="billing-field">
+                                <label for="medicineSelect">Select Medicine</label>
+                                <select id="medicineSelect" required></select>
+                            </div>
+
+                            <div class="billing-field">
+                                <label for="quantity">Quantity</label>
+                                <input id="quantity" type="number" min="1" step="1" value="1" required>
+                            </div>
+
+                            <div class="form-actions">
+                                <button id="addItemButton" class="button button-primary" type="submit">
+                                    + Add Item
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Schedule H Controlled Medicine Compliance Alert -->
+                    <div id="scheduleHAlert" class="schedule-h-banner" role="alert" hidden>
+                        <div class="schedule-h-icon" aria-hidden="true">⚠️</div>
+                        <div class="schedule-h-content">
+                            <strong>Schedule H / H1 Controlled Substance Alert</strong>
+                            <p id="scheduleHAlertText">This bill contains controlled substances. A doctor's prescription must be attached before completing the sale.</p>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Management Panel (Rx) -->
+                    <section id="prescriptionSection" class="prescription-panel" hidden>
+                        <div class="prescription-header">
+                            <div>
+                                <h3 id="prescriptionTitle">Doctor's Prescription (Rx)</h3>
+                                <p id="prescriptionSubtitle" class="helper-text">
+                                    Attach a valid physician's prescription slip or PDF for Schedule H and controlled drugs.
+                                </p>
+                            </div>
+                            <span id="prescriptionStatusBadge" class="rx-badge rx-optional">Optional</span>
+                        </div>
+
+                        <!-- Attached Prescription Card -->
+                        <div id="prescriptionActiveCard" class="rx-card-attached" hidden>
+                            <div class="rx-card-details">
+                                <div class="rx-file-icon" aria-hidden="true">📄</div>
+                                <div class="rx-meta">
+                                    <strong id="rxFileName">prescription.jpg</strong>
+                                    <p id="rxDoctorMeta" class="rx-submeta">
+                                        Prescribed by: <span id="rxDoctorName">—</span> · Reg: <span id="rxDoctorReg">—</span>
+                                    </p>
+                                    <small id="rxUploadMeta" class="rx-date"></small>
+                                </div>
+                            </div>
+                            <div class="rx-card-actions">
+                                <button id="viewPrescriptionBtn" type="button" class="button button-secondary button-small">View prescription</button>
+                                <button id="removePrescriptionBtn" type="button" class="button button-secondary button-small button-danger" hidden>Remove</button>
+                            </div>
+                        </div>
+
+                        <!-- Upload Form -->
+                        <form id="prescriptionUploadForm" class="rx-upload-form" hidden>
+                            <div class="rx-dropzone" id="rxDropzone">
+                                <input type="file" id="prescriptionFileInput" accept="image/jpeg,image/png,image/webp,application/pdf" class="rx-file-input">
+                                <div class="rx-dropzone-content">
+                                    <span class="rx-dropzone-icon" aria-hidden="true">📷</span>
+                                    <p><strong>Click to browse or drag &amp; drop prescription</strong></p>
+                                    <p class="rx-dropzone-hint">Supports JPG, PNG, WEBP, or PDF (max 5 MB)</p>
+                                </div>
+                                <p id="selectedFilePreview" class="rx-selected-file" hidden></p>
+                            </div>
+
+                            <div class="rx-form-grid">
+                                <div class="billing-field">
+                                    <label for="doctorNameInput">Prescribing Doctor Name <span id="docNameStar" class="rx-req-star" hidden>*</span></label>
+                                    <input id="doctorNameInput" type="text" placeholder="e.g. Dr. K. Ramanathan, MD" maxlength="120">
+                                </div>
+                                <div class="billing-field">
+                                    <label for="doctorRegNoInput">Doctor Registration / License No. <span id="docRegStar" class="rx-req-star" hidden>*</span></label>
+                                    <input id="doctorRegNoInput" type="text" placeholder="e.g. AP-MC-38491" maxlength="60">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button id="uploadPrescriptionButton" class="button button-secondary" type="submit" disabled>
+                                    Attach prescription to bill
+                                </button>
+                            </div>
+                        </form>
+                        <p id="prescriptionActionStatus" class="message" role="status" aria-live="polite" hidden></p>
+                    </section>
+
+                    <!-- The Unified Invoice Line Items Table -->
+                    <table class="inv-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 36px;">#</th>
+                                <th>Medicine Description</th>
+                                <th style="width: 110px;">Batch</th>
+                                <th style="width: 100px;">Expiry</th>
+                                <th style="text-align: center; width: 110px;">Qty</th>
+                                <th style="text-align: right; width: 110px;">Unit Price</th>
+                                <th style="text-align: right; width: 120px;">Amount</th>
+                                <th id="invActionColHeader" class="inv-action-col" style="text-align: center; width: 70px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invTableBody"></tbody>
+                    </table>
+
+                    <!-- Invoice Footer: Legal Terms & Financial Totals -->
+                    <div class="inv-footer-grid">
+                        <div class="inv-terms-block">
+                            <strong>Terms &amp; Conditions:</strong>
+                            <ul class="inv-terms-list">
+                                <li>1. Medicines once sold can be returned within 48 hours with intact seal and original receipt.</li>
+                                <li>2. Schedule H medicines are dispensed strictly under registered medical supervision.</li>
+                                <li>3. Storage instructions as indicated on packaging must be followed.</li>
+                            </ul>
+                            <!-- Digital Receipt Status Badge -->
+                            <div id="receiptStatusBanner" class="receipt-status-banner" hidden>
+                                <span class="receipt-status-icon" aria-hidden="true">✉️</span>
+                                <span id="receiptStatusText">Digital receipt delivered</span>
+                            </div>
+                            <div class="inv-signature-box">
+                                <div class="inv-sig-line">Registered Pharmacist Signature &amp; Stamp</div>
+                            </div>
+                        </div>
+
+                        <div class="inv-totals-box">
+                            <div class="inv-total-row">
+                                <span>Subtotal:</span>
+                                <strong id="invSubtotal">₹0.00</strong>
+                            </div>
+                            <div class="inv-total-row">
+                                <span id="invTaxLabel">GST Tax:</span>
+                                <strong id="invTaxAmount">₹0.00</strong>
+                            </div>
+                            <div class="inv-total-row inv-grand-total-row">
+                                <span>Grand Total:</span>
+                                <strong id="invGrandTotal">₹0.00</strong>
+                            </div>
+                            <div class="inv-total-row inv-payment-row">
+                                <span id="invPaidViaLabel">Paid via:</span>
+                                <span id="invAmountReceived">₹0.00</span>
+                            </div>
+                            <div id="invChangeRow" class="inv-total-row inv-payment-row" hidden>
+                                <span>Change Due:</span>
+                                <span id="invChangeDue" style="color: #059669; font-weight: 700;">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Tender & Sale Completion Drawer (Draft Mode) -->
+                    <div id="billCompletionActions" class="inv-checkout-box" hidden>
+                        <div class="inv-checkout-header">
+                            <h3>💳 POS Payment &amp; Sale Completion</h3>
+                            <span class="inv-checkout-tip">Shortcut: Press <strong>Ctrl + Enter</strong> to complete sale</span>
+                        </div>
+
+                        <div class="inv-checkout-grid">
+                            <div class="billing-field">
+                                <label for="paymentMethod">Payment Method</label>
+                                <select id="paymentMethod" required>
+                                    <option value="cash">💵 Cash</option>
+                                    <option value="upi">📱 UPI / QR Code</option>
+                                    <option value="card">💳 Debit / Credit Card</option>
+                                </select>
+                            </div>
+
+                            <div class="billing-field">
+                                <label for="amountReceived">Amount Received (₹)</label>
+                                <input
+                                    id="amountReceived"
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    inputmode="decimal"
+                                    placeholder="Enter amount received"
+                                    required
+                                >
+                            </div>
+
+                            <div class="billing-field" style="grid-column: 1 / -1;">
+                                <label>Quick Cash Tender</label>
+                                <div id="quickCashChips" class="quick-cash-chips">
+                                    <button type="button" class="cash-chip" data-tender="exact">Exact Total</button>
+                                    <button type="button" class="cash-chip" data-tender="50">+₹50</button>
+                                    <button type="button" class="cash-chip" data-tender="100">+₹100</button>
+                                    <button type="button" class="cash-chip" data-tender="500">+₹500</button>
+                                </div>
+                            </div>
+
+                            <div class="billing-field" style="grid-column: 1 / -1;">
+                                <label for="completeCustomerEmail">Customer Email <span class="rx-opt-hint">(for auto digital receipt)</span></label>
+                                <input id="completeCustomerEmail" type="email" maxlength="150" placeholder="customer@example.com">
+                            </div>
+
+                            <div class="billing-field-checkbox" style="grid-column: 1 / -1;">
+                                <label class="checkbox-label" for="sendReceiptCheckbox">
+                                    <input type="checkbox" id="sendReceiptCheckbox" checked>
+                                    <span>Send digital tax invoice receipt to customer's email immediately</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="inv-checkout-actions">
+                            <button id="completeBillButton" class="button button-primary button-large" type="button">
+                                ⚡ Complete Sale &amp; Deduct Stock
+                            </button>
+                        </div>
+                        <p id="completeBillRxWarning" class="rx-completion-warning" role="alert" hidden>
+                            ⚠️ Prescription required: You must attach a valid doctor's prescription above before completing this sale.
+                        </p>
+                    </div>
+
+                    <div class="inv-bottom-tagline">
+                        *** Thank You For Choosing MediStock Pharmacy &bull; Wish You Good Health! ***
+                    </div>
                 </div>
 
-                <div class="form-actions">
-                    <button id="completeBillButton" class="button button-primary" type="button">
-                        Complete sale and deduct stock
+                <p id="billCompletionMessage" class="message" role="status" aria-live="polite" hidden></p>
+                <p id="billApprovalMessage" class="helper-text" role="status" hidden>
+                    Draft saved. A Store Manager or Owner must review and complete this sale before stock is deducted.
+                </p>
+
+                <!-- Hidden fallback container to preserve backwards compatibility for legacy DOM hooks -->
+                <div style="display: none !important;" aria-hidden="true">
+                    <table><tbody id="billItemRows"></tbody></table>
+                    <span id="itemActionsHeading"></span>
+                    <div class="bill-totals">
+                        <strong id="billSubtotal">₹0.00</strong>
+                        <strong id="billTax">₹0.00</strong>
+                        <strong id="billTotal">₹0.00</strong>
+                    </div>
+                </div>
+
+                <!-- Stock Batches Allocated Section (for completed sales & returns) -->
+                <section id="batchAllocationsSection" hidden>
+                    <h3>Stock Batches Used</h3>
+                    <div class="record-search" role="search">
+                        <label for="billBatchSearch">Search stock batches</label>
+                        <input id="billBatchSearch" type="search" data-record-search="#batchAllocationRows" placeholder="Search medicine, batch, or expiry" autocomplete="off">
+                        <p class="record-search-empty" role="status" hidden>No matching stock batches.</p>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Batch</th>
+                                    <th>Quantity Sold</th>
+                                    <th>Quantity Returned</th>
+                                    <th>Available to Return</th>
+                                    <th>Expiry</th>
+                                    <th id="batchReturnActionsHeading">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batchAllocationRows"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </section>
+        </div>
+
+        <!-- ==============================================================
+             TAB 2: INVOICES & SALES HISTORY
+             ============================================================== -->
+        <div id="billHistoryView" class="pos-view" hidden>
+            <section class="panel">
+                <div class="section-heading">
+                    <div>
+                        <h2>All Sales &amp; Invoices</h2>
+                        <p id="billListDescription" class="helper-text">Loading…</p>
+                    </div>
+                    <button id="refreshButton" class="button button-secondary" type="button">
+                        Refresh
                     </button>
                 </div>
-            </div>
 
-            <p id="billCompletionMessage" class="message" role="status" aria-live="polite" hidden></p>
-            <p id="billApprovalMessage" class="helper-text" role="status" hidden>
-                Draft saved. A Store Manager or Owner must review and complete this sale before stock is deducted.
-            </p>
-
-            <section id="batchAllocationsSection" hidden>
-                <h3>Stock batches used</h3>
                 <div class="record-search" role="search">
-                    <label for="billBatchSearch">Search stock batches</label>
-                    <input id="billBatchSearch" type="search" data-record-search="#batchAllocationRows" placeholder="Search medicine, batch, or expiry" autocomplete="off">
-                    <p class="record-search-empty" role="status" hidden>No matching stock batches.</p>
+                    <label for="billSearch">Search bills</label>
+                    <input id="billSearch" type="search" data-record-search="#billRows" placeholder="Search invoice, customer, payment, or status" autocomplete="off">
+                    <p class="record-search-empty" role="status" hidden>No matching bills.</p>
                 </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Medicine</th>
-                                <th>Batch</th>
-                                <th>Quantity sold</th>
-                                <th>Quantity returned</th>
-                                <th>Available to return</th>
-                                <th>Expiry</th>
-                                <th id="batchReturnActionsHeading">Actions</th>
+                                <th>Invoice</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Rx</th>
+                                <th>Receipt</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="batchAllocationRows"></tbody>
+                        <tbody id="billRows"></tbody>
                     </table>
                 </div>
             </section>
-        </section>
+        </div>
     </main>
+
+    <!-- Prescription Lightbox Modal -->
+    <div id="prescriptionModal" class="rx-modal" role="dialog" aria-modal="true" aria-labelledby="rxModalTitle" hidden>
+        <div class="rx-modal-backdrop" id="rxModalBackdrop"></div>
+        <div class="rx-modal-content">
+            <div class="rx-modal-header">
+                <div>
+                    <h3 id="rxModalTitle">Doctor's Prescription</h3>
+                    <p id="rxModalSubtitle" class="helper-text"></p>
+                </div>
+                <button id="closeRxModalBtn" class="button button-secondary button-small" type="button">✕ Close</button>
+            </div>
+            <div class="rx-modal-body">
+                <div id="rxImageContainer" class="rx-viewer-wrap" hidden>
+                    <img id="rxModalImage" src="" alt="Doctor's Prescription Slip" class="rx-viewer-img">
+                </div>
+                <div id="rxPdfContainer" class="rx-pdf-wrap" hidden>
+                    <p>PDF Prescription document attached.</p>
+                    <a id="rxPdfLink" href="#" target="_blank" rel="noopener noreferrer" class="button button-primary">
+                        Open PDF Prescription in new tab
+                    </a>
+                </div>
+                <p id="rxModalError" class="message message-error" hidden></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Camera Barcode / QR Code Scanner Modal -->
+    <div id="scannerModal" class="rx-modal" role="dialog" aria-modal="true" aria-labelledby="scannerModalTitle" hidden>
+        <div class="rx-modal-backdrop" id="scannerModalBackdrop"></div>
+        <div class="rx-modal-content scanner-modal-box">
+            <div class="rx-modal-header">
+                <div>
+                    <h3 id="scannerModalTitle">📷 POS Barcode / QR Scanner</h3>
+                    <p class="helper-text">Point camera at medicine barcode or QR box</p>
+                </div>
+                <div class="scanner-header-actions">
+                    <button id="switchCameraBtn" class="button button-secondary button-small" type="button" title="Switch front/rear camera">🔄 Flip</button>
+                    <button id="toggleTorchBtn" class="button button-secondary button-small" type="button" title="Toggle flashlight" hidden>🔦 Torch</button>
+                    <button id="closeScannerModalBtn" class="button button-secondary button-small" type="button">✕ Close</button>
+                </div>
+            </div>
+            <div class="scanner-viewport-wrap">
+                <video id="scannerVideo" playsinline autoplay muted></video>
+                <div class="scanner-overlay">
+                    <div class="scanner-target-box">
+                        <div class="scanner-laser"></div>
+                    </div>
+                </div>
+                <div id="scannerStatusBadge" class="scanner-status">Initializing camera…</div>
+            </div>
+            <div class="scanner-modal-footer">
+                <p class="scanner-tip">💡 Hold steady 15–25 cm away from the packaging barcode.</p>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/api/client.js"></script>
     <script src="/js/components/app-shell.js"></script>
-    <script src="/js/components/confirm-dialog.js"></script>
     <script src="/js/components/record-search.js"></script>
+    <script src="/js/components/confirm-dialog.js"></script>
     <script src="/js/billing.js"></script>
 </body>
 </html>

@@ -110,3 +110,124 @@ table:has(#itemRows) td:nth-child(6),
         align-items: stretch;
     }
 }
+
+/* ==========================================================================
+   Add-on 4: Automated Purchase Order Generator
+   ========================================================================== */
+
+.auto-po-panel {
+    background: linear-gradient(135deg, rgba(8, 119, 123, 0.05), rgba(103, 210, 174, 0.08));
+    border: 1px solid var(--ms-edge);
+    margin-bottom: 24px;
+}
+
+.auto-po-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.auto-po-info h2 {
+    margin: 4px 0 0;
+    font-size: 1.25rem;
+}
+
+.auto-po-badge {
+    display: inline-block;
+    background: #075D63;
+    color: #67D2AE;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.auto-po-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.button-auto-po {
+    background: linear-gradient(135deg, #075D63, #08777B) !important;
+    font-weight: 600;
+}
+
+.button-auto-po:hover {
+    background: #065e62 !important;
+}
+
+.low-stock-preview-box {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--ms-edge);
+}
+
+.low-stock-summary {
+    font-size: 0.92rem;
+    color: var(--ms-ink);
+    margin-bottom: 14px;
+    padding: 8px 14px;
+    background: var(--ms-surface, #fff);
+    border-radius: 6px;
+    border: 1px solid var(--ms-edge);
+}
+
+.low-stock-suppliers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.supplier-preview-card {
+    background: var(--ms-surface, #fff);
+    border: 1px solid var(--ms-edge);
+    border-radius: var(--ms-radius, 8px);
+    padding: 14px 18px;
+}
+
+.supplier-preview-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: var(--ms-ink);
+    margin-bottom: 10px;
+}
+
+.supplier-preview-items {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.supplier-preview-items th {
+    text-align: left;
+    padding: 6px 8px;
+    background: var(--ms-mist);
+    border-bottom: 1px solid var(--ms-edge);
+    color: var(--ms-slate);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+}
+
+.supplier-preview-items td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--ms-edge);
+}
+
+.stock-pill-low {
+    display: inline-block;
+    padding: 2px 7px;
+    background: #fef2f2;
+    color: #b91c1c;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.8rem;
+}

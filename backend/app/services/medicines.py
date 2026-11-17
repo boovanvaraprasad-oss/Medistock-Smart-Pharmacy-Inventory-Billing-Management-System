@@ -23,13 +23,13 @@ def to_object_id(value: str, label: str) -> ObjectId:
 def to_medicine_response(medicine: dict) -> dict:
     return {
         "id": str(medicine["_id"]),
-        "name": medicine["name"],
+        "name": medicine.get("name", ""),
         "sku": medicine.get("sku"),
         "dosage_form": medicine.get("dosage_form"),
-        "category_id": str(medicine["category_id"]),
-        "manufacturer_id": str(medicine["manufacturer_id"]),
-        "unit_id": str(medicine["unit_id"]),
-        "supplier_id": str(medicine["supplier_id"]),
+        "category_id": str(medicine.get("category_id") or ""),
+        "manufacturer_id": str(medicine.get("manufacturer_id") or ""),
+        "unit_id": str(medicine.get("unit_id") or ""),
+        "supplier_id": str(medicine.get("supplier_id") or ""),
         "stock": medicine.get("stock", 0),
         "price": medicine.get("price", 0),
         "reorder_threshold": medicine.get("reorder_threshold", 10),
@@ -157,11 +157,12 @@ async def list_medicines(
     query = {}
 
     if search and search.strip():
-        # re.escape makes special characters like ( or . plain text
-        query["name"] = {
-            "$regex": re.escape(search.strip()),
-            "$options": "i",
-        }
+        # Match either medicine name or SKU / barcode
+        pattern = re.escape(search.strip())
+        query["$or"] = [
+            {"name": {"$regex": pattern, "$options": "i"}},
+            {"sku": {"$regex": pattern, "$options": "i"}},
+        ]
 
     if category_id is not None:
         query["category_id"] = to_object_id(
@@ -388,3 +389,51 @@ async def update_medicine(
     )
 
     return to_medicine_response(updated_medicine)
+
+
+async def get_medicine_by_barcode(barcode: str):
+    """Lookup active medicine by exact SKU, barcode, or ID."""
+    clean_code = barcode.strip()
+    if not clean_code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Barcode or SKU cannot be empty",
+        )
+
+    # 1. Exact SKU or Barcode match (case-insensitive)
+    medicine = await db.medicines.find_one(
+        {
+            "$or": [
+                {"sku": {"$regex": f"^{re.escape(clean_code)}$", "$options": "i"}},
+                {"barcode": {"$regex": f"^{re.escape(clean_code)}$", "$options": "i"}},
+            ],
+            "is_active": True,
+        }
+    )
+
+    # 2. Try by ObjectId if valid
+    if not medicine:
+        try:
+            oid = ObjectId(clean_code)
+            medicine = await db.medicines.find_one(
+                {"_id": oid, "is_active": True}
+            )
+        except Exception:
+            pass
+
+    # 3. Try exact Name match (case-insensitive)
+    if not medicine:
+        medicine = await db.medicines.find_one(
+            {
+                "name": {"$regex": f"^{re.escape(clean_code)}$", "$options": "i"},
+                "is_active": True,
+            }
+        )
+
+    if not medicine:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No active medicine found with barcode/SKU '{clean_code}'.",
+        )
+
+    return to_medicine_response(medicine)
