@@ -135,10 +135,13 @@
                         <p>Choose the display theme for your MediStock pages.</p>
                     </div>
                 </div>
-                <label class="theme-setting" for="themeToggle">
-                    <span><strong>Dark theme</strong><small id="themeDescription">Use a darker background across the app.</small></span>
-                    <input id="themeToggle" type="checkbox" role="switch" aria-describedby="themeDescription">
-                </label>
+                <div class="theme-setting">
+                    <span><strong>Dark theme</strong><small id="themeDescription">Toggle between MediStock light theme and night mode.</small></span>
+                    <label class="switch" for="themeToggle">
+                        <input id="themeToggle" type="checkbox" role="switch" aria-describedby="themeDescription">
+                        <span class="slider"></span>
+                    </label>
+                </div>
                 <p id="settingsStatus" class="settings-status" role="status" aria-live="polite"></p>
             </section>
         </section>

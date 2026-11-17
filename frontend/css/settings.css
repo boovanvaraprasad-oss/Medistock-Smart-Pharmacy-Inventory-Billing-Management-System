@@ -98,14 +98,85 @@
     gap: 18px;
     padding: 18px 0 8px;
     border-top: 1px solid #d6e5e8;
-    cursor: pointer;
 }
 
 .theme-setting > span { display: grid; gap: 5px; }
-.theme-setting strong { color: #17383d; font-size: 0.92rem; }
+.theme-setting strong { color: #17383d; font-size: 0.95rem; }
 .theme-setting small { color: #60777b; font-size: 0.82rem; }
-.theme-setting input { width: 48px; height: 26px; accent-color: #08777b; cursor: pointer; }
 .settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #08777b; font-size: 0.8rem; }
+
+/* ==========================================================================
+   Animated Sun/Moon Dark Mode Switch (Uiverse Adapted for MediStock Palette)
+   ========================================================================== */
+.switch {
+    display: inline-block;
+    --width-of-switch: 3.5em;
+    --height-of-switch: 2em;
+    --size-of-icon: 1.4em;
+    --slider-offset: 0.3em;
+    position: relative;
+    width: var(--width-of-switch);
+    height: var(--height-of-switch);
+    flex-shrink: 0;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* The slider track */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e4f7f4;
+    border: 1.5px solid #bceae5;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 30px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Sun / Day icon (Golden morning sun) */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: var(--size-of-icon, 1.4em);
+    width: var(--size-of-icon, 1.4em);
+    border-radius: 50%;
+    left: var(--slider-offset, 0.3em);
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, #f59e0b, #fbbf24 70%);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode track */
+.switch input:checked + .slider {
+    background-color: #10272b;
+    border-color: #1a4b50;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark mode Moon crescent with MediStock Teal & Mint highlights */
+.switch input:checked + .slider:before {
+    left: calc(100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em)));
+    background: #10272b;
+    box-shadow: inset -3px -2px 5px -1px #0b9c9d, inset -8px -4px 0 0 #67d2ae;
+    filter: drop-shadow(0 0 5px rgba(103, 210, 174, 0.4));
+}
+
+.switch input:focus-visible + .slider {
+    outline: 3px solid rgba(8, 119, 123, 0.45);
+    outline-offset: 2px;
+}
 
 /* Customer Inquiries & Leads Panel */
 .inquiry-count-badge {
