@@ -100,6 +100,7 @@ ROLE_PERMISSIONS = {
         BILL_COMPLETE,
         REPORT_VIEW,
         LOGIN_LOG_READ,
+        AUDIT_LOG_READ,
     ],
 
     COMPLIANCE_OFFICER: [

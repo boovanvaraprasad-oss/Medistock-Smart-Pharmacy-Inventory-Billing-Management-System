@@ -172,7 +172,7 @@ async def update_inquiry_status(
     update_fields = {
         "status": update.status,
         "updated_at": datetime.now(timezone.utc),
-        "updated_by": user.get("email"),
+        "updated_by": current_user.get("email"),
     }
     if update.notes is not None:
         update_fields["notes"] = update.notes
