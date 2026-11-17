@@ -181,6 +181,58 @@ async def update_inquiry_status(
     return {"success": True, "status": update.status}
 
 
+@router.delete("/{inquiry_id}", status_code=status.HTTP_200_OK)
+async def delete_inquiry(
+    inquiry_id: str,
+    current_user=Depends(get_current_user),
+):
+    """Staff endpoint to permanently delete a customer inquiry/lead."""
+    if current_user.get("role") not in ALLOWED_STAFF_ROLES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to delete customer inquiries",
+        )
+
+    try:
+        oid = ObjectId(inquiry_id)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid inquiry ID format",
+        )
+
+    inquiry = await db.inquiries.find_one({"_id": oid})
+    if not inquiry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Inquiry not found",
+        )
+
+    await db.inquiries.delete_one({"_id": oid})
+
+    try:
+        from app.services.audit_log import create_audit_log
+
+        await create_audit_log(
+            action="INQUIRY_DELETE",
+            entity_type="inquiries",
+            entity_id=inquiry_id,
+            entity_label=f"{inquiry.get('name', 'Customer')} ({inquiry.get('pharmacy', 'Pharmacy')})",
+            actor_user_id=str(current_user["_id"]),
+            actor_role=current_user.get("role", "unknown"),
+            details={
+                "customer_name": inquiry.get("name"),
+                "customer_email": inquiry.get("email"),
+                "pharmacy": inquiry.get("pharmacy"),
+                "subject": inquiry.get("subject"),
+            },
+        )
+    except Exception:
+        pass
+
+    return {"success": True, "message": "Inquiry deleted successfully"}
+
+
 @router.get("/smtp-status")
 async def get_smtp_status(current_user=Depends(get_current_user)):
     """Staff endpoint to inspect SMTP configuration."""

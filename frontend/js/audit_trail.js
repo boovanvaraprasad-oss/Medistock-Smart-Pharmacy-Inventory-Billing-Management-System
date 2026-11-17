@@ -28,13 +28,15 @@ const auditActionLabels = {
     PURCHASE_ORDER_ITEM_ADD: "Purchase item added", PURCHASE_ORDER_ITEM_UPDATE: "Purchase item changed",
     PURCHASE_ORDER_RECEIVE: "Purchase order received", USER_CREATE: "Staff account created",
     USER_UPDATE: "Staff account changed", USER_DELETE: "Staff account deleted",
-    MASTER_DATA_DELETE: "Master data deleted"
+    MASTER_DATA_DELETE: "Master data deleted",
+    INQUIRY_DELETE: "Customer inquiry deleted"
 };
 
 const auditEntityLabels = {
     bills: "Bill", medicines: "Medicine", stock_batches: "Stock batch",
     purchase_orders: "Purchase order", users: "Staff account",
-    categories: "Category", manufacturers: "Manufacturer", units: "Unit", suppliers: "Supplier"
+    categories: "Category", manufacturers: "Manufacturer", units: "Unit", suppliers: "Supplier",
+    inquiries: "Customer inquiry"
 };
 
 const inquirySubjectLabels = {
@@ -217,6 +219,7 @@ function renderInquiries() {
                 ${inq.status === "new" ? `<button type="button" class="inquiry-action-btn" data-action="in_progress" data-id="${inq.id}">Start Review</button>` : ""}
                 ${inq.status !== "resolved" ? `<button type="button" class="inquiry-action-btn" data-action="resolved" data-id="${inq.id}">✓ Mark Resolved</button>` : ""}
                 ${inq.status === "resolved" ? `<button type="button" class="inquiry-action-btn" data-action="new" data-id="${inq.id}">↺ Reopen</button>` : ""}
+                <button type="button" class="inquiry-action-btn btn-danger-action" data-delete-id="${inq.id}" data-delete-name="${escapeHtml(inq.name)}" title="Delete this customer inquiry">🗑 Delete</button>
             </div>
         `;
 
@@ -249,6 +252,38 @@ function renderInquiries() {
                 }
             });
         });
+
+        const deleteBtn = card.querySelector("button[data-delete-id]");
+        if (deleteBtn) {
+            deleteBtn.addEventListener("click", async () => {
+                const inquiryId = deleteBtn.dataset.deleteId;
+                const customerName = deleteBtn.dataset.deleteName || "this customer";
+                if (!confirm(`Are you sure you want to permanently delete the inquiry from "${customerName}"?`)) {
+                    return;
+                }
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = "Deleting…";
+                try {
+                    await apiRequest(`/api/v1/inquiries/${inquiryId}`, {
+                        method: "DELETE"
+                    });
+                    allInquiries = allInquiries.filter((item) => item.id !== inquiryId);
+                    renderInquiries();
+                    if (inquiryActionStatus) {
+                        inquiryActionStatus.textContent = `Inquiry from "${customerName}" deleted successfully.`;
+                        inquiryActionStatus.classList.remove("is-error");
+                        setTimeout(() => { if (inquiryActionStatus) inquiryActionStatus.textContent = ""; }, 3500);
+                    }
+                } catch (err) {
+                    if (inquiryActionStatus) {
+                        inquiryActionStatus.textContent = err.message || "Failed to delete inquiry.";
+                        inquiryActionStatus.classList.add("is-error");
+                    }
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = "🗑 Delete";
+                }
+            });
+        }
 
         inquiriesList.appendChild(card);
     });

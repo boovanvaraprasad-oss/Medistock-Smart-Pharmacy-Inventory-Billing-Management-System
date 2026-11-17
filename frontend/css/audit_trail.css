@@ -474,6 +474,19 @@
     background: #065b5e;
 }
 
+.inquiry-action-btn.btn-danger-action {
+    margin-left: auto;
+    color: #c53030;
+    border-color: #fecaca;
+    background: #fff5f5;
+}
+
+.inquiry-action-btn.btn-danger-action:hover {
+    color: #9b2c2c;
+    border-color: #f87171;
+    background: #fee2e2;
+}
+
 .inquiry-action-status {
     margin: 12px 0 0;
     font-size: 0.84rem;
@@ -513,6 +526,9 @@
     }
     .inquiry-search-box {
         max-width: 100%;
+    }
+    .inquiry-action-btn.btn-danger-action {
+        margin-left: 0;
     }
 }
 
@@ -620,6 +636,18 @@
 
 :root[data-theme="dark"] .inquiry-action-btn.btn-primary-action:hover {
     background: #0b9c9d;
+}
+
+:root[data-theme="dark"] .inquiry-action-btn.btn-danger-action {
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+:root[data-theme="dark"] .inquiry-action-btn.btn-danger-action:hover {
+    color: #ffffff;
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.25);
 }
 
 :root[data-theme="dark"] .inquiry-count-badge {
