@@ -66,7 +66,7 @@ Visual walkthrough of MediStock's core interfaces, role-specific dashboards, POS
 | Store manager dashboard | [`docs/images/store-manager-dashboard.png`](docs/images/store-manager-dashboard.png) | Operations overview, staff activity, and store settings |
 | Inventory executive dashboard | [`docs/images/inventory-executive-dashboard.png`](docs/images/inventory-executive-dashboard.png) | Stock levels, FEFO batch tracking, and low-stock indicators |
 | Purchase executive dashboard | [`docs/images/purchase-executive-dashboard.png`](docs/images/purchase-executive-dashboard.png) | Supplier management, PO workflows, and automated reorder generator |
-| Compliance officer dashboard | [`docs/images/compliance-officer-dashboard.png`](docs/images/compliance-officer-dashboard.png) | Audit trails, schedule H/H1 registers, and regulatory logs |
+| Compliance officer dashboard | [`docs/images/compliance-officer-dashboard.png`](docs/images/compliance-officer-dashboard.png) | Activity logs, schedule H/H1 registers, and regulatory audit records |
 | Billing & POS workstation | [`docs/images/billing-pos.png`](docs/images/billing-pos.png) | High-speed POS register with hardware barcode scanning, live quantity steppers, and cash tender calculation |
 | Printable Tax Invoice | [`docs/images/invoice.png`](docs/images/invoice.png) | Completed tax invoice with itemized tax breakdown, customer details, and `@media print` styling |
 | Medicine inventory | [`docs/images/inventory.png`](docs/images/inventory.png) | Medicine master catalog with barcode/SKU search, category, and pricing filters |
@@ -622,7 +622,7 @@ All API routes use the `/api/v1` prefix. The complete OpenAPI UI is available at
 | `GET`, `POST`, `PATCH`, `DELETE` | `/api/v1/bills` | Draft bills, items, completion, returns, prescriptions, and receipts | Create: owner and pharmacist; read: owner, pharmacist, store manager, compliance officer; complete: owner and store manager |
 | `GET` | `/api/v1/dashboard`, `/api/v1/dashboard/summary`, `/api/v1/reports/*` | Dashboard summaries and report exports (Excel `.xlsx` & PDF `.pdf`) | Owner, store manager, compliance officer |
 | `GET`, `PUT` | `/api/v1/settings*` | Billing and pharmacy store settings (`/settings/store`) | Billing settings: owner and pharmacist can read, owner can update; store settings: authenticated users can read, owner can update |
-| `GET` | `/api/v1/audit-logs` | Audit trail | Owner and compliance officer |
+| `GET` | `/api/v1/audit-logs` | Activity log and audit trail | Owner and compliance officer |
 | `GET`, `POST`, `PATCH` | `/api/v1/notifications` | Notifications and read state | Roles with `stock:read` |
 | `GET`, `POST`, `PATCH` | `/api/v1/inquiries` | Public contact inquiries with async background mailer, staff review, status updates, and SMTP test | Public can submit; owner, store manager, and compliance officer can review/manage |
 

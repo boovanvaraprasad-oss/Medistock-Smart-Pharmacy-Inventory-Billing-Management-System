@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediStock | Audit Trail</title>
+    <title>MediStock | Activity Log</title>
     <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/css/app-shell.css">
     <link rel="stylesheet" href="/css/audit_trail.css">
@@ -13,14 +13,14 @@
 <body class="app-theme-ready">
     <main class="page audit-page">
         <header class="page-header">
-            <div><p class="eyebrow">Security &amp; accountability</p><h1>Audit Trail</h1><p>Review important billing, stock, purchasing, and staff changes.</p></div>
+            <div><p class="eyebrow">Security &amp; accountability</p><h1>Activity Log</h1><p>Review important billing, stock, purchasing, and staff changes.</p></div>
             <button id="auditRefresh" class="button button-secondary" type="button">Refresh</button>
         </header>
         <p id="auditStatus" class="audit-message" role="status" hidden></p>
         <p id="auditError" class="audit-message audit-error" role="alert" hidden></p>
         <section class="audit-panel">
             <form id="auditFilters" class="audit-filters" role="search">
-                <label for="auditSearch">Search audit trail<input id="auditSearch" type="search" maxlength="100" placeholder="Action, performed by, record, invoice, or details"></label>
+                <label for="auditSearch">Search activity log<input id="auditSearch" type="search" maxlength="100" placeholder="Action, performed by, record, invoice, or details"></label>
                 <label for="auditAction">Action<select id="auditAction"><option value="">All actions</option>
                     <option value="BILL_COMPLETE">Bill completed</option><option value="BILL_RETURN">Bill returned</option>
                     <option value="STOCK_ADJUSTMENT">Stock adjusted</option><option value="STOCK_REDUCE">Stock reduced</option>
@@ -37,7 +37,7 @@
                 <tbody id="auditRows"></tbody>
             </table></div>
             <p id="auditEmpty" class="audit-empty" hidden>No audit events match these filters.</p>
-            <nav class="audit-pagination" aria-label="Audit trail pages">
+            <nav class="audit-pagination" aria-label="Activity log pages">
                 <button id="auditPrevious" class="button button-secondary" type="button" disabled>Previous</button>
                 <span id="auditPageLabel">Page 1</span>
                 <button id="auditNext" class="button button-secondary" type="button" disabled>Next</button>

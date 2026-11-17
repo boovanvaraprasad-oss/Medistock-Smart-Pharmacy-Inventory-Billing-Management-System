@@ -24,7 +24,7 @@
         { label: "Notifications", href: "notifications.html", icon: "bell", permissions: ["stock:read"] },
         { label: "Reports & Analytics", href: "reports.html", icon: "chart-column", permissions: ["report:view"] },
         { label: "Settings", href: "settings.html", icon: "settings", permissions: [] },
-        { label: "Audit Trail", href: "audit_trail.html", icon: "audit", permissions: ["audit_log:read"] }
+        { label: "Activity Log", href: "audit_trail.html", icon: "audit", permissions: ["audit_log:read"] }
     ];
 
     function addSidebar(currentUser) {

@@ -94,7 +94,7 @@ async function loadAuditTrail() {
         status.hidden = true;
     } catch (caught) {
         status.hidden = true;
-        error.textContent = caught.message || "Unable to load the audit trail.";
+        error.textContent = caught.message || "Unable to load the activity log.";
         error.hidden = false;
         if (!localStorage.getItem("access_token")) window.location.href = "/";
     } finally {
