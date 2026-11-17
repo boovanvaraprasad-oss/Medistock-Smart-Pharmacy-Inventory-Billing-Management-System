@@ -512,6 +512,9 @@ async def get_dashboard_summary(selected_date: date | None = None, selected_mont
         },
         "top_selling_medicines": top_selling_medicines,
         "category_distribution": category_distribution,
+        "inquiries": {
+            "new_count": await db.inquiries.count_documents({"status": "new"}),
+        },
         "alerts": {
             "low_stock_medicines": sorted(
                 low_stock_medicines,

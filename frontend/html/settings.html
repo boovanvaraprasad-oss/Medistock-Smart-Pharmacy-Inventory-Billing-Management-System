@@ -58,6 +58,75 @@
                 </form>
                 <p id="billingSettingsStatus" class="settings-status" role="status" aria-live="polite"></p>
             </section>
+            <section id="inquiriesCard" class="settings-card" aria-labelledby="inquiriesTitle" hidden>
+                <div class="settings-card-copy">
+                    <span class="settings-icon" aria-hidden="true">✉</span>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <h2 id="inquiriesTitle">Customer Inquiries</h2>
+                            <span id="inquiryCountBadge" class="inquiry-count-badge">Loading…</span>
+                        </div>
+                        <p>Messages received from prospective pharmacies and customers through the landing page.</p>
+                    </div>
+                </div>
+
+                <div class="inquiry-toolbar">
+                    <div class="inquiry-filters" role="tablist" aria-label="Filter inquiries by status">
+                        <button type="button" class="inquiry-filter-btn is-active" data-filter="all">All</button>
+                        <button type="button" class="inquiry-filter-btn" data-filter="new">New</button>
+                        <button type="button" class="inquiry-filter-btn" data-filter="in_progress">In Progress</button>
+                        <button type="button" class="inquiry-filter-btn" data-filter="resolved">Resolved</button>
+                    </div>
+                    <div class="inquiry-search-box">
+                        <input id="inquirySearchInput" type="search" placeholder="Search by name, pharmacy, or message…" autocomplete="off">
+                    </div>
+                </div>
+
+                <div id="inquiriesList" class="inquiries-list" aria-live="polite">
+                    <p class="inquiry-empty">Loading customer inquiries…</p>
+                </div>
+                <p id="inquiryActionStatus" class="settings-status" role="status" aria-live="polite"></p>
+            </section>
+            <section id="smtpSettingsCard" class="settings-card" aria-labelledby="smtpTitle" hidden>
+                <div class="settings-card-copy">
+                    <span class="settings-icon" aria-hidden="true">⚙</span>
+                    <div>
+                        <h2 id="smtpTitle">Email &amp; SMTP Mailer</h2>
+                        <p>Verify outgoing SMTP connection and test message delivery.</p>
+                    </div>
+                </div>
+
+                <div class="smtp-status-box">
+                    <div class="smtp-status-grid">
+                        <div>
+                            <span class="smtp-label">Mailer status</span>
+                            <strong id="smtpConfiguredBadge" class="smtp-badge">Checking…</strong>
+                        </div>
+                        <div>
+                            <span class="smtp-label">SMTP Host</span>
+                            <span id="smtpHostVal" class="smtp-value">—</span>
+                        </div>
+                        <div>
+                            <span class="smtp-label">Sender Address</span>
+                            <span id="smtpFromVal" class="smtp-value">—</span>
+                        </div>
+                        <div>
+                            <span class="smtp-label">Admin Inbox</span>
+                            <span id="smtpAdminVal" class="smtp-value">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="smtpTestForm" class="smtp-test-form">
+                    <label for="smtpTestEmail">Send verification email to</label>
+                    <div class="smtp-test-row">
+                        <input id="smtpTestEmail" type="email" placeholder="name@pharmacy.com" required>
+                        <button id="smtpTestButton" class="button button-secondary" type="submit">Send test email</button>
+                    </div>
+                    <p class="settings-hint">Tests the SMTP handshake and sends a test email to verify credentials in <code>backend/.env</code>.</p>
+                </form>
+                <p id="smtpTestStatus" class="settings-status" role="status" aria-live="polite"></p>
+            </section>
             <section class="settings-card" aria-labelledby="appearanceTitle">
                 <div class="settings-card-copy">
                     <span class="settings-icon" aria-hidden="true">◐</span>

@@ -566,6 +566,8 @@ async function loadDashboard() {
         setText("alertExpiredCount", numberFormatter.format(expiredCount));
         setText("alertExpiringCount", numberFormatter.format(expiringCount));
         setText("alertOrdersCount", numberFormatter.format(openOrdersCount));
+        const newInquiriesCount = summary.inquiries?.new_count || 0;
+        setText("alertInquiriesCount", numberFormatter.format(newInquiriesCount));
 
         renderCategoryDistribution(summary.category_distribution || []);
         renderTopSellingMedicines(summary.top_selling_medicines || []);

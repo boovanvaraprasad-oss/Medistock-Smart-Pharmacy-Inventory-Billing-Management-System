@@ -57,17 +57,12 @@ class StoreSettingsResponse(StoreSettingsRequest):
 
 
 async def require_owner(current_user=Depends(get_current_user)):
-    try:
-        user = await db.users.find_one({"_id": ObjectId(current_user["sub"])})
-    except (KeyError, TypeError, ValueError):
-        user = None
-
-    if not user or user.get("role") != "owner":
+    if current_user.get("role") != "owner":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the owner can manage pharmacy settings",
         )
-    return user
+    return current_user
 
 
 @router.get("", response_model=BillingSettingsResponse)
@@ -102,7 +97,7 @@ async def update_billing_settings(
 
 
 @router.get("/store", response_model=StoreSettingsResponse)
-async def get_store_settings(current_user=Depends(require_owner)):
+async def get_store_settings(current_user=Depends(get_current_user)):
     settings = await db.settings.find_one({"_id": SETTINGS_ID}) or {}
     return StoreSettingsResponse(
         store_name=settings.get("store_name", ""),

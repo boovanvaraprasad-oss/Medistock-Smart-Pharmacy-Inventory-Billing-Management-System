@@ -30,3 +30,8 @@ class InquiryResponse(BaseModel):
     created_at: str
     notes: Optional[str] = None
 
+
+class TestSMTPRequest(BaseModel):
+    target_email: Optional[EmailStr] = None
+
+

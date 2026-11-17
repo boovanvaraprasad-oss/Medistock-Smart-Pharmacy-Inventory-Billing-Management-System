@@ -180,20 +180,20 @@ async def get_stock_batches(
             {
                 "id": str(batch["_id"]),
                 "medicine_id": str(
-                    batch["medicine_id"]
+                    batch.get("medicine_id", "")
                 ),
-                "batch_number": batch["batch_number"],
-                "quantity": batch["quantity"],
-                "purchase_price": batch["purchase_price"],
+                "batch_number": batch.get("batch_number", "Batch"),
+                "quantity": batch.get("quantity", 0),
+                "purchase_price": float(batch.get("purchase_price") or batch.get("cost_price") or 0.0),
                 "manufacturing_date": (
                     manufacturing_date.date()
-                    if manufacturing_date
-                    else None
+                    if hasattr(manufacturing_date, "date")
+                    else manufacturing_date
                 ),
                 "expiry_date": (
                     expiry_date.date()
-                    if expiry_date
-                    else None
+                    if hasattr(expiry_date, "date")
+                    else expiry_date
                 ),
                 "is_active": batch.get(
                     "is_active",

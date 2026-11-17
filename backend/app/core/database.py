@@ -20,7 +20,9 @@ def _get_client():
 
 def _get_db():
     cl = _get_client()
-    db_name = os.getenv("DATABASE_NAME", DATABASE_NAME)
+    if os.getenv("PYTEST_CURRENT_TEST"):
+        return cl["medistock_test"]
+    db_name = os.getenv("DATABASE_NAME") or DATABASE_NAME or "medistock"
     return cl[db_name]
 
 

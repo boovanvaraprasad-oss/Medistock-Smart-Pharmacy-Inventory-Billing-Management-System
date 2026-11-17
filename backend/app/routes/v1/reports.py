@@ -91,9 +91,8 @@ async def _inventory_report_data():
         totals["value"] += quantity * float(batch.get("purchase_price", 0))
         totals["batch_count"] += 1
         expiry = batch.get("expiry_date")
-        if isinstance(expiry, datetime) and expiry.date() < today:
-            totals["expired_units"] += quantity
-        elif isinstance(expiry, date) and expiry < today:
+        expiry_date = expiry.date() if hasattr(expiry, "date") else expiry
+        if isinstance(expiry_date, date) and expiry_date < today:
             totals["expired_units"] += quantity
 
     rows = []

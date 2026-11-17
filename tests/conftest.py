@@ -28,7 +28,7 @@ os.environ.setdefault("JWT_SECRET_KEY", "test_secret_key_for_pytest_only")
 os.environ.setdefault("JWT_ACCESS_EXPIRY_MIN", "20")
 
 import app.core.database as _db_module  # noqa: E402
-_test_db = _db_module.db
+_test_db = _db_module._get_client()["medistock_test"]
 
 from httpx import AsyncClient, ASGITransport  # noqa: E402
 from main import app  # noqa: E402

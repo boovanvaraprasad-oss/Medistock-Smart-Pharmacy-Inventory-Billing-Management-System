@@ -21,6 +21,7 @@ async def recalculate_bill_subtotal(
     )
 
     subtotal = 0.0
+    has_controlled = False
 
     async for item in bill_items:
         subtotal += float(
@@ -29,11 +30,15 @@ async def recalculate_bill_subtotal(
                 0,
             )
         )
+        if not has_controlled:
+            med = await db.medicines.find_one({"_id": item["medicine_id"]})
+            if med and med.get("is_controlled_substance"):
+                has_controlled = True
 
     bill = await db.bills.find_one(
         {
             "_id": bill_object_id,
-            "is_active": True,
+            "is_active": {"$ne": False},
         }
     )
 
@@ -69,6 +74,7 @@ async def recalculate_bill_subtotal(
                 "subtotal": subtotal,
                 "tax_amount": tax_amount,
                 "total_amount": total_amount,
+                "requires_prescription": has_controlled,
             }
         },
     )
@@ -105,7 +111,7 @@ async def create_bill_item(
     bill = await db.bills.find_one(
         {
             "_id": bill_object_id,
-            "is_active": True,
+            "is_active": {"$ne": False},
         }
     )
 
@@ -249,7 +255,7 @@ async def update_bill_item(
     bill = await db.bills.find_one(
         {
             "_id": bill_object_id,
-            "is_active": True,
+            "is_active": {"$ne": False},
         }
     )
 

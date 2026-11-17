@@ -243,22 +243,16 @@ async def register(data: RegisterRequest):
 async def get_me(
     current_user=Depends(get_current_user),
 ):
-    # get_current_user already checked the token is valid.
-    # Here we load the user to return who they are.
-    user = await db.users.find_one(
-        {"_id": ObjectId(current_user["sub"])}
-    )
-
-    role = user.get("role")
+    role = current_user.get("role")
 
     return {
-        "id": str(user["_id"]),
-        "email": user["email"],
+        "id": str(current_user["_id"]),
+        "email": current_user["email"],
         "role": role,
-        "is_active": user.get("is_active", True),
+        "is_active": current_user.get("is_active", True),
         "permissions": ROLE_PERMISSIONS.get(role, []),
-        "full_name": user.get("full_name", ""),
-        "phone": user.get("phone", ""),
+        "full_name": current_user.get("full_name", ""),
+        "phone": current_user.get("phone", ""),
     }
 
 
