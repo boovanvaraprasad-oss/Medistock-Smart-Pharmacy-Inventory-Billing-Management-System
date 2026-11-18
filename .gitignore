@@ -18,6 +18,7 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+*.zip
 
 # User Uploads
 backend/uploads/prescriptions/*
