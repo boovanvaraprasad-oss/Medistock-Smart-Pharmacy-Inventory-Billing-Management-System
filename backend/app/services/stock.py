@@ -4,6 +4,7 @@ from bson import ObjectId
 from fastapi import HTTPException, status
 
 from app.core.database import client, db
+from app.services.audit_log import create_audit_log
 from app.services.stock_transactions import (
     create_stock_transaction,
 )
@@ -16,6 +17,8 @@ INDIA_TIMEZONE = timezone(timedelta(hours=5, minutes=30))
 async def reduce_stock(
     medicine_id: str,
     quantity: int,
+    actor_user_id: str,
+    actor_role: str,
 ):
     # Validate quantity.
     if (
@@ -200,6 +203,22 @@ async def reduce_stock(
             previous_stock=current_stock,
             new_stock=new_stock,
             reason="Medicine issued",
+            session=session,
+        )
+
+        await create_audit_log(
+            action="STOCK_REDUCE",
+            entity_type="medicines",
+            entity_id=medicine_id,
+            entity_label=medicine.get("name", medicine_id),
+            actor_user_id=actor_user_id,
+            actor_role=actor_role,
+            details={
+                "quantity": quantity,
+                "previous_stock": current_stock,
+                "new_stock": new_stock,
+                "reason": "Medicine issued",
+            },
             session=session,
         )
 

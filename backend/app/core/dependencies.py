@@ -78,14 +78,17 @@ async def get_current_user(
         )
 
     # Check whether user is active
-
     if not user.get("is_active", True):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User account is inactive",
         )
 
-    return payload
+    # Attach token metadata for consumers needing sub or jti
+    user["sub"] = str(user["_id"])
+    user["jti"] = jti
+    user["exp"] = payload["exp"]
+    return user
 
 
 def require_permission(permission: str):
@@ -93,32 +96,7 @@ def require_permission(permission: str):
     async def permission_checker(
         current_user=Depends(get_current_user),
     ):
-        user_id = current_user.get("sub")
-
-        if not user_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-            )
-
-        try:
-            user = await db.users.find_one(
-                {"_id": ObjectId(user_id)}
-            )
-
-        except Exception:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid user ID",
-            )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-            )
-
-        role = user.get("role")
+        role = current_user.get("role")
 
         if role not in ROLE_PERMISSIONS:
             raise HTTPException(
@@ -132,6 +110,6 @@ def require_permission(permission: str):
                 detail="Permission denied",
             )
 
-        return user
+        return current_user
 
     return permission_checker

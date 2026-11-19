@@ -1,55 +1,61 @@
 const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const togglePasswordButton = document.getElementById("togglePassword");
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+const loginButton = document.getElementById("loginButton");
 const message = document.getElementById("message");
-const checkSessionButton = document.getElementById("checkSessionButton");
-const logoutButton = document.getElementById("logoutButton");
 
-async function checkSession() {
-    try {
-        await apiRequest("/api/v1/auth/me");
-        message.textContent = "Your protected session is active.";
-    } catch (error) {
-        message.textContent = error.message;
-    }
+function showMessage(text) {
+    message.textContent = text;
+    message.hidden = !text;
 }
+
+togglePasswordButton.addEventListener("click", () => {
+    const shouldShowPassword = passwordInput.type === "password";
+    passwordInput.type = shouldShowPassword ? "text" : "password";
+    togglePasswordButton.setAttribute("aria-pressed", String(shouldShowPassword));
+    togglePasswordButton.setAttribute(
+        "aria-label",
+        shouldShowPassword ? "Hide password" : "Show password"
+    );
+});
+
+forgotPasswordLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    showMessage("Password reset is not available yet. Please contact your MediStock owner.");
+});
 
 loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    showMessage("");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    loginButton.disabled = true;
+    loginButton.textContent = "Signing in…";
+    let tokensWereSaved = false;
 
     try {
         const data = await loginUser(email, password);
 
+        sessionStorage.removeItem("medistock_current_user");
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
-        checkSessionButton.hidden = false;
-        logoutButton.hidden = false;
-        await checkSession();
+        tokensWereSaved = true;
+
+        await getCurrentUser();
+        window.location.href = "/home.html";
     } catch (error) {
-        message.textContent = error.message;
-    }
-});
-
-checkSessionButton.addEventListener("click", checkSession);
-
-logoutButton.addEventListener("click", async () => {
-    logoutButton.disabled = true;
-
-    try {
-        await logoutUser();
-        checkSessionButton.hidden = true;
-        logoutButton.hidden = true;
-        message.textContent = "Logged out successfully.";
-    } catch (error) {
-        message.textContent = error.message;
+        if (tokensWereSaved) {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            sessionStorage.removeItem("medistock_current_user");
+        }
+        showMessage(error.message || "Unable to sign in. Check your details and try again.");
     } finally {
-        logoutButton.disabled = false;
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
     }
-});
-
-const signupButton = document.getElementById("signupButton");
-
-signupButton.addEventListener("click", () => {
-    window.location.href = "signup.html";
 });

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock | Medicines</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/medicines.css">
+    <link rel="stylesheet" href="/css/confirm-dialog.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Inventory</p>
+                <h1>Medicines</h1>
+                <p class="subtitle">Search and manage your medicine list.</p>
+            </div>
+        </header>
+
+        <p id="pageMessage" class="message" role="status" hidden></p>
+        <p id="errorMessage" class="error-message" role="alert" hidden></p>
+        <p id="successMessage" class="success-message" role="status" hidden></p>
+
+        <section id="createMedicineSection" class="panel" hidden>
+            <h2 id="medicineFormTitle">Add medicine</h2>
+            <p class="form-help">New medicines start with zero stock. Add stock through purchase receiving.</p>
+
+            <form id="createMedicineForm" class="medicine-form">
+                <label>
+                    Medicine name
+                    <input id="medicineName" name="name" type="text" minlength="2" maxlength="150" required>
+                </label>
+
+                <label>
+                    SKU
+                    <input id="medicineSku" name="sku" type="text" minlength="2" maxlength="30" required>
+                </label>
+
+                <label>
+                    Dosage form
+                    <input id="medicineDosageForm" name="dosage_form" type="text" minlength="2" maxlength="50" placeholder="Tablet, Syrup, Injection..." required>
+                </label>
+
+                <label>
+                    Category
+                    <select id="medicineCategory" name="category_id" required>
+                        <option value="">Choose category</option>
+                    </select>
+                </label>
+
+                <label>
+                    Manufacturer
+                    <select id="medicineManufacturer" name="manufacturer_id" required>
+                        <option value="">Choose manufacturer</option>
+                    </select>
+                </label>
+
+                <label>
+                    Unit
+                    <select id="medicineUnit" name="unit_id" required>
+                        <option value="">Choose unit</option>
+                    </select>
+                </label>
+
+                <label>
+                    Supplier
+                    <select id="medicineSupplier" name="supplier_id" required>
+                        <option value="">Choose supplier</option>
+                    </select>
+                </label>
+
+                <label>
+                    Selling price (₹)
+                    <input id="medicinePrice" name="price" type="number" min="0.01" step="0.01" required>
+                </label>
+
+                <label>
+                    Reorder threshold
+                    <input id="medicineReorderThreshold" name="reorder_threshold" type="number" min="0" step="1" value="10" required>
+                </label>
+
+                <label class="checkbox-label">
+                    <input id="controlledSubstance" name="is_controlled_substance" type="checkbox">
+                    Controlled substance
+                </label>
+
+                <div class="form-actions">
+                    <button id="createMedicineButton" class="button button-primary" type="submit">
+                        Create medicine
+                    </button>
+                    <button id="cancelEditButton" class="button button-secondary" type="button" hidden>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Medicine catalog</h2>
+                    <p id="listDescription" class="helper-text">Review and search medicines in stock.</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="record-search" role="search">
+                <label for="medicineSearch">Search medicines</label>
+                <input id="medicineSearch" type="search" data-record-search="#medicineRows" placeholder="Search medicines by name or SKU" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching medicines.</p>
+            </div>
+
+            <p id="statusMessage" class="status-message" role="status">Loading medicines…</p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>SKU</th>
+                            <th>Form</th>
+                            <th>Stock</th>
+                            <th>Batches (quantity)</th>
+                            <th>Price</th>
+                            <th>Reorder at</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicineRows"></tbody>
+                </table>
+            </div>
+
+            <nav class="pagination" aria-label="Medicine list pages">
+                <button class="button button-secondary" id="previousButton" type="button">Previous</button>
+                <span id="pageInfo"></span>
+                <button class="button button-secondary" id="nextButton" type="button">Next</button>
+            </nav>
+        </section>
+    </main>
+
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/confirm-dialog.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/medicines.js"></script>
+</body>
+</html>

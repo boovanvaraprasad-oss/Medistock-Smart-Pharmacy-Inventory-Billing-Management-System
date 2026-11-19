@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock | Purchase Orders</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/purchase_orders.css">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Purchasing</p>
+                <h1>Purchase Orders</h1>
+                <p class="subtitle">Create orders, record supplier batches, and receive stock.</p>
+            </div>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="successMessage" class="message message-success" role="status" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading purchase orders…</p>
+
+        <!-- Automated Low Stock PO Generator -->
+        <section id="autoPoSection" class="panel auto-po-panel" hidden>
+            <div class="auto-po-header">
+                <div class="auto-po-info">
+                    <div class="auto-po-badge">⚡ Smart Auto-Reorder</div>
+                    <h2>Automated Purchase Order Generator</h2>
+                    <p class="helper-text">
+                        Scan inventory for medicines at or below reorder threshold and automatically generate draft purchase orders grouped by supplier.
+                    </p>
+                </div>
+                <div class="auto-po-actions">
+                    <button id="previewLowStockBtn" class="button button-secondary" type="button">
+                        🔍 Check Low Stock
+                    </button>
+                    <button id="generateAutoPoBtn" class="button button-primary button-auto-po" type="button">
+                        ⚡ Generate Purchase Orders
+                    </button>
+                </div>
+            </div>
+
+            <!-- Low Stock Preview Dropdown/Box -->
+            <div id="lowStockPreviewBox" class="low-stock-preview-box" hidden>
+                <div id="lowStockSummaryText" class="low-stock-summary"></div>
+                <div id="lowStockSuppliersList" class="low-stock-suppliers-list"></div>
+            </div>
+        </section>
+
+        <section id="createOrderSection" class="panel" hidden>
+            <h2>Create purchase order</h2>
+            <form id="createOrderForm" class="purchase-form">
+                <div class="purchase-field">
+                    <label for="supplierSelect">Supplier</label>
+                    <select id="supplierSelect" required></select>
+                </div>
+
+                <div class="purchase-field">
+                    <label for="orderNotes">Notes</label>
+                    <textarea id="orderNotes" maxlength="500" rows="3" placeholder="Optional notes for this purchase order"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button id="createOrderButton" class="button button-primary" type="submit">
+                        Create draft order
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Purchase order list</h2>
+                    <p id="listDescription" class="helper-text">Loading…</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="record-search" role="search">
+                <label for="orderSearch">Search purchase orders</label>
+                <input id="orderSearch" type="search" data-record-search="#orderRows" placeholder="Search supplier, status, or notes" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching purchase orders.</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderRows"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="orderDetailsSection" class="panel" hidden>
+            <div class="section-heading">
+                <div>
+                    <h2 id="selectedOrderTitle">Order details</h2>
+                    <p id="selectedOrderDescription" class="helper-text"></p>
+                </div>
+                <button id="closeDetailsButton" class="button button-secondary" type="button">
+                    Close
+                </button>
+            </div>
+
+            <div id="addItemSection" hidden>
+                <h3>Add medicine batch</h3>
+                <form id="itemForm" class="purchase-form item-form">
+                    <div class="purchase-field">
+                        <label for="medicineSelect">Medicine</label>
+                        <select id="medicineSelect" required></select>
+                    </div>
+
+                    <div class="purchase-field">
+                        <label for="itemQuantity">Quantity</label>
+                        <input id="itemQuantity" type="number" min="1" step="1" required>
+                    </div>
+
+                    <div class="purchase-field">
+                        <label for="itemPrice">Purchase price per unit</label>
+                        <input id="itemPrice" type="number" min="0.01" step="0.01" required>
+                    </div>
+
+                    <div class="purchase-field">
+                        <label for="itemBatchNumber">Batch number</label>
+                        <input id="itemBatchNumber" type="text" maxlength="50" required>
+                    </div>
+
+                    <div class="purchase-field">
+                        <label for="itemManufacturingDate">Manufacturing date (optional)</label>
+                        <input id="itemManufacturingDate" type="date">
+                    </div>
+
+                    <div class="purchase-field">
+                        <label for="itemExpiryDate">Expiry date</label>
+                        <input id="itemExpiryDate" type="date" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="addItemButton" class="button button-primary" type="submit">
+                            Add batch to order
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <h3>Order items</h3>
+            <p id="itemsMessage" class="message">Select an order to view its items.</p>
+            <div class="record-search" role="search">
+                <label for="orderItemSearch">Search items on this order</label>
+                <input id="orderItemSearch" type="search" data-record-search="#itemRows" placeholder="Search medicine, batch, or expiry" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching items.</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Batch</th>
+                            <th>Quantity</th>
+                            <th>Unit price</th>
+                            <th>Total</th>
+                            <th>Expiry</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/purchase_orders.js"></script>
+</body>
+</html>

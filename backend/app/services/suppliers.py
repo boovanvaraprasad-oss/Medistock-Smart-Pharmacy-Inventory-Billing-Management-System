@@ -55,10 +55,10 @@ async def get_all_suppliers():
         suppliers.append(
             {
                 "id": str(supplier["_id"]),
-                "name": supplier["name"],
-                "phone": supplier["phone"],
-                "email": supplier.get("email"),
-                "address": supplier.get("address"),
+                "name": supplier.get("name", ""),
+                "phone": supplier.get("phone") or supplier.get("contact_phone") or "",
+                "email": supplier.get("email") or supplier.get("contact_email") or None,
+                "address": supplier.get("address", ""),
                 "is_active": supplier.get(
                     "is_active",
                     True,

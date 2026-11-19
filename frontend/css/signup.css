@@ -1,0 +1,91 @@
+.signup-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 28px 18px;
+    background: var(--ms-mist);
+    color: var(--ms-ink);
+}
+
+.signup-card {
+    width: min(100%, 460px);
+    padding: clamp(24px, 5vw, 38px);
+    border: 1px solid var(--ms-edge);
+    border-radius: 20px;
+    background: var(--ms-white);
+    box-shadow: 0 18px 48px rgb(23 56 61 / 12%);
+}
+
+.signup-card h1 {
+    margin: 0 0 8px;
+    color: var(--ms-teal-800);
+    font-size: 1.55rem;
+    letter-spacing: -0.04em;
+}
+
+.signup-card h2 {
+    margin: 0 0 24px;
+    color: var(--ms-ink);
+    font-size: 1.25rem;
+}
+
+#signupForm {
+    display: grid;
+    gap: 16px;
+}
+
+#signupForm label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--ms-ink);
+    font-size: 0.9rem;
+    font-weight: 650;
+}
+
+#signupForm input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 13px;
+    border: 1px solid var(--ms-edge);
+    border-radius: 10px;
+    background: var(--ms-white);
+    color: var(--ms-ink);
+    font: inherit;
+}
+
+#signupForm input:focus {
+    border-color: var(--ms-aqua-500);
+    outline: 3px solid rgb(34 185 181 / 18%);
+}
+
+#signupForm button,
+#backToLogin {
+    width: 100%;
+}
+
+#backToLogin {
+    margin-top: 10px;
+}
+
+#message:not(:empty) {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: var(--ms-radius-sm, 8px);
+    line-height: 1.45;
+    font-size: 0.9rem;
+}
+
+#message.message-error,
+#message.is-error {
+    border: 1px solid var(--ms-danger-edge);
+    background: var(--ms-danger-bg);
+    color: var(--ms-danger-ink);
+}
+
+#message.message-success,
+#message.is-success {
+    border: 1px solid var(--ms-success-edge);
+    background: var(--ms-success-bg);
+    color: var(--ms-success-ink);
+}
+

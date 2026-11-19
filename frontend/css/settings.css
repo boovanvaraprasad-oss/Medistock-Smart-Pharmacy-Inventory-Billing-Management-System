@@ -1,0 +1,265 @@
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-header h1 {
+    margin: 0 0 7px;
+    color: #17383d;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.settings-header p:last-child { margin: 0; color: #60777b; }
+
+.settings-content {
+    width: 100%;
+    max-width: 980px;
+    margin: 24px 0 0;
+    padding: 0 0 44px;
+}
+
+.settings-card {
+    padding: 25px;
+    border: 1px solid #d6e5e8;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgb(8 119 123 / 7%);
+}
+
+.settings-content { display: grid; gap: 20px; }
+.settings-card[hidden] { display: none; }
+.settings-form {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(180px, 2fr);
+    align-items: center;
+    gap: 12px 18px;
+    padding-top: 18px;
+    border-top: 1px solid #d6e5e8;
+}
+.settings-form label { color: #17383d; font-size: 0.92rem; font-weight: 600; }
+.settings-form input {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+    border: 1px solid #d6e5e8;
+    border-radius: 10px;
+    background: #fff;
+    color: #17383d;
+    font: inherit;
+}
+.settings-form textarea {
+    width: 100%;
+    min-height: 92px;
+    padding: 10px 13px;
+    border: 1px solid #d6e5e8;
+    border-radius: 10px;
+    background: #fff;
+    color: #17383d;
+    font: inherit;
+    resize: vertical;
+}
+.settings-form textarea:focus { outline: 3px solid rgb(8 119 123 / 18%); border-color: #08777b; }
+.settings-store-form { grid-template-columns: minmax(180px, 1fr) minmax(220px, 2fr); }
+.settings-form input:focus { outline: 3px solid rgb(8 119 123 / 18%); border-color: #08777b; }
+.settings-hint { grid-column: 2; margin-top: -6px !important; }
+.settings-save-button {
+    grid-column: 2;
+    justify-self: start;
+}
+.settings-save-button:disabled { opacity: 0.65; cursor: wait; }
+.settings-card .settings-status.is-error { color: #b42318; }
+
+.settings-card-copy {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.settings-icon {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 14px;
+    background: #e4f7f4;
+    color: #08777b;
+    font-size: 1.5rem;
+}
+
+.settings-card h2 { margin: 0 0 5px; color: #17383d; font-size: 1.1rem; }
+.settings-card p { margin: 0; color: #60777b; font-size: 0.9rem; }
+
+.theme-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 0 8px;
+    border-top: 1px solid #d6e5e8;
+}
+
+.theme-setting > span { display: grid; gap: 5px; }
+.theme-setting strong { color: #17383d; font-size: 0.95rem; }
+.theme-setting small { color: #60777b; font-size: 0.82rem; }
+.settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #08777b; font-size: 0.8rem; }
+
+/* ==========================================================================
+   Animated Sun/Moon Dark Mode Switch (Uiverse Adapted for MediStock Palette)
+   ========================================================================== */
+.switch {
+    display: inline-block;
+    --width-of-switch: 3.5em;
+    --height-of-switch: 2em;
+    --size-of-icon: 1.4em;
+    --slider-offset: 0.3em;
+    position: relative;
+    width: var(--width-of-switch);
+    height: var(--height-of-switch);
+    flex-shrink: 0;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* The slider track */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e4f7f4;
+    border: 1.5px solid #bceae5;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 30px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Sun / Day icon (Golden morning sun) */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: var(--size-of-icon, 1.4em);
+    width: var(--size-of-icon, 1.4em);
+    border-radius: 50%;
+    left: var(--slider-offset, 0.3em);
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, #f59e0b, #fbbf24 70%);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode track */
+.switch input:checked + .slider {
+    background-color: #10272b;
+    border-color: #1a4b50;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark mode Moon crescent with MediStock Teal & Mint highlights */
+.switch input:checked + .slider:before {
+    left: calc(100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em)));
+    background: #10272b;
+    box-shadow: inset -3px -2px 5px -1px #0b9c9d, inset -8px -4px 0 0 #67d2ae;
+    filter: drop-shadow(0 0 5px rgba(103, 210, 174, 0.4));
+}
+
+.switch input:focus-visible + .slider {
+    outline: 3px solid rgba(8, 119, 123, 0.45);
+    outline-offset: 2px;
+}
+
+/* SMTP Status & Testing */
+.smtp-status-box {
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px solid #d6e5e8;
+    border-radius: 12px;
+    background: #f8fafb;
+}
+
+.smtp-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+
+.smtp-label {
+    display: block;
+    color: #60777b;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.smtp-value {
+    color: #17383d;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.smtp-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.smtp-badge.is-ready {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.smtp-badge.is-missing {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.smtp-test-form {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #edf4f5;
+}
+
+.smtp-test-row {
+    display: flex;
+    gap: 10px;
+    max-width: 520px;
+}
+
+.smtp-test-row input {
+    flex: 1;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid #d6e5e8;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.88rem;
+}
+
+.smtp-test-row input:focus {
+    outline: 2px solid #08777b;
+    border-color: #08777b;
+}
+
+
+@media (max-width: 760px) {
+    .settings-content { margin: 18px auto; padding-inline: 16px; }
+    .settings-card { padding: 18px; }
+    .settings-form, .settings-store-form { grid-template-columns: 1fr; }
+    .settings-hint, .settings-save-button { grid-column: 1; }
+}

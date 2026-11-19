@@ -18,6 +18,7 @@ ROLES = [
 
 USER_READ = "user:read"
 USER_WRITE = "user:write"
+USER_DELETE = "user:delete"
 
 MEDICINE_READ = "medicine:read"
 MEDICINE_WRITE = "medicine:write"
@@ -33,13 +34,18 @@ PURCHASE_WRITE = "purchase:write"
 
 BILL_CREATE = "bill:create"
 BILL_READ = "bill:read"
+BILL_COMPLETE = "bill:complete"
 
 REPORT_VIEW = "report:view"
+MASTER_DATA_DELETE = "master_data:delete"
+LOGIN_LOG_READ = "login_log:read"
+AUDIT_LOG_READ = "audit_log:read"
 
 
 PERMISSIONS = [
     USER_READ,
     USER_WRITE,
+    USER_DELETE,
     MEDICINE_READ,
     MEDICINE_WRITE,
     STOCK_READ,
@@ -50,7 +56,11 @@ PERMISSIONS = [
     PURCHASE_WRITE,
     BILL_CREATE,
     BILL_READ,
+    BILL_COMPLETE,
     REPORT_VIEW,
+    MASTER_DATA_DELETE,
+    LOGIN_LOG_READ,
+    AUDIT_LOG_READ,
 ]
 
 
@@ -87,7 +97,10 @@ ROLE_PERMISSIONS = {
         SUPPLIER_READ,
         PURCHASE_READ,
         BILL_READ,
+        BILL_COMPLETE,
         REPORT_VIEW,
+        LOGIN_LOG_READ,
+        AUDIT_LOG_READ,
     ],
 
     COMPLIANCE_OFFICER: [
@@ -96,5 +109,6 @@ ROLE_PERMISSIONS = {
         STOCK_READ,
         BILL_READ,
         REPORT_VIEW,
+        AUDIT_LOG_READ,
     ],
 }

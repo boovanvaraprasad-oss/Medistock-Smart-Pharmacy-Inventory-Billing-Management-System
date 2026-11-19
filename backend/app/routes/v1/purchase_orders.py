@@ -8,10 +8,12 @@ from app.schemas.purchase_order import (
     UpdatePurchaseOrderRequest,
 )
 from app.services.purchase_orders import (
+    auto_generate_purchase_orders_for_low_stock,
     create_purchase_order,
     get_all_purchase_orders,
-    update_purchase_order,
+    preview_low_stock_for_po,
     receive_purchase_order,
+    update_purchase_order,
 )
 
 router = APIRouter(
@@ -35,6 +37,8 @@ async def add_purchase_order(
         supplier_id=data.supplier_id,
         status_value=data.status,
         notes=data.notes,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 
@@ -48,6 +52,34 @@ async def get_purchase_orders(
     ),
 ):
     return await get_all_purchase_orders()
+
+
+@router.get(
+    "/low-stock-preview",
+)
+async def preview_low_stock(
+    current_user=Depends(
+        require_permission(PURCHASE_READ)
+    ),
+):
+    """Preview low-stock medicines that require purchase orders grouped by supplier."""
+    return await preview_low_stock_for_po()
+
+
+@router.post(
+    "/generate-from-low-stock",
+    status_code=status.HTTP_200_OK,
+)
+async def generate_po_from_low_stock(
+    current_user=Depends(
+        require_permission(PURCHASE_WRITE)
+    ),
+):
+    """Automatically create draft purchase orders and line items for low-stock medicines."""
+    return await auto_generate_purchase_orders_for_low_stock(
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
+    )
 
 
 @router.patch(
@@ -66,6 +98,8 @@ async def edit_purchase_order(
         status_value=data.status,
         notes=data.notes,
         is_active=data.is_active,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 @router.patch(
@@ -80,4 +114,6 @@ async def receive_order(
 ):
     return await receive_purchase_order(
         purchase_order_id=purchase_order_id,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )

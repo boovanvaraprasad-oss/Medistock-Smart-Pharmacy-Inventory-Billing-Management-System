@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, status
 
 from app.core.dependencies import require_permission
-from app.core.permissions import MEDICINE_READ, MEDICINE_WRITE
+from app.core.permissions import (
+    MASTER_DATA_DELETE,
+    MEDICINE_READ,
+    MEDICINE_WRITE,
+)
 from app.schemas.manufacturer import (
     CreateManufacturerRequest,
     ManufacturerResponse,
@@ -12,6 +16,7 @@ from app.services.manufacturers import (
     get_all_manufacturers,
     update_manufacturer,
 )
+from app.services.master_data_deletion import delete_master_data_record
 
 
 router = APIRouter(
@@ -57,4 +62,17 @@ async def edit_manufacturer(
         manufacturer_id=manufacturer_id,
         name=data.name,
         is_active=data.is_active,
+    )
+
+
+@router.delete("/{manufacturer_id}")
+async def delete_unused_manufacturer(
+    manufacturer_id: str,
+    current_user=Depends(require_permission(MASTER_DATA_DELETE)),
+):
+    return await delete_master_data_record(
+        collection_name="manufacturers",
+        record_id=manufacturer_id,
+        actor_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )

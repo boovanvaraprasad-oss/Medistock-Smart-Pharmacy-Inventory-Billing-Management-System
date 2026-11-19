@@ -1,0 +1,178 @@
+.confirm-dialog {
+    width: min(390px, calc(100% - 32px));
+    max-width: none;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: var(--ms-radius-xl);
+    background: transparent;
+    color: var(--ms-ink);
+    box-shadow: 0 24px 70px rgb(0 0 0 / 24%);
+}
+
+.confirm-dialog::backdrop {
+    background: rgb(6 34 25 / 54%);
+    backdrop-filter: blur(3px);
+}
+
+.confirm-card {
+    padding: 25px 24px 20px;
+    border: 1px solid var(--ms-edge);
+    border-radius: var(--ms-radius-xl);
+    background: var(--ms-white);
+    text-align: center;
+}
+
+.confirm-dialog-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ms-danger-bg, #fff0ef);
+    color: var(--ms-danger-ink, #c83d35);
+}
+
+.confirm-dialog-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.confirm-dialog-content {
+    margin-top: 15px;
+}
+
+.confirm-dialog-title {
+    margin: 0;
+    color: var(--ms-ink, #17383d);
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.confirm-dialog-message {
+    margin: 8px 0 0;
+    color: var(--ms-muted, #60777b);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.confirm-dialog-actions {
+    display: grid;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.confirm-dialog-actions button {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--ms-radius-md, 10px);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.confirm-dialog-actions button:active {
+    transform: translateY(1px);
+}
+
+.confirm-dialog-submit {
+    background: var(--ms-danger, #d65354);
+    color: #ffffff;
+}
+
+.confirm-dialog-submit:hover {
+    background: #b53839;
+}
+
+.confirm-dialog-cancel {
+    border-color: var(--ms-edge, #d6e5e8) !important;
+    background: var(--ms-white, #ffffff);
+    color: var(--ms-ink, #17383d);
+}
+
+.confirm-dialog-cancel:hover {
+    background: var(--ms-mist, #f1f7f8);
+}
+
+.confirm-dialog-simple .confirm-dialog-icon {
+    display: none;
+}
+
+.confirm-dialog-simple .confirm-dialog-content {
+    margin-top: 0;
+}
+
+.confirm-dialog-simple .confirm-dialog-submit {
+    background: var(--ms-teal-800, #08777b);
+    color: #ffffff;
+}
+
+.confirm-dialog-simple .confirm-dialog-submit:hover {
+    background: var(--ms-teal-900, #075d63);
+}
+
+:root[data-theme="dark"] .confirm-card {
+    background: var(--ms-surface, #1b2b2e);
+    border-color: var(--ms-edge, #31484b);
+    box-shadow: 0 24px 70px rgb(0 0 0 / 60%);
+}
+
+:root[data-theme="dark"] .confirm-dialog-title {
+    color: var(--ms-ink, #e7f2f1);
+}
+
+:root[data-theme="dark"] .confirm-dialog-message {
+    color: var(--ms-muted, #a3b9b9);
+}
+
+:root[data-theme="dark"] .confirm-dialog-icon {
+    background: var(--ms-danger-bg, #38211f);
+    color: var(--ms-danger-ink, #ffb4ad);
+}
+
+:root[data-theme="dark"] .confirm-dialog-cancel {
+    border-color: var(--ms-edge, #31484b) !important;
+    background: var(--ms-surface-raised, #142326);
+    color: var(--ms-ink, #e7f2f1);
+}
+
+:root[data-theme="dark"] .confirm-dialog-cancel:hover {
+    background: var(--ms-mist, #10191b);
+}
+
+:root[data-theme="dark"] .confirm-dialog-submit {
+    background: var(--ms-danger, #f07175);
+    color: #10191b;
+}
+
+:root[data-theme="dark"] .confirm-dialog-submit:hover {
+    background: #ff8e92;
+}
+
+:root[data-theme="dark"] .confirm-dialog-simple .confirm-dialog-submit {
+    background: var(--ms-teal-700, #25b8b6);
+    color: var(--ms-mist, #10191b);
+}
+
+:root[data-theme="dark"] .confirm-dialog-simple .confirm-dialog-submit:hover {
+    background: var(--ms-aqua-500, #39c8c1);
+}
+
+.confirm-dialog-actions button:focus-visible {
+    outline: 3px solid rgb(34 185 181 / 35%);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confirm-dialog-actions button {
+        transition: none;
+    }
+}

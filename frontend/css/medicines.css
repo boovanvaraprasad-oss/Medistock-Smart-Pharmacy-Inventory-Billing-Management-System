@@ -1,0 +1,90 @@
+/* Medicine catalog styles (inherits core styling from app-theme.css) */
+
+.medicine-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    align-items: end;
+    gap: 15px;
+    margin-top: 18px;
+}
+
+.medicine-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--ms-ink, #17383d);
+    font-weight: 700;
+}
+
+.medicine-form input,
+.medicine-form select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 11px;
+    border: 1px solid var(--ms-edge, #d6e5e8);
+    border-radius: var(--ms-radius-md, 10px);
+    background: var(--ms-white, #ffffff);
+    color: var(--ms-ink, #17383d);
+}
+
+.medicine-batch-list {
+    display: inline-block;
+    max-width: 300px;
+    color: var(--ms-ink, #315257);
+    line-height: 1.5;
+    white-space: normal;
+}
+
+.medicine-batch-empty {
+    color: var(--ms-muted, #60777b);
+    font-size: 0.9rem;
+}
+
+.checkbox-label {
+    display: flex !important;
+    min-height: 42px;
+    align-items: center;
+    gap: 9px !important;
+}
+
+.checkbox-label input {
+    width: 18px;
+    min-height: 18px;
+}
+
+/* Table Column Alignment */
+table:has(#medicineRows) th:nth-child(4),
+table:has(#medicineRows) td:nth-child(4),
+#medicineRows td:nth-child(4),
+table:has(#medicineRows) th:nth-child(6),
+table:has(#medicineRows) td:nth-child(6),
+#medicineRows td:nth-child(6),
+table:has(#medicineRows) th:nth-child(7),
+table:has(#medicineRows) td:nth-child(7),
+#medicineRows td:nth-child(7) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+table:has(#medicineRows) th:nth-child(6),
+table:has(#medicineRows) td:nth-child(6),
+#medicineRows td:nth-child(6) {
+    font-weight: 600;
+}
+
+table:has(#medicineRows) th:nth-child(8),
+table:has(#medicineRows) td:nth-child(8),
+#medicineRows td:nth-child(8) {
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .medicine-form {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .medicine-form {
+        grid-template-columns: 1fr;
+    }
+}

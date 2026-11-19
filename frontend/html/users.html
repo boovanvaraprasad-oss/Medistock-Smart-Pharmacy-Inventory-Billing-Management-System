@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock | Staff &amp; Users</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/users.css">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/confirm-dialog.css">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Administration</p>
+                <h1>Staff &amp; users</h1>
+                <p class="subtitle">Manage staff access and account status.</p>
+            </div>
+            <div class="header-actions">
+                <a href="login_history.html" class="button button-secondary" id="viewLoginHistoryBtn">View login history</a>
+            </div>
+        </header>
+
+        <nav class="sub-nav" aria-label="Staff management navigation">
+            <a href="users.html" class="sub-nav-item is-active" aria-current="page">Staff accounts</a>
+            <a href="login_history.html" class="sub-nav-item" id="loginHistoryTab">Login history</a>
+        </nav>
+
+        <p id="statusMessage" class="message" role="status" hidden></p>
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="successMessage" class="message message-success" role="status" hidden></p>
+
+        <section id="createSection" class="panel" hidden>
+            <h2>Add staff account</h2>
+            <p class="helper-text">Passwords must contain at least 10 characters, including a letter and a number.</p>
+            <form id="createForm" class="create-form">
+                <label>
+                    Email
+                    <input id="newEmail" type="email" autocomplete="off" maxlength="254" placeholder="name@medistock.com" required>
+                </label>
+                <label>
+                    Temporary password
+                    <input id="newPassword" type="password" autocomplete="new-password" minlength="10" maxlength="72" required>
+                </label>
+                <label>
+                    Role
+                    <select id="newRole" required></select>
+                </label>
+                <button id="createButton" class="button button-primary" type="submit">Create account</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Staff accounts</h2>
+                    <p id="listDescription" class="helper-text">Loading accounts…</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">Refresh</button>
+            </div>
+
+            <div class="record-search" role="search">
+                <label for="userSearch">Search staff accounts</label>
+                <input id="userSearch" type="search" data-record-search="#userRows" placeholder="Search name, email, phone, role, or status" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching staff accounts.</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/confirm-dialog.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/users.js"></script>
+</body>
+</html>

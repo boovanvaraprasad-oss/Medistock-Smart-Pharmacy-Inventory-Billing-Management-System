@@ -34,6 +34,8 @@ async def create_batch(
         purchase_price=data.purchase_price,
         manufacturing_date=data.manufacturing_date,
         expiry_date=data.expiry_date,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">MediStock mark</title>
+  <g transform="translate(4 4)">
+    <rect x="52" y="0" width="56" height="56" rx="16" fill="#08777B"/>
+    <rect x="4" y="48" width="56" height="56" rx="16" fill="#08777B"/>
+    <rect x="100" y="48" width="56" height="56" rx="16" fill="#22B9B5"/>
+    <rect x="52" y="96" width="56" height="56" rx="16" fill="#0B9C9D"/>
+    <rect x="52" y="48" width="56" height="56" rx="16" fill="#08777B"/>
+    <rect x="68" y="63" width="24" height="6" rx="3" fill="#67D2AE"/>
+    <rect x="68" y="73" width="24" height="6" rx="3" fill="#67D2AE"/>
+    <rect x="68" y="83" width="24" height="6" rx="3" fill="#67D2AE"/>
+  </g>
+</svg>

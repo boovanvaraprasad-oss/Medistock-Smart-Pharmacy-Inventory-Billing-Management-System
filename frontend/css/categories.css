@@ -1,0 +1,35 @@
+/* Category management styles (inherits core styling from app-theme.css) */
+.category-form {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.category-form label {
+    grid-column: 1 / -1;
+    margin-bottom: -5px;
+    color: var(--ms-ink, #17383d);
+    font-weight: 700;
+}
+
+.category-form input {
+    min-height: 42px;
+    width: 100%;
+    padding: 0 11px;
+    border: 1px solid var(--ms-edge, #d6e5e8);
+    border-radius: var(--ms-radius-md, 10px);
+    background: var(--ms-white, #ffffff);
+    color: var(--ms-ink, #17383d);
+}
+
+@media (max-width: 640px) {
+    .category-form {
+        grid-template-columns: 1fr;
+    }
+
+    .category-form label {
+        grid-column: auto;
+    }
+}

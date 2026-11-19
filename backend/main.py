@@ -34,18 +34,45 @@ app.include_router(
 
 # Frontend
 
-FRONTEND_DIR = (
-    Path(__file__).resolve().parent.parent / "frontend"
-)
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+FRONTEND_HTML_DIR = FRONTEND_DIR / "html"
 
 
 # Keep this mount after the API routes
 # so /api/v1 requests reach FastAPI first.
 
 app.mount(
+    "/css",
+    StaticFiles(directory=FRONTEND_DIR / "css"),
+    name="frontend-css",
+)
+
+app.mount(
+    "/js",
+    StaticFiles(directory=FRONTEND_DIR / "js"),
+    name="frontend-js",
+)
+
+app.mount(
+    "/assets",
+    StaticFiles(directory=FRONTEND_DIR / "assets"),
+    name="frontend-assets",
+)
+
+UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+(UPLOADS_DIR / "prescriptions").mkdir(parents=True, exist_ok=True)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory=UPLOADS_DIR),
+    name="uploads",
+)
+
+app.mount(
     "/",
     StaticFiles(
-        directory=FRONTEND_DIR,
+        directory=FRONTEND_HTML_DIR,
         html=True,
     ),
     name="frontend",

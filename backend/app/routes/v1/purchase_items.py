@@ -42,6 +42,8 @@ async def add_purchase_item(
         batch_number=data.batch_number,
         manufacturing_date=data.manufacturing_date,
         expiry_date=data.expiry_date,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
     )
 
 
@@ -70,6 +72,8 @@ async def edit_purchase_item(
 ):
     return await update_purchase_item(
         purchase_item_id=purchase_item_id,
+        actor_user_id=str(current_user["_id"]),
+        actor_role=current_user["role"],
         quantity=data.quantity,
         unit_price=data.unit_price,
         batch_number=data.batch_number,

@@ -56,6 +56,27 @@ async def create_indexes():
     except Exception as error:
         print(f"[indexes] revoked_tokens.jti FAILED: {error}")
 
+    try:
+        await db.login_attempts.create_index([("timestamp", -1)])
+        print("[indexes] login_attempts.timestamp ready")
+    except Exception as error:
+        print(f"[indexes] login_attempts.timestamp FAILED: {error}")
+
+    try:
+        await db.audit_logs.create_index([("created_at", -1), ("_id", -1)])
+        print("[indexes] audit_logs.created_at+_id ready")
+    except Exception as error:
+        print(f"[indexes] audit_logs.created_at+_id FAILED: {error}")
+
+    try:
+        await db.notification_reads.create_index(
+            [("user_id", 1), ("notification_id", 1)],
+            unique=True,
+        )
+        print("[indexes] notification_reads.user_id+notification_id ready")
+    except Exception as error:
+        print(f"[indexes] notification_reads index FAILED: {error}")
+
     # 3. Self-cleaning: MongoDB deletes each revoked token
     #    automatically once its expires_at time has passed.
     #    (expireAfterSeconds=0 means "delete right at expires_at")
@@ -73,3 +94,11 @@ async def create_indexes():
             "[indexes] revoked_tokens.expires_at "
             f"FAILED: {error}"
         )
+
+    # 4. Inquiries index on created_at for fast descending listing
+    try:
+        await db.inquiries.create_index([("created_at", -1), ("status", 1)])
+        print("[indexes] inquiries.created_at+status ready")
+    except Exception as error:
+        print(f"[indexes] inquiries index FAILED: {error}")
+

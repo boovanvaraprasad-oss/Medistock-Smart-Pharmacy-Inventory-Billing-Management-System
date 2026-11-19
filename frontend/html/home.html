@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#075D63">
+  <title>MediStock | Home</title>
+  <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+  <script src="/js/components/theme-bootstrap.js"></script>
+  <link rel="stylesheet" href="/css/app-theme.css">
+  <link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="app-theme-ready home-page">
+  <main class="home-shell">
+    <header class="home-header">
+      <a class="home-brand" href="/home.html" aria-label="MediStock home">
+        <img src="/assets/medistock-mark.svg" alt="">
+        <span>MediStock</span>
+      </a>
+      <div class="home-account">
+        <a class="home-profile" id="homeProfileLink" href="profile.html" title="View your profile" aria-label="View your profile">
+          <span class="home-profile-avatar" id="homeProfileAvatar">U</span>
+          <span class="home-profile-details">
+            <strong class="home-profile-name" id="homeProfileName">My profile</strong>
+            <small class="home-profile-role" id="homeProfileRole">Profile</small>
+          </span>
+        </a>
+        <button class="home-logout" id="logoutButton" type="button">Log out</button>
+      </div>
+    </header>
+
+    <section class="home-welcome" aria-labelledby="welcomeTitle">
+      <p class="home-eyebrow" id="roleLabel">YOUR WORKSPACE</p>
+      <h1 id="welcomeTitle">Welcome back, <span id="welcomeName">there</span></h1>
+      <p class="home-description" id="roleDescription">Choose an area to continue.</p>
+    </section>
+
+    <section class="home-areas" aria-label="Areas available to your role">
+      <div class="home-tiles" id="homeTiles" aria-live="polite"></div>
+      <p class="home-tile-count" id="tileCount"></p>
+      <p class="home-error" id="homeError" role="alert" hidden></p>
+    </section>
+    <footer class="home-footer">MediStock · Pharmacy inventory and billing</footer>
+  </main>
+  <script src="/js/api/client.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

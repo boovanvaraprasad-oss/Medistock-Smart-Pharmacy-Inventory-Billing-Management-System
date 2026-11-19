@@ -22,6 +22,7 @@ async def get_low_stock_medicines():
                 {
                     "id": str(medicine["_id"]),
                     "name": medicine["name"],
+                    "sku": medicine.get("sku"),
                     "stock": stock,
                     "threshold": reorder_threshold,
                 }

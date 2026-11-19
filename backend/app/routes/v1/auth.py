@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth import (
@@ -10,16 +10,20 @@ from app.schemas.auth import (
     LogoutRequest,
     MeResponse,
     ChangePasswordRequest,
+    UpdateProfileRequest,
 )
 
 from app.services.auth import (
     authenticate_user,
+    get_login_history,
+    log_login_attempt,
     register_user,
     revoke_token,
     change_user_password,
 )
 
-from app.core.database import db
+from app.core.database import client, db
+from app.core.email_rules import MEDISTOCK_EMAIL_DOMAIN
 
 from app.core.security import (
     create_access_token,
@@ -31,9 +35,10 @@ from app.core.security import (
 from app.core.dependencies import (
     get_current_user,
     oauth2_scheme,
+    require_permission,
 )
-
-from app.core.permissions import ROLE_PERMISSIONS
+from app.core.permissions import LOGIN_LOG_READ, ROLE_PERMISSIONS
+from app.services.audit_log import create_audit_log
 
 
 router = APIRouter(
@@ -51,11 +56,29 @@ router = APIRouter(
     response_model=TokenResponse,
 )
 async def oauth2_login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
+    email = form_data.username.strip().lower()
+    ip_address = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    if email.rsplit("@", 1)[-1] != MEDISTOCK_EMAIL_DOMAIN:
+        await log_login_attempt(
+            email,
+            False,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+
     user = await authenticate_user(
-        form_data.username,
+        email,
         form_data.password,
+        ip_address=ip_address,
+        user_agent=user_agent,
     )
 
     if not user:
@@ -77,6 +100,17 @@ async def oauth2_login(
         refresh_token=refresh_token,
         token_type="bearer",
     )
+
+
+@router.get("/login-logs")
+@router.get("/login-history")
+async def read_login_history(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=25, ge=1, le=100),
+    success: bool | None = None,
+    current_user=Depends(require_permission(LOGIN_LOG_READ)),
+):
+    return await get_login_history(page=page, limit=limit, success=success)
 
 
 # ---------------------------------------------------------
@@ -194,6 +228,7 @@ async def register(data: RegisterRequest):
     return {
         "message": "User registered successfully",
         "email": user["email"],
+        "role": user.get("role", "owner"),
     }
 
 
@@ -208,21 +243,50 @@ async def register(data: RegisterRequest):
 async def get_me(
     current_user=Depends(get_current_user),
 ):
-    # get_current_user already checked the token is valid.
-    # Here we load the user to return who they are.
-    user = await db.users.find_one(
-        {"_id": ObjectId(current_user["sub"])}
-    )
-
-    role = user.get("role")
+    role = current_user.get("role")
 
     return {
-        "id": str(user["_id"]),
-        "email": user["email"],
+        "id": str(current_user["_id"]),
+        "email": current_user["email"],
         "role": role,
-        "is_active": user.get("is_active", True),
+        "is_active": current_user.get("is_active", True),
         "permissions": ROLE_PERMISSIONS.get(role, []),
+        "full_name": current_user.get("full_name", ""),
+        "phone": current_user.get("phone", ""),
     }
+
+
+@router.patch("/me/profile")
+async def update_my_profile(
+    data: UpdateProfileRequest,
+    current_user=Depends(get_current_user),
+):
+    user_id = ObjectId(current_user["sub"])
+    user = await db.users.find_one({"_id": user_id}, {"password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    changes = {"full_name": data.full_name, "phone": data.phone}
+    previous = {key: user.get(key, "") for key in changes}
+    if changes != previous:
+        async def transaction_work(session):
+            await db.users.update_one(
+                {"_id": user_id}, {"$set": changes}, session=session
+            )
+            await create_audit_log(
+                action="USER_PROFILE_UPDATE",
+                entity_type="users",
+                entity_id=str(user_id),
+                entity_label=user.get("email", str(user_id)),
+                actor_user_id=str(user_id),
+                actor_role=user.get("role", ""),
+                details={"updated_fields": list(changes)},
+                session=session,
+            )
+
+        async with await client.start_session() as session:
+            await session.with_transaction(transaction_work)
+    return {"full_name": data.full_name, "phone": data.phone}
 
 
 # ---------------------------------------------------------
@@ -281,39 +345,24 @@ async def logout(
             detail="Access token has no identifier",
         )
 
-    # Decode refresh token
-
-    refresh_payload = decode_refresh_token(
-        data.refresh_token
-    )
-
-    if not refresh_payload:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired refresh token",
-        )
-
-    refresh_jti = refresh_payload.get("jti")
-
-    if not refresh_jti:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has no identifier",
-        )
-
     # Revoke access token
-
     await revoke_token(
         access_jti,
         access_payload["exp"],
     )
 
-    # Revoke refresh token
-
-    await revoke_token(
-        refresh_jti,
-        refresh_payload["exp"],
-    )
+    # Decode and revoke refresh token if provided
+    if data.refresh_token:
+        refresh_payload = decode_refresh_token(
+            data.refresh_token
+        )
+        if refresh_payload:
+            refresh_jti = refresh_payload.get("jti")
+            if refresh_jti:
+                await revoke_token(
+                    refresh_jti,
+                    refresh_payload["exp"],
+                )
 
     return {
         "message": "Successfully logged out",

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediStock | Manufacturers</title>
+    <link rel="icon" href="/assets/medistock-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/record-search.css">
+    <link rel="stylesheet" href="/css/confirm-dialog.css">
+    <link rel="stylesheet" href="/css/app-shell.css">
+    <link rel="stylesheet" href="/css/app-theme.css">
+    <script src="/js/components/theme-bootstrap.js"></script>
+</head>
+<body class="app-theme-ready">
+    <main class="page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Master data</p>
+                <h1>Manufacturers</h1>
+                <p class="subtitle">Manage medicine manufacturers.</p>
+            </div>
+        </header>
+
+        <p id="errorMessage" class="message message-error" role="alert" hidden></p>
+        <p id="successMessage" class="message message-success" role="status" hidden></p>
+        <p id="statusMessage" class="message" role="status">Loading manufacturers…</p>
+
+        <section id="formSection" class="panel" hidden>
+            <h2 id="formTitle">Add manufacturer</h2>
+            <form id="manufacturerForm" class="category-form">
+                <label for="manufacturerName">Manufacturer name</label>
+                <input id="manufacturerName" type="text" minlength="2" maxlength="100" required>
+                <div class="form-actions">
+                    <button id="saveButton" class="button button-primary" type="submit">
+                        Create manufacturer
+                    </button>
+                    <button id="cancelButton" class="button button-secondary" type="button" hidden>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Manufacturer list</h2>
+                    <p id="listDescription" class="helper-text">Loading…</p>
+                </div>
+                <button id="refreshButton" class="button button-secondary" type="button">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="record-search" role="search">
+                <label for="manufacturerSearch">Search manufacturers</label>
+                <input id="manufacturerSearch" type="search" data-record-search="#manufacturerRows" placeholder="Type a manufacturer name or status" autocomplete="off">
+                <p class="record-search-empty" role="status" hidden>No matching manufacturers.</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Manufacturer</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manufacturerRows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api/client.js"></script>
+    <script src="/js/components/confirm-dialog.js"></script>
+    <script src="/js/components/app-shell.js"></script>
+    <script src="/js/components/record-search.js"></script>
+    <script src="/js/manufacturers.js"></script>
+</body>
+</html>
