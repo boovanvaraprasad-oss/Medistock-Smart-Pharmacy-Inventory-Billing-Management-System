@@ -172,7 +172,7 @@ function renderUsers() {
                 async () => {
                     const confirmed = await window.showConfirmDialog({
                         title: "Delete staff account permanently?",
-                        message: `The account for ${user.email} will be permanently removed. This cannot be undone, and accounts referenced in audit history cannot be deleted.`,
+                        message: `The account for ${user.email} will be permanently removed. This action cannot be undone.`,
                         confirmText: "Delete permanently"
                     });
                     if (!confirmed) return;

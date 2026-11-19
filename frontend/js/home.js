@@ -26,7 +26,7 @@ const roleDetails = {
     },
     compliance_officer: {
         label: "Compliance officer access",
-        description: "Review staff, inventory, billing records, reports and the audit trail."
+        description: "Review staff, inventory, billing records, reports and the activity log."
     }
 };
 
@@ -132,8 +132,8 @@ const tileDefinitions = [
         icon: "history"
     },
     {
-        title: "Audit trail",
-        description: "Review recorded changes across the pharmacy system.",
+        title: "Activity log",
+        description: "Review recorded activity and changes across the pharmacy system.",
         href: "audit_trail.html",
         permissions: ["audit_log:read"],
         icon: "audit"

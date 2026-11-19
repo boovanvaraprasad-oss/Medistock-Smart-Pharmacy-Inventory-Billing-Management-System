@@ -98,279 +98,84 @@
     gap: 18px;
     padding: 18px 0 8px;
     border-top: 1px solid #d6e5e8;
-    cursor: pointer;
 }
 
 .theme-setting > span { display: grid; gap: 5px; }
-.theme-setting strong { color: #17383d; font-size: 0.92rem; }
+.theme-setting strong { color: #17383d; font-size: 0.95rem; }
 .theme-setting small { color: #60777b; font-size: 0.82rem; }
-.theme-setting input { width: 48px; height: 26px; accent-color: #08777b; cursor: pointer; }
 .settings-card .settings-status { min-height: 1.2em; margin-top: 10px; color: #08777b; font-size: 0.8rem; }
 
-/* Customer Inquiries & Leads Panel */
-.inquiry-count-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: #e4f7f4;
-    color: #08777b;
-    font-size: 0.78rem;
-    font-weight: 700;
-}
-
-.inquiry-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 18px 0;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #edf4f5;
-}
-
-.inquiry-filters {
-    display: inline-flex;
-    gap: 6px;
-    background: #f1f7f8;
-    padding: 4px;
-    border-radius: 10px;
-}
-
-.inquiry-filter-btn {
-    padding: 6px 14px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: #52696c;
-    font: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 140ms ease, color 140ms ease;
-}
-
-.inquiry-filter-btn:hover {
-    color: #17383d;
-}
-
-.inquiry-filter-btn.is-active {
-    background: #ffffff;
-    color: #08777b;
-    font-weight: 700;
-    box-shadow: 0 2px 6px rgb(8 119 123 / 10%);
-}
-
-.inquiry-search-box {
-    flex: 1;
-    min-width: 220px;
-    max-width: 380px;
-}
-
-.inquiry-search-box input {
-    width: 100%;
-    min-height: 38px;
-    padding: 6px 12px;
-    border: 1px solid #d6e5e8;
-    border-radius: 9px;
-    background: #ffffff;
-    font: inherit;
-    font-size: 0.84rem;
-    color: #17383d;
-}
-
-.inquiry-search-box input:focus {
-    outline: 2px solid #08777b;
-    border-color: #08777b;
-}
-
-.inquiries-list {
-    display: grid;
-    gap: 14px;
-    margin-top: 8px;
-}
-
-.inquiry-card {
-    padding: 18px;
-    border: 1px solid #e1ecee;
-    border-radius: 14px;
-    background: #fafcfc;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.inquiry-card:hover {
-    border-color: #22b9b5;
-    box-shadow: 0 4px 14px rgb(8 119 123 / 6%);
-}
-
-.inquiry-card.status-new {
-    border-left: 4px solid #f59e0b;
-}
-
-.inquiry-card.status-in_progress {
-    border-left: 4px solid #0284c7;
-}
-
-.inquiry-card.status-resolved {
-    border-left: 4px solid #10b981;
-}
-
-.inquiry-card-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-}
-
-.inquiry-avatar {
-    display: grid;
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-    place-items: center;
-    border-radius: 50%;
-    background: #67d2ae;
-    color: #043036;
-    font-size: 0.88rem;
-    font-weight: 800;
-}
-
-.inquiry-identity {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.inquiry-identity strong {
-    color: #17383d;
-    font-size: 0.95rem;
-}
-
-.inquiry-identity small {
-    color: #60777b;
-    font-size: 0.8rem;
-}
-
-.inquiry-meta {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.inquiry-date {
-    color: #839b9e;
-    font-size: 0.76rem;
-}
-
-.inquiry-badge {
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-.inquiry-badge.badge-new {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.inquiry-badge.badge-in_progress {
-    background: #e0f2fe;
-    color: #0369a1;
-}
-
-.inquiry-badge.badge-resolved {
-    background: #dcfce7;
-    color: #15803d;
-}
-
-.inquiry-details-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin: 8px 0 12px;
-    font-size: 0.82rem;
-}
-
-.inquiry-channel {
-    color: #08777b;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.inquiry-channel:hover {
-    text-decoration: underline;
-}
-
-.inquiry-tag {
+/* ==========================================================================
+   Animated Sun/Moon Dark Mode Switch (Uiverse Adapted for MediStock Palette)
+   ========================================================================== */
+.switch {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: #e8f4f3;
-    color: #075d63;
-    font-size: 0.75rem;
-    font-weight: 600;
+    --width-of-switch: 3.5em;
+    --height-of-switch: 2em;
+    --size-of-icon: 1.4em;
+    --slider-offset: 0.3em;
+    position: relative;
+    width: var(--width-of-switch);
+    height: var(--height-of-switch);
+    flex-shrink: 0;
 }
 
-.inquiry-message {
-    padding: 12px 14px;
-    border-radius: 8px;
-    background: #ffffff;
-    border: 1px solid #edf3f4;
-    color: #17383d;
-    font-size: 0.86rem;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    margin: 8px 0 14px;
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
 }
 
-.inquiry-actions-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.inquiry-action-btn {
-    padding: 5px 12px;
-    border: 1px solid #d6e5e8;
-    border-radius: 7px;
-    background: #ffffff;
-    color: #17383d;
-    font: inherit;
-    font-size: 0.78rem;
-    font-weight: 600;
+/* The slider track */
+.slider {
+    position: absolute;
     cursor: pointer;
-    text-decoration: none;
-    transition: background-color 140ms ease, border-color 140ms ease;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e4f7f4;
+    border: 1.5px solid #bceae5;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 30px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.inquiry-action-btn:hover {
-    background: #f1f7f8;
-    border-color: #08777b;
+/* Sun / Day icon (Golden morning sun) */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: var(--size-of-icon, 1.4em);
+    width: var(--size-of-icon, 1.4em);
+    border-radius: 50%;
+    left: var(--slider-offset, 0.3em);
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(45deg, #f59e0b, #fbbf24 70%);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.inquiry-action-btn.btn-primary-action {
-    background: #08777b;
-    border-color: #08777b;
-    color: #ffffff;
+/* Dark mode track */
+.switch input:checked + .slider {
+    background-color: #10272b;
+    border-color: #1a4b50;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.inquiry-action-btn.btn-primary-action:hover {
-    background: #065b5e;
+/* Dark mode Moon crescent with MediStock Teal & Mint highlights */
+.switch input:checked + .slider:before {
+    left: calc(100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em)));
+    background: #10272b;
+    box-shadow: inset -3px -2px 5px -1px #0b9c9d, inset -8px -4px 0 0 #67d2ae;
+    filter: drop-shadow(0 0 5px rgba(103, 210, 174, 0.4));
 }
 
-.inquiry-empty {
-    padding: 24px;
-    text-align: center;
-    color: #60777b;
-    font-size: 0.9rem;
+.switch input:focus-visible + .slider {
+    outline: 3px solid rgba(8, 119, 123, 0.45);
+    outline-offset: 2px;
 }
 
 /* SMTP Status & Testing */

@@ -96,10 +96,11 @@ const prescriptionModal = document.getElementById("prescriptionModal");
 const rxModalBackdrop = document.getElementById("rxModalBackdrop");
 const rxModalTitle = document.getElementById("rxModalTitle");
 const rxModalSubtitle = document.getElementById("rxModalSubtitle");
-const rxDownloadLink = document.getElementById("rxDownloadLink");
 const closeRxModalBtn = document.getElementById("closeRxModalBtn");
+const rxImageContainer = document.getElementById("rxImageContainer");
 const rxModalImage = document.getElementById("rxModalImage");
-const rxModalFrame = document.getElementById("rxModalFrame");
+const rxPdfContainer = document.getElementById("rxPdfContainer");
+const rxPdfLink = document.getElementById("rxPdfLink");
 
 // Redesigned Printable Invoice DOM Elements
 const printableInvoiceCard = document.getElementById("printableInvoiceCard");
@@ -1672,17 +1673,12 @@ if (viewPrescriptionBtn) {
         rxModalSubtitle.textContent = docParts.join(" · ") || rx.file_name;
 
         const fullUrl = `${API_BASE_URL}${rx.file_path}`;
-        rxDownloadLink.href = fullUrl;
+        if (rxPdfLink) rxPdfLink.href = fullUrl;
 
-        if (rx.content_type === "application/pdf" || rx.file_name.toLowerCase().endsWith(".pdf")) {
-            rxModalImage.hidden = true;
-            rxModalFrame.hidden = false;
-            rxModalFrame.src = fullUrl;
-        } else {
-            rxModalFrame.hidden = true;
-            rxModalImage.hidden = false;
-            rxModalImage.src = fullUrl;
-        }
+        const isPdf = rx.content_type === "application/pdf" || (rx.file_name && rx.file_name.toLowerCase().endsWith(".pdf"));
+        if (rxImageContainer) rxImageContainer.hidden = isPdf;
+        if (rxPdfContainer) rxPdfContainer.hidden = !isPdf;
+        if (rxModalImage) rxModalImage.src = isPdf ? "" : fullUrl;
 
         prescriptionModal.hidden = false;
     });
@@ -1691,7 +1687,8 @@ if (viewPrescriptionBtn) {
 function closePrescriptionModal() {
     if (prescriptionModal) prescriptionModal.hidden = true;
     if (rxModalImage) rxModalImage.src = "";
-    if (rxModalFrame) rxModalFrame.src = "";
+    if (rxImageContainer) rxImageContainer.hidden = true;
+    if (rxPdfContainer) rxPdfContainer.hidden = true;
 }
 
 if (closeRxModalBtn) closeRxModalBtn.addEventListener("click", closePrescriptionModal);

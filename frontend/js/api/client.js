@@ -62,7 +62,25 @@ async function readResponse(response) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        throw new Error(data.detail || "Request failed");
+        let message = "";
+        if (typeof data.detail === "string") {
+            message = data.detail;
+        } else if (Array.isArray(data.detail)) {
+            message = data.detail.map((err) => err.msg || JSON.stringify(err)).join(", ");
+        } else if (typeof data.message === "string") {
+            message = data.message;
+        } else if (response.status === 403) {
+            message = "Permission denied: Your role does not have access to this resource.";
+        } else if (response.status === 401) {
+            message = "Session expired. Please log in again.";
+        } else if (response.status === 404) {
+            message = "Requested resource was not found.";
+        } else if (response.status >= 500) {
+            message = "Internal server error (500). Please check server logs or restart the server.";
+        } else {
+            message = `Request failed (HTTP ${response.status})`;
+        }
+        throw new Error(message);
     }
 
     return data;
