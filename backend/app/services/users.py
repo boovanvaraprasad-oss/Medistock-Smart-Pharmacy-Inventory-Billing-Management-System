@@ -291,27 +291,6 @@ async def delete_staff_user(
                 detail="Deactivate the user before permanently deleting the account",
             )
 
-        existing_audit = await db.audit_logs.find_one(
-            {
-                "$or": [
-                    {"actor_user_id": object_id},
-                    {"target_user_id": object_id},
-                    {"entity_type": "users", "entity_id": str(object_id)},
-                ]
-            },
-            {"_id": 1},
-            session=session,
-        )
-
-        if existing_audit:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=(
-                    "User is referenced by audit history and cannot be "
-                    "permanently deleted; keep the account deactivated"
-                ),
-            )
-
         result = await db.users.delete_one(
             {"_id": object_id, "is_active": False},
             session=session,
