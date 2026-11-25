@@ -578,9 +578,9 @@ function renderPrintableInvoice() {
 
     // 1. Store Header Info
     if (invStoreName) invStoreName.textContent = storeSettings.store_name || "MediStock Pharmacy";
-    if (invStoreAddress) invStoreAddress.textContent = storeSettings.store_address || "Tirupati, Andhra Pradesh, 517505";
-    if (invStorePhone) invStorePhone.textContent = storeSettings.store_phone || "+91 78945 61230";
-    if (invStoreLicense) invStoreLicense.textContent = storeSettings.store_license_number || "DL-123456789";
+    if (invStoreAddress) invStoreAddress.textContent = storeSettings.address || storeSettings.store_address || "Tirupati, Andhra Pradesh, 517505";
+    if (invStorePhone) invStorePhone.textContent = storeSettings.phone || storeSettings.store_phone || "+91 78945 61230";
+    if (invStoreLicense) invStoreLicense.textContent = storeSettings.license_number || storeSettings.store_license_number || "DL-123456789";
 
     const invMemoTitle = document.getElementById("invMemoTitle");
     const invMemoSub = document.getElementById("invMemoSub");
@@ -1427,8 +1427,10 @@ if (whatsappReceiptButton) {
             itemsText = "Prescription medicines";
         }
 
+        const storeName = (storeSettings.store_name || "MediStock Pharmacy").trim();
+        const storePhone = (storeSettings.phone || storeSettings.store_phone || "+91 78945 61230").trim();
         const message =
-`*🏥 MEDISTOCK PHARMACY*
+`*🏥 ${storeName.toUpperCase()}*
 *Tax Invoice / Digital Bill Receipt*
 ━━━━━━━━━━━━━━━━━━━━━
 *Invoice:* ${inv}
@@ -1443,8 +1445,8 @@ ${itemsText}
 *Grand Total:* *${total}*
 *Payment Method:* ${method} (Paid)
 ━━━━━━━━━━━━━━━━━━━━━
-_Thank you for choosing MediStock!_
-_Helpline: +91 78945 61230_`;
+_Thank you for choosing ${storeName}!_
+_Helpline: ${storePhone}_`;
 
         const waUrl = `https://api.whatsapp.com/send?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(message)}`;
         window.open(waUrl, "_blank");
