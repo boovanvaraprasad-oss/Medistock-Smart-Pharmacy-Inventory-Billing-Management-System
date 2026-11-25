@@ -29,6 +29,15 @@ def is_smtp_configured() -> bool:
     return get_smtp_settings()["configured"]
 
 
+def _extract_email_domain(email_address: str) -> str:
+    """Return the domain portion of an email address for Message-ID headers."""
+    if "@" in (email_address or ""):
+        domain = email_address.rsplit("@", 1)[-1].strip()
+        if domain:
+            return domain
+    return "medistock.com"
+
+
 def _send_smtp_sync(
     to_email: str,
     subject: str,
@@ -52,7 +61,7 @@ def _send_smtp_sync(
     msg["From"] = f"{cfg['from_name']} <{cfg['from_email']}>"
     msg["To"] = to_email
     msg["Date"] = formatdate(localtime=True)
-    msg["Message-ID"] = make_msgid(domain="medistock.com")
+    msg["Message-ID"] = make_msgid(domain=_extract_email_domain(cfg["from_email"]))
     if reply_to:
         msg["Reply-To"] = reply_to
 
@@ -174,7 +183,7 @@ def _test_smtp_sync(target_email: str) -> Dict[str, Any]:
     msg["From"] = f"{from_name} <{from_email}>"
     msg["To"] = target_email
     msg["Date"] = formatdate(localtime=True)
-    msg["Message-ID"] = make_msgid(domain="medistock.com")
+    msg["Message-ID"] = make_msgid(domain=_extract_email_domain(cfg["from_email"]))
     msg.attach(MIMEText(plain_body, "plain", "utf-8"))
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 

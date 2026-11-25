@@ -39,7 +39,12 @@ def verify_password(
 # JWT Configuration
 # ---------------------------------------------------------
 
-SECRET_KEY = JWT_SECRET_KEY
+SECRET_KEY = (JWT_SECRET_KEY or "").strip()
+if not SECRET_KEY:
+    raise RuntimeError(
+        "JWT_SECRET_KEY environment variable is not set. "
+        "Provide it in backend/.env or your container environment."
+    )
 ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = JWT_ACCESS_EXPIRY_MIN
