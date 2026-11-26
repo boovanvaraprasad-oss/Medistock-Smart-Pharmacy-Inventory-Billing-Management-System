@@ -347,7 +347,14 @@ async def get_dashboard_summary(selected_date: date | None = None, selected_mont
             {"$unwind": {"path": "$medicine", "preserveNullAndEmptyArrays": True}},
             {
                 "$group": {
-                    "_id": "$medicine.category_id",
+                    "_id": {
+                        "$convert": {
+                            "input": "$medicine.category_id",
+                            "to": "objectId",
+                            "onError": None,
+                            "onNull": None,
+                        }
+                    },
                     "stock_value": {
                         "$sum": {
                             "$multiply": ["$quantity", "$purchase_price"]

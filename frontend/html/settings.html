@@ -52,7 +52,7 @@
                     <label for="defaultTaxPercentage">Default tax (%)</label>
                     <input id="defaultTaxPercentage" name="default_tax_percentage" type="number" min="0" max="100" step="0.01" required>
                     <label for="invoicePrefix">Invoice prefix</label>
-                    <input id="invoicePrefix" name="invoice_prefix" type="text" minlength="1" maxlength="12" pattern="[A-Za-z0-9-]+" required>
+                    <input id="invoicePrefix" name="invoice_prefix" type="text" minlength="1" maxlength="12" pattern="[A-Za-z0-9\-]+" required>
                     <p class="settings-hint">Example: INV produces invoice numbers such as INV-000001.</p>
                     <button class="button button-primary settings-save-button" type="submit">Save billing defaults</button>
                 </form>
